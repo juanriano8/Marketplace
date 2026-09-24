@@ -8,6 +8,7 @@ import com.marketplace.api.modules.auth.application.dto.RegisterBuyerRequest;
 import com.marketplace.api.modules.auth.application.dto.RegisterSellerRequest;
 import com.marketplace.api.modules.auth.domain.port.inbound.AuthUseCase;
 import com.marketplace.api.shared.security.CustomUserDetailsService;
+import com.marketplace.api.shared.security.JwtAccessDeniedHandler;
 import com.marketplace.api.shared.security.JwtAuthenticationEntryPoint;
 import com.marketplace.api.shared.security.JwtAuthenticationFilter;
 import com.marketplace.api.shared.security.JwtTokenProvider;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, JwtAuthenticationFilter.class})
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, JwtAccessDeniedHandler.class})
 @AutoConfigureMockMvc
 class AuthControllerTest {
 

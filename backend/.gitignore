@@ -36,6 +36,10 @@ out/
 ### Log files ###
 *.log
 
+### Credenciales locales (NUNCA subir al repositorio) ###
+.env
+.env.local
+
 ### OS ###
 .DS_Store
 Thumbs.db
