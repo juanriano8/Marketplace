@@ -10,4 +10,7 @@ public interface UserRepositoryPort {
     Optional<User> findById(UUID id);
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
+
+    /** Guards seller-only operations that require a verified (admin approved) account. */
+    boolean isSellerApproved(UUID sellerId);
 }

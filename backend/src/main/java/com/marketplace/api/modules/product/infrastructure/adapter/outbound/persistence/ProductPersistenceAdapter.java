@@ -38,6 +38,11 @@ public class ProductPersistenceAdapter implements ProductRepositoryPort {
     }
 
     @Override
+    public Page<Product> findByStatus(ProductStatus status, Pageable pageable) {
+        return springDataProductRepository.findByStatus(status, pageable);
+    }
+
+    @Override
     public Page<Product> findBySellerIdAndStatus(UUID sellerId, ProductStatus status, Pageable pageable) {
         return springDataProductRepository.findBySellerIdAndStatus(sellerId, status, pageable);
     }

@@ -21,7 +21,11 @@ public record UpdateProductRequest(
     @DecimalMin(value = "0.01", message = "Price must be greater than zero")
     BigDecimal price,
 
-    @Schema(description = "Available stock quantity", example = "50")
+    @Schema(
+        description = "Ignored for stock purposes: physical stock is owned by the inventory module after creation",
+        deprecated = true,
+        example = "50"
+    )
     @Min(value = 0, message = "Stock quantity cannot be negative")
     Integer stockQuantity,
 

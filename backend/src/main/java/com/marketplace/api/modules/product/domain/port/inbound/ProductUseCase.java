@@ -4,6 +4,7 @@ import com.marketplace.api.modules.product.application.dto.CreateProductRequest;
 import com.marketplace.api.modules.product.application.dto.ProductApprovalRequest;
 import com.marketplace.api.modules.product.application.dto.ProductResponse;
 import com.marketplace.api.modules.product.application.dto.UpdateProductRequest;
+import com.marketplace.api.modules.product.domain.model.ProductStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,4 +22,5 @@ public interface ProductUseCase {
 
     // Admin
     ProductResponse approveOrRejectProduct(UUID productId, ProductApprovalRequest request);
+    Page<ProductResponse> listProductsByStatus(ProductStatus status, Pageable pageable);
 }

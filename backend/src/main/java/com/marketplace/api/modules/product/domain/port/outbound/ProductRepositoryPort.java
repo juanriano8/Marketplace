@@ -13,6 +13,7 @@ public interface ProductRepositoryPort {
     Optional<Product> findById(UUID id);
     Optional<Product> findBySlug(String slug);
     Page<Product> findAllActive(Pageable pageable);
+    Page<Product> findByStatus(ProductStatus status, Pageable pageable);
     Page<Product> findBySellerIdAndStatus(UUID sellerId, ProductStatus status, Pageable pageable);
     Page<Product> findBySellerId(UUID sellerId, Pageable pageable);
     boolean existsBySlug(String slug);

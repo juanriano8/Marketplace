@@ -33,4 +33,12 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     public boolean existsByEmail(String email) {
         return springDataUserRepository.existsByEmail(email);
     }
+
+    @Override
+    public boolean isSellerApproved(UUID sellerId) {
+        return springDataUserRepository.findById(sellerId)
+            .filter(User::isEnabled)
+            .map(user -> Boolean.TRUE.equals(user.getSellerApproved()))
+            .orElse(false);
+    }
 }

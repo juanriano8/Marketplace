@@ -29,6 +29,9 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        # Collections are LAZY and loaded in batches: avoids N+1 selects and the
+        # "cannot simultaneously fetch multiple bags" failure during paginated queries.
+        default_batch_fetch_size: 50
 
   data:
     redis:
@@ -41,6 +44,15 @@ app:
     secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
+  payment:
+    stub:
+      # When false the stub gateway leaves payments PENDING so the failure/retry branch of
+      # checkout can be exercised locally.
+      always-capture: ${PAYMENT_STUB_CAPTURE:true}
+
+logging:
+  level:
+    com.marketplace.api: INFO
 
 springdoc:
   api-docs:
