@@ -18,6 +18,7 @@ Proyecto: `backend/` · Documento técnico: [ESPECIFICACION_TECNICA.md](ESPECIFI
 
 ## Índice
 
+0. [Ejecutar el proyecto desde otro PC](#0-ejecutar-el-proyecto-desde-otro-pc)
 1. [Antes de empezar: el JDK](#1-antes-de-empezar-el-jdk)
 2. [Elección de base de datos](#2-elección-de-base-de-datos)
 3. [Camino A — PostgreSQL local con Docker](#3-camino-a--postgresql-local-con-docker)
@@ -29,6 +30,142 @@ Proyecto: `backend/` · Documento técnico: [ESPECIFICACION_TECNICA.md](ESPECIFI
 9. [Resumen de endpoints](#9-resumen-de-endpoints)
 10. [Solución de problemas](#10-solución-de-problemas)
 11. [Comandos de referencia](#11-comandos-de-referencia)
+
+---
+
+## 0. Ejecutar el proyecto desde otro PC
+
+El proyecto vive en `https://github.com/juanriano8/Marketplace`. Hay **tres cosas** que hay que
+tener en cuenta, y una de ellas es la que suele fallar.
+
+### 0.1 Sube los cambios primero
+
+Antes de nada, en el PC donde has estado trabajando:
+
+```powershell
+cd C:\Users\sebas\Desktop\marketplace\fullstack
+git add -A
+git commit -m "Backend completo con conexion a Cloud SQL verificada"
+git push origin main
+```
+
+Comprueba que no queda nada pendiente:
+
+```powershell
+git status -sb          # debe decir  "## main...origin/main"  (sin "ahead")
+```
+
+> **Esto es imprescindible:** si el repositorio no tiene los últimos commits, el otro PC se
+> traerá una versión antigua del código.
+
+### 0.2 Qué se transfiere y qué no
+
+| Elemento | ¿Está en Git? | Qué hacer en el otro PC |
+|---|---|---|
+| Código fuente, tests, `Dockerfile`, `docker-compose.yml`, scripts, documentación | ✅ Sí | Se descarga con `git clone` |
+| Colección de Postman | ✅ Sí | Se importa desde el repo |
+| **`backend/.env`** (contraseña de BD, secreto JWT) | ❌ **No** (está en `.gitignore`) | **Recrearlo con `setup.ps1`** |
+| `backend/build/`, `backend/.gradle/` | ❌ No | Se regeneran al compilar |
+| Dependencias de Maven | ❌ No | Se descargan solas la primera vez (~100 MB) |
+| La base de datos en Cloud SQL | — | **Es la misma, compartida**: no hay que recrear nada |
+
+Ese es el punto clave: **`.env` no viaja en el repositorio porque contiene credenciales**, así que
+en el PC nuevo hay que generarlo. El script `setup.ps1` lo hace casi todo.
+
+### 0.3 Pasos en el PC nuevo (Windows)
+
+```powershell
+# 1. Java 21 (imprescindible: con Java 8 NO arranca)
+winget install EclipseAdoptium.Temurin.21.JDK
+#    cierra y reabre la terminal después de instalarlo
+
+# 2. Clonar
+cd $env:USERPROFILE\Desktop
+git clone https://github.com/juanriano8/Marketplace.git marketplace-fullstack
+cd marketplace-fullstack\backend
+
+# 3. Configuración inicial: comprueba Java, crea el .env y prueba la red
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
+
+# 4. Pon tu contraseña de la base de datos en el .env
+notepad .env      # rellena DB_PASSWORD
+
+# 5. Compila y ejecuta los tests (114)
+.\run.ps1 -Test
+
+# 6. Arranca la API
+.\run.ps1
+
+# 7. Comprueba que todo funciona de extremo a extremo
+powershell -ExecutionPolicy Bypass -File .\tools\verify.ps1
+```
+
+### 0.4 Si el PC nuevo usa Linux o macOS
+
+`run.ps1` es sólo para Windows; para Linux/macOS/WSL hay `run.sh`:
+
+```bash
+# 1. Java 21
+brew install --cask temurin@21        # macOS
+# sudo apt install temurin-21-jdk     # Ubuntu (o SDKMAN: sdk install java 21-tem)
+
+# 2. Clonar
+git clone https://github.com/juanriano8/Marketplace.git
+cd Marketplace/backend
+
+# 3. Crear el .env
+cp .env.example .env
+nano .env                             # pon tu DB_PASSWORD
+chmod +x gradlew run.sh
+
+# 4. Compilar, arrancar y verificar
+./run.sh test
+./run.sh
+```
+
+### 0.5 ⚠️ Lo que hay que hacer en Google Cloud (el paso que se olvida)
+
+Como el PC nuevo se conecta **directamente a Cloud SQL por IP pública**, hay que autorizar su
+dirección IP.
+
+1. Averigua la IP pública del PC nuevo: <https://whatismyipaddress.com/>
+2. En <https://console.cloud.google.com/sql> → instancia **`marketplace`** →
+   **Connections → Networking → Authorized networks → Add network**
+3. Añade esa IP (o `0.0.0.0/0` si vas a probar desde varios sitios; menos seguro)
+4. Guarda y espera ~1 minuto
+
+Si te olvidas, `setup.ps1` te avisará al final:
+
+```
+[FALLA] No se alcanza 136.112.91.42:5432
+```
+
+**Alternativa más robusta y sin tocar la IP:** el **Cloud SQL Auth Proxy**, que abre un túnel
+cifrado sobre el puerto 443 (funciona tras cualquier firewall y no expone tu IP). Requiere
+`gcloud`, y luego se usa `DB_HOST=127.0.0.1`:
+
+```powershell
+gcloud auth application-default login
+cloud-sql-proxy --port 5432 marketplace-509503:us-central1:marketplace
+```
+
+### 0.6 El administrador ya existe
+
+Como la base de datos es **compartida**, el usuario `admin@marketplace.com` **ya está creado**.
+`BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD` no volverán a crear nada: usa la contraseña
+que estableciste, o sincronízala con la utilidad `tools/AdminPasswordSync.java` (ver §10.3.1).
+
+### 0.7 Resumen de la diferencia entre PC
+
+| | PC 1 (el tuyo) | PC 2 (nuevo) |
+|---|---|---|
+| Código | `git clone` o carpeta actual | `git clone` |
+| JDK 21 | ✅ instalado | ❌ hay que instalarlo |
+| `backend/.env` | ✅ ya configurado | ❌ se crea con `setup.ps1` |
+| Dependencias Maven | ✅ en caché | ❌ se descargan la 1ª vez |
+| IP autorizada en Cloud SQL | ✅ | ❌ **hay que añadirla** |
+| Base de datos | compartida | compartida (mismos datos) |
+| Admin | ya existe | ya existe (misma contraseña) |
 
 ---
 

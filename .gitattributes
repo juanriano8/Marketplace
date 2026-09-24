@@ -1,0 +1,28 @@
+# ============================================================================
+# Normalización de finales de línea
+# ----------------------------------------------------------------------------
+# Los scripts de shell DEBEN usar LF o fallan en Linux/macOS con el error
+# "/usr/bin/env: 'bash\r': No such file or directory".
+# Los .bat y .ps1 de Windows funcionan mejor con CRLF.
+# Sin esta configuración, un clon en Linux se rompería.
+# ============================================================================
+
+# Por defecto, normalizar a LF en el repositorio
+* text=auto eol=lf
+
+# Scripts de shell: siempre LF
+*.sh        text eol=lf
+
+# Scripts de Windows y batch: CRLF
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# Binarios (no tocar)
+*.jar       binary
+*.pdf       binary
+*.docx      binary
+*.xlsx      binary
+*.png       binary
+*.jpg       binary
+*.zip       binary
