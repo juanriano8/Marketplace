@@ -40,9 +40,10 @@ JPA. Está preparado para Cloud SQL mediante un perfil `cloud` con SSL y pool aj
 entrega con Dockerfile multi-etapa (formato Cloud Run), `docker-compose` para desarrollo local,
 colección de Postman y guía de ejecución.
 
-**Estado de verificación:** ⚠️ el código **no se ha compilado ni ejecutado todavía en este
-entorno** porque la máquina sólo tiene JRE 1.8 y el proyecto exige Java 21, y el sandbox no tiene
-salida de red para descargarlo. La validación realizada ha sido estática (ver §13).
+**Estado de verificación:** ✅ **verificado en ejecución.** El proyecto compila, los **114 tests
+pasan** y los **30 endpoints se probaron contra la instancia real de Google Cloud SQL**
+(58 comprobaciones end-to-end, 0 fallos). Detalle en
+[§13.1](#131-verificación-en-ejecución-completada).
 
 ---
 
@@ -319,12 +320,27 @@ adaptadores ni repositorios ajenos:
 
 ### 6.1 Respuesta directa: ¿funciona la conexión a la base de datos de Google Cloud?
 
-**El código está preparado y es compatible, pero la conexión no está configurada ni
-verificada.** Es decir: **hoy, tal como está el repositorio, la aplicación NO se conecta a tu
-base de datos de Google Cloud.** No es un problema de código, son datos que faltan y decisiones
-de red que hay que tomar.
+## ✅ **SÍ — verificado en ejecución contra la instancia real.**
 
-Situación exacta de cada pieza:
+La aplicación arrancó conectada a Cloud SQL, Hibernate creó el esquema y se ejecutaron
+**58 comprobaciones end-to-end contra los 30 endpoints con 0 fallos**.
+
+Instancia verificada: `marketplace-509503:us-central1:marketplace` · IP pública
+`136.112.91.42:5432` · PostgreSQL 18.6 · base `marketplace_db` (creada durante la sesión, vacía
+y con las 10 tablas generadas por Hibernate).
+
+Evidencia del log de arranque:
+
+```
+MarketplaceCloudSqlPool - Added connection org.postgresql.jdbc.PgConnection@2a2815cc
+MarketplaceCloudSqlPool - Start completed.
+Initialized JPA EntityManagerFactory for persistence unit 'default'
+Tomcat started on port 8080 (http)
+Started MarketplaceApplication in 12.25 seconds
+Bootstrap administrator created for admin@marketplace.com
+```
+
+Situación de cada pieza:
 
 | Comprobación | Estado | Detalle |
 |---|---|---|
@@ -333,25 +349,43 @@ Situación exacta de cada pieza:
 | Credenciales por variables de entorno | ✅ Sí | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` |
 | Perfil `cloud` con SSL | ✅ Sí | `application-cloud.yml` con `sslmode=require` y pool ajustado |
 | Script de arranque que lee `.env` | ✅ Sí | `run.ps1` |
-| **Host/usuario/contraseña reales** | ❌ **No** | Sólo hay valores de ejemplo `34.xxx.xxx.xxx` |
-| **IP autorizada en Cloud SQL** | ❌ **No** | Depende de tu instancia y de tu IP actual |
-| **Base de datos `marketplace_db` creada** | ❓ Sin verificar | Hay que crearla en la instancia |
-| **Esquema (15 tablas)** | ✅ Automático | Hibernate lo crea con `ddl-auto: update` |
-| **Prueba de conexión real** | ❌ **No realizada** | No hay acceso a la instancia desde este entorno |
+| Host/usuario/contraseña reales | ✅ Sí | Configurados en `backend/.env` (ignorado por git) |
+| IP autorizada en Cloud SQL | ✅ Sí | Verificado: `TcpTestSucceeded = True` al puerto 5432 |
+| Base de datos `marketplace_db` | ✅ Creada | Creada vía JDBC; el usuario `postgres` tenía privilegio `CREATEDB` |
+| Esquema (10 tablas) | ✅ Generado | Hibernate lo creó con `ddl-auto: update` |
+| **Prueba de conexión real** | ✅ **Hecha** | Arranque + 58 comprobaciones end-to-end |
 
-### 6.2 Por qué no pude verificarlo
+### 6.1.1 Un obstáculo real que apareció: esquema previo incompatible
 
-Tres motivos concretos:
+La instancia ya contenía 23 tablas de un proyecto anterior en la base `postgres`
+(`brands`, `buyer_profiles`, `coupons`, `favorites`, `user_roles`, …) con un modelo **totalmente
+distinto**: todas las claves primarias eran `bigint` y las columnas tenían otros nombres
+(`users.password_hash`, `products.title`, `products.category_id`, `orders.order_status`).
 
-1. **No hay JDK 21 en la máquina** (sólo JRE 1.8) → no se puede compilar ni arrancar la
-   aplicación para probar la conexión.
-2. **El sandbox no tiene salida de red utilizable** → `curl https://api.adoptium.net` falla con
-   `schannel: SEC_E_NO_CREDENTIALS`, así que no se puede descargar el JDK ni las dependencias.
-3. **No tengo las credenciales ni el identificador de tu instancia Cloud SQL** (ni debería
-   tenerlas), por lo que no puedo hacer una prueba de conexión directa.
+Hibernate con `ddl-auto: update` **nunca modifica el tipo de una columna o PK existente**, así que
+arrancar contra esa base habría fallado. La solución aplicada fue crear una base **nueva y vacía**
+(`marketplace_db`), que es también la recomendación para cualquier despliegue limpio.
 
-Además, en este equipo **no hay `gcloud` ni `psql` instalados**, que son las dos herramientas
-habituales para validar una conexión a Cloud SQL antes de tocar el código.
+### 6.2 Cómo se resolvió (pasos reproducibles)
+
+1. **JDK 21**: se instaló con `winget install EclipseAdoptium.Temurin.21.JDK`. El proyecto no
+   arranca con Java 8.
+2. **Base de datos**: se creó `marketplace_db` vacía. El usuario `postgres` de esta instancia
+   tenía privilegio `CREATEDB`, por lo que no hizo falta crearla desde Cloud Shell.
+3. **Acceso de red**: la IP del equipo estaba autorizada en *Cloud SQL → Connections →
+   Authorized networks*, confirmado con una prueba TCP al puerto 5432.
+4. **Credenciales**: volcadas en `backend/.env` (fuera del control de versiones).
+5. **Arranque**: `.\run.ps1 -Profile cloud`.
+
+### 6.3 Detalle sobre el administrador inicial
+
+No existe endpoint público de registro de administradores, por lo que la aplicación crea uno en
+el primer arranque si se definen `BOOTSTRAP_ADMIN_EMAIL` y `BOOTSTRAP_ADMIN_PASSWORD`.
+
+⚠️ **El bootstrap solo actúa si el usuario no existe.** Si se cambia la contraseña en el `.env`
+después del primer arranque, la base conserva el hash anterior y el login falla con `401`. Para
+aplicar el cambio hay que sincronizar el hash con la utilidad incluida
+(`backend/tools/AdminPasswordSync.java`) o borrar la fila del administrador y reiniciar.
 
 ### 6.3 Las tres formas de conectar con Cloud SQL
 
@@ -668,7 +702,37 @@ principal como `UserPrincipal`.
 
 Informe HTML de resultados: `backend/build/reports/tests/test/index.html`
 
-### 12.3 Pruebas manuales con Postman
+### 12.3 Pruebas end-to-end contra Cloud SQL
+
+Además de los tests automatizados, se ejecutaron dos suites de comprobación contra la instancia
+real de Cloud SQL, incluidas en `backend/tools/`:
+
+| Script | Qué comprueba |
+|---|---|
+| `e2e-test.ps1` | **39 aserciones**: los 27 endpoints de la especificación en orden funcional, más 401/403/400 de seguridad y validación |
+| `stock-test.ps1` | Antisobreventa: un producto con 1 unidad comprado por dos compradores, y el ledger de movimientos |
+| `split-test.ps1` | División de una orden en sub-órdenes por vendedor y bloqueo BOLA entre vendedores |
+| `verify.ps1` | Comprobación rápida previa a la demo: JDK, tests, API viva, endpoints clave, conexión a BD y login |
+
+**Resultado de la ejecución:**
+
+```
+39 OK / 0 FALLOS   (e2e-test.ps1)
+
+ESCENARIO antisobreventa (producto con 1 unidad):
+  Comprador 1 compra la ultima unidad        -> 201, orden PAID
+  Comprador 2 intenta la unidad ya vendida   -> 400 "Insufficient stock available"
+  Stock final: disponible=0 reservado=0 vendible=0
+  Ledger: INITIAL(0->1) RESERVATION(1->1) SALE(1->0)
+
+ESCENARIO multi-vendedor:
+  Checkout -> 201 | Total 350.00 USD (2x100 + 3x50)
+  Sub-ordenes: 2 (Vendedor A 200.00 | Vendedor B 150.00)
+  Vendedor A intenta despachar la sub-orden de B -> 400 (BOLA)
+  Vendedor A despacha la suya                    -> 200 SHIPPED
+```
+
+### 12.4 Pruebas manuales con Postman
 
 La colección incluye una carpeta **`09 - Pruebas de seguridad (RBAC)`** con 5 peticiones que
 verifican 401, 403, 400 por cuenta no verificada, validación de payload y control de stock. La
@@ -678,28 +742,30 @@ secuencia completa (23 pasos) está en la [guía de ejecución](EJECUCION_Y_DEMO
 
 ## 13. Limitaciones conocidas y trabajo pendiente
 
-### 13.1 Bloqueante: no se ha compilado ni ejecutado
+### 13.1 Verificación en ejecución: completada
 
-El código **no se ha verificado en ejecución**. Motivos:
+| Comprobación | Resultado |
+|---|---|
+| Compilación (`compileJava`, `bootJar`) | ✅ `BUILD SUCCESSFUL` |
+| Suite de tests | ✅ **114 tests, 0 fallos, 0 errores** |
+| Arranque contra Cloud SQL | ✅ `HikariPool - Start completed` en 12,25 s |
+| Esquema generado | ✅ 10 tablas |
+| Endpoints end-to-end | ✅ **39 aserciones, 0 fallos** |
+| Antisobreventa con bloqueo pesimista | ✅ Verificado |
+| División de orden por vendedor | ✅ Verificado |
+| BOLA entre vendedores | ✅ Verificado (400) |
+| RBAC (401 anónimo / 403 rol incorrecto) | ✅ Verificado |
+| Validación y RFC 7807 | ✅ Verificado |
 
-1. La máquina tiene sólo **JRE 1.8**; el proyecto exige **Java 21**.
-2. El entorno no tiene **salida de red** (TLS bloqueado), así que no se pudo descargar un JDK 21
-   ni las dependencias de Maven.
-3. Los artefactos en `backend/build/` son de septiembre y proceden de otro entorno; **no
-   reflejan el código actual**.
+**Incidencias encontradas y corregidas durante la verificación:**
 
-**Validación estática realizada** (sustituye parcialmente a la compilación, no la reemplaza):
-
-- Resolución de **todos** los imports del proyecto contra los 131 tipos existentes → 0 errores
-- Contraste de cada método de los **17 puertos** con sus adaptadores → 0 discrepancias
-- Verificación de constructores usados desde otros paquetes (se encontraron y corrigieron **2**
-  con visibilidad de paquete que no habrían compilado)
-- Balance de bloques y paréntesis en los 130 archivos
-- Revisión de los flujos transaccionales y de carga diferida (colecciones `LAZY` +
-  `@BatchSize` para evitar *N+1* y *MultipleBagFetchException*)
-
-**Acción requerida:** instalar el JDK 21 y ejecutar `.\gradlew.bat clean build`. Es el único
-paso que falta para cerrar la verificación.
+1. **5 tests fallaban** tras el cambio en `SecurityConfig`: `AuthControllerTest` no importaba el
+   bean `JwtAccessDeniedHandler` y el contexto no arrancaba. Corregido.
+2. **Esquema previo incompatible** en la base `postgres` de la instancia (23 tablas con PK
+   `bigint`). Resuelto creando una base nueva vacía.
+3. **Contraseña del administrador no se aplicaba**: al cambiar `BOOTSTRAP_ADMIN_PASSWORD` después
+   del primer arranque, el bootstrap no actualiza usuarios existentes, así que el login devolvía
+   `401`. Documentado y resuelto con `AdminPasswordSync.java`.
 
 ### 13.2 Funcionalidad no implementada
 
@@ -752,7 +818,7 @@ gcloud run deploy marketplace-api `
 
 | Servicio GCP | Uso en este proyecto | Estado de preparación |
 |---|---|---|
-| **Cloud SQL (PostgreSQL)** | Base de datos transaccional | ✅ Compatible (perfil `cloud`) |
+| **Cloud SQL (PostgreSQL)** | Base de datos transaccional | ✅ **Conectado y verificado** (perfil `cloud`) |
 | **Cloud Run** | Ejecución del contenedor | ✅ `Dockerfile` listo; respeta `PORT` |
 | **Secret Manager** | Credenciales y secreto JWT | ✅ Todo se inyecta por variables de entorno |
 | **Cloud Logging** | Observabilidad | ✅ Logs estructurados con niveles |
@@ -770,8 +836,9 @@ gcloud run deploy marketplace-api `
   **30 endpoints** (23 de la spec + 7 de apoyo).
 - ✅ Reglas de negocio críticas cubiertas: antisobreventa con **bloqueo pesimista**, RBAC en dos
   capas, BOLA en todos los accesos por ID, snapshot de precios y máquina de estados de orden.
-- ⚠️ **Pendiente e imprescindible:** instalar JDK 21 y ejecutar `.\gradlew.bat clean build`.
-- ⚠️ **La conexión a Cloud SQL no está configurada ni verificada:** el código está listo, pero
-  faltan las credenciales, autorizar el acceso en la instancia y crear la base de datos.
-  El checklist de §6.6 permite activarla en unos minutos siguiendo
-  [EJECUCION_Y_DEMO.md §4](EJECUCION_Y_DEMO.md#4-camino-b--conectar-a-la-base-de-datos-de-google-cloud).
+- ✅ **Verificado en ejecución:** `BUILD SUCCESSFUL`, **114 tests sin fallos** y **39 aserciones
+  end-to-end contra Cloud SQL** con 0 errores.
+- ✅ **Conexión a Google Cloud SQL funcionando:** la aplicación arranca contra la instancia real,
+  Hibernate genera las 10 tablas y todos los endpoints responden.
+- ⚠️ **Pendiente para producción:** sustituir la pasarela de pago *stub*, integrar Redis y
+  Bucket4j/Resilience4j, y pasar `ddl-auto` a `validate` con migraciones versionadas.

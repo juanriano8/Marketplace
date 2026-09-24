@@ -1,5 +1,7 @@
 # Tareas de Implementación del Backend Marketplace
 
+Estado: **completado y verificado en ejecución contra Google Cloud SQL.**
+
 - [x] **Módulo Auth (Autenticación y Gestión de Usuarios)**
   - [x] Implementar configuración JWT, entidades de usuario y persistencia.
   - [x] `POST /api/v1/auth/register/buyer` (Público) - Registro de compradores.
@@ -36,9 +38,33 @@
 
 - [x] **Pruebas y Verificación**
   - [x] Configuración inicial de Tests de Seguridad RBAC.
-  - [ ] Compilación y validación continua (`./gradlew build`).
+  - [x] Compilación y validación continua (`./gradlew build`).
 
-## Endpoints adicionales implementados (soporte de los anteriores)
+---
+
+## Resultados de la verificación
+
+| Comprobación | Resultado |
+| --- | --- |
+| Compilación (`./gradlew clean build`) | ✅ BUILD SUCCESSFUL |
+| Suite de tests | ✅ **114 tests, 0 fallos, 0 errores** |
+| Arranque contra Google Cloud SQL | ✅ `HikariPool - Start completed` en 12,25 s |
+| Esquema generado por Hibernate | ✅ 10 tablas |
+| Endpoints end-to-end contra Cloud SQL | ✅ **39 aserciones, 0 fallos** |
+| Antisobreventa (bloqueo pesimista) | ✅ Verificado con 2 compradores y 1 unidad |
+| División de orden por vendedor | ✅ Verificado (1 orden → 2 sub-órdenes) |
+| BOLA entre vendedores | ✅ Verificado (400 al despachar sub-orden ajena) |
+| RBAC (401 anónimo / 403 rol incorrecto) | ✅ Verificado |
+| Validación de payloads y RFC 7807 | ✅ Verificado |
+
+### Entorno verificado
+
+- Instancia: `marketplace-509503:us-central1:marketplace` (PostgreSQL 18.6, IP pública `136.112.91.42`)
+- Base de datos: `marketplace_db` (creada vacía; la base `postgres` de la instancia contiene 23
+  tablas de un proyecto anterior con claves `bigint`, incompatible con este modelo)
+- JDK: Temurin 21.0.12.1 · Gradle 8.10.2
+
+### Endpoints adicionales implementados (soporte de los anteriores)
 
 | Endpoint | Rol | Motivo |
 | --- | --- | --- |
@@ -50,12 +76,29 @@
 | `GET /api/v1/admin/products?status=` | ADMINISTRADOR | Bandeja de moderación (`PENDING_APPROVAL` por defecto). |
 | `GET /api/v1/admin/reviews` | ADMINISTRADOR | Moderación incluyendo reseñas ocultas. |
 
-## Nota sobre la verificación
+### Herramientas de verificación incluidas
 
-`./gradlew build` **no pudo ejecutarse en este entorno**: la máquina sólo tiene
-`JRE 1.8` (`C:\Program Files\Java\jre1.8.0_461`) mientras el proyecto exige
-`Java 21` (`build.gradle` → `JavaLanguageVersion.of(21)`), y el sandbox no tiene
-salida de red (TLS bloqueado) para descargar un JDK 21 ni dependencias de Maven.
-El código se validó de forma estática (imports, firmas de puertos vs. adaptadores,
-balance de bloques) y con la suite de tests escrita, pero **queda pendiente
-ejecutar `./gradlew build` en una máquina con JDK 21**.
+| Archivo | Uso |
+| --- | --- |
+| `backend/tools/verify.ps1` | Comprobación rápida antes de la demo (JDK, tests, API, endpoints, BD, login). |
+| `backend/tools/e2e-test.ps1` | Recorrido completo de los 27 endpoints (39 aserciones). |
+| `backend/tools/stock-test.ps1` | Prueba de antisobreventa con dos compradores. |
+| `backend/tools/split-test.ps1` | Prueba de división de orden multi-vendedor y BOLA. |
+| `backend/tools/AdminPasswordSync.java` | Sincroniza el hash del admin si se cambia la contraseña en `.env`. |
+
+### Incidencias encontradas y corregidas durante la verificación
+
+1. `AuthControllerTest` fallaba (5 tests) porque `SecurityConfig` ahora requiere el bean
+   `JwtAccessDeniedHandler` y el test no lo importaba. Corregido.
+2. La base `postgres` de la instancia tenía un esquema incompatible (PK `bigint`). Se creó la base
+   nueva `marketplace_db`.
+3. Cambiar `BOOTSTRAP_ADMIN_PASSWORD` tras el primer arranque no actualiza el usuario existente,
+   por lo que el login devolvía `401`. Documentado y resuelto con `AdminPasswordSync.java`.
+
+### Pendiente para producción (no bloquea la demo)
+
+- Sustituir la pasarela de pago *stub* por el proveedor real.
+- Integrar Bucket4j (rate limiting) y Resilience4j (dependencias ya declaradas).
+- Memorystore Redis para caché y blacklist de JWT.
+- Pasar `ddl-auto` a `validate` con migraciones versionadas (Flyway/Liquibase).
+- Mover `JWT_SECRET` y las credenciales a GCP Secret Manager.

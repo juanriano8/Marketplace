@@ -61,14 +61,21 @@ Ver el catálogo completo en [ESPECIFICACION_TECNICA.md §5](ESPECIFICACION_TECN
 
 ## Estado de verificación
 
-⚠️ El código **todavía no se ha compilado ni ejecutado**: este equipo sólo tiene JRE 1.8 y el
-proyecto exige Java 21, sin salida de red para descargarlo. La validación realizada ha sido
-estática. Ejecuta lo siguiente antes de dar el proyecto por cerrado:
+✅ **Verificado en ejecución contra Google Cloud SQL:**
+
+| Comprobación | Resultado |
+|---|---|
+| Compilación (`./gradlew clean build`) | `BUILD SUCCESSFUL` |
+| Suite de tests | **114 tests, 0 fallos** |
+| Arranque contra Cloud SQL | `HikariPool - Start completed` |
+| Endpoints end-to-end | **39 aserciones, 0 fallos** |
+| Antisobreventa, split multi-vendedor, BOLA, RBAC | Verificados |
+
+Comprobación rápida antes de presentar:
 
 ```powershell
 cd backend
-.\run.ps1 -Test        # o: .\gradlew.bat clean build
+powershell -ExecutionPolicy Bypass -File .\tools\verify.ps1
 ```
 
-Detalle de qué se validó y qué queda pendiente en
-[ESPECIFICACION_TECNICA.md §13](ESPECIFICACION_TECNICA.md#13-limitaciones-conocidas-y-trabajo-pendiente).
+Detalle completo en [ESPECIFICACION_TECNICA.md §13](ESPECIFICACION_TECNICA.md#13-limitaciones-conocidas-y-trabajo-pendiente).

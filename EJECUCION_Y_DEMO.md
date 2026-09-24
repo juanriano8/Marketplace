@@ -1,7 +1,18 @@
 # Guía de Ejecución y Demostración
 
-**Marketplace API — Spring Boot 3.3.4 + Java 21 + PostgreSQL**
+**Marketplace API — Spring Boot 3.3.4 + Java 21 + PostgreSQL (Google Cloud SQL)**
 Proyecto: `backend/` · Documento técnico: [ESPECIFICACION_TECNICA.md](ESPECIFICACION_TECNICA.md)
+
+> **✅ ESTADO ACTUAL: el proyecto está funcionando contra Cloud SQL.**
+> Compila, los **114 tests pasan** y los **30 endpoints fueron probados end-to-end** contra la
+> instancia real (`39 aserciones, 0 fallos`). Para volver a comprobarlo en cualquier momento:
+>
+> ```powershell
+> cd backend
+> powershell -ExecutionPolicy Bypass -File .\tools\verify.ps1
+> ```
+>
+> Si ya está arrancado, salta directo a [Probar los endpoints en Postman](#7-probar-los-endpoints-en-postman).
 
 ---
 
@@ -9,7 +20,7 @@ Proyecto: `backend/` · Documento técnico: [ESPECIFICACION_TECNICA.md](ESPECIFI
 
 1. [Antes de empezar: el JDK](#1-antes-de-empezar-el-jdk)
 2. [Elección de base de datos](#2-elección-de-base-de-datos)
-3. [Camino A — PostgreSQL local con Docker (recomendado para la demo)](#3-camino-a--postgresql-local-con-docker-recomendado-para-la-demo)
+3. [Camino A — PostgreSQL local con Docker](#3-camino-a--postgresql-local-con-docker)
 4. [Camino B — Conectar a la base de datos de Google Cloud](#4-camino-b--conectar-a-la-base-de-datos-de-google-cloud)
 5. [Arrancar la aplicación](#5-arrancar-la-aplicación)
 6. [Comprobar que funciona](#6-comprobar-que-funciona)
@@ -116,19 +127,50 @@ contraseña `postgres`, que es exactamente lo que levanta `docker-compose.yml`.
 
 ## 4. Camino B — Conectar a la base de datos de Google Cloud
 
-### 4.1 Situación actual: **no está conectada, falta configuración**
+### 4.1 Estado actual: ✅ **CONECTADA Y VERIFICADA**
 
-La aplicación **está preparada** para Cloud SQL (driver de PostgreSQL incluido, perfil `cloud`
-con SSL y pool ajustado), pero **la conexión no está configurada ni verificada**: en el
-repositorio sólo hay valores de ejemplo. Para conectarla hay que hacer **3 cosas obligatorias**
-en Google Cloud y 1 en local.
+La conexión está funcionando. Esta es la configuración real que quedó en `backend/.env`:
+
+```ini
+DB_HOST=136.112.91.42          # IP pública de la instancia marketplace
+DB_PORT=5432
+DB_NAME=marketplace_db         # base creada y vacía, con las 10 tablas de la app
+DB_USER=postgres
+DB_PASSWORD=<tu contraseña>
+DB_SSLMODE=require
+SPRING_PROFILES_ACTIVE=cloud
+```
+
+Instancia: `marketplace-509503:us-central1:marketplace` · PostgreSQL 18.6
+
+**Evidencia de que funciona** (log de arranque):
+
+```
+MarketplaceCloudSqlPool - Added connection org.postgresql.jdbc.PgConnection@2a2815cc
+MarketplaceCloudSqlPool - Start completed.
+Initialized JPA EntityManagerFactory for persistence unit 'default'
+Tomcat started on port 8080 (http)
+Started MarketplaceApplication in 12.25 seconds
+Bootstrap administrator created for admin@marketplace.com
+```
+
+> ⚠️ **Importante — la instancia ya tenía datos de otro proyecto.** La base `postgres` de esta
+> instancia contiene 23 tablas de una aplicación anterior (`brands`, `buyer_profiles`, `coupons`,
+> `user_roles`, …) con un esquema **incompatible**: todas sus claves primarias son `bigint` y las
+> columnas tienen otros nombres (`users.password_hash`, `products.title`, `products.category_id`).
+>
+> Hibernate con `ddl-auto: update` **nunca cambia el tipo de una PK existente**, así que se creó
+> una base **nueva y vacía** (`marketplace_db`) para este proyecto. **No apuntes la aplicación a
+> la base `postgres`** o fallará al arrancar.
+
+Si alguna vez necesitas rehacer la conexión desde cero, los pasos son los de §4.2 a §4.6.
 
 ### 4.2 Paso 1 — Averiguar los datos de la instancia
 
 En **Google Cloud Console → SQL → tu instancia**:
 
 - **Nombre de conexión**: `proyecto:region:instancia` (lo usarás sólo con el proxy)
-- **IP pública** (ej. `34.xxx.xxx.xxx`) **o** **IP privada** (ej. `10.xxx.xxx.xxx`)
+- **IP pública** (ej. `136.112.91.42`) **o** **IP privada** (ej. `10.xxx.xxx.xxx`)
 - **Usuario y contraseña** de la base
 
 ### 4.3 Paso 2 — Autorizar el acceso
@@ -489,6 +531,50 @@ Test-NetConnection -ComputerName 34.xxx.xxx.xxx -Port 5432 -InformationLevel Det
 - En Postman, comprueba que la petición tiene la pestaña **Authorization → Bearer Token** con la
   variable correcta (`{{buyerToken}}`, `{{sellerToken}}` o `{{adminToken}}`).
 - Asegúrate de que el header empieza por `Bearer ` (con espacio).
+- **Si el login del admin falla con `Invalid email or password`**, mira el punto 10.3.1.
+
+### 10.3.1 El login del admin falla aunque la contraseña del `.env` sea correcta
+
+**Es el error más fácil de cometer en este proyecto.** `BootstrapAdminRunner` solo crea el
+administrador **si no existe**: si cambias `BOOTSTRAP_ADMIN_PASSWORD` en el `.env` después del
+primer arranque, la base conserva el hash antiguo y el login devuelve `401`.
+
+Dos soluciones:
+
+**a) Sincronizar el hash con la contraseña del `.env`** (sin borrar datos):
+
+```powershell
+cd backend
+$base = "$env:USERPROFILE\.gradle\caches\modules-2\files-2.1"
+$jars = @()
+$jars += (Get-ChildItem "$base\org.postgresql\postgresql" -Recurse -Filter 'postgresql-4*.jar' | Where-Object { $_.Name -notmatch 'sources|javadoc' } | Select-Object -First 1).FullName
+$jars += (Get-ChildItem "$base\org.springframework.security\spring-security-crypto" -Recurse -Filter '*.jar' | Where-Object { $_.Name -notmatch 'sources|javadoc' } | Select-Object -First 1).FullName
+$jars += (Get-ChildItem "$base\org.springframework\spring-jcl" -Recurse -Filter '*.jar' | Where-Object { $_.Name -notmatch 'sources|javadoc' } | Select-Object -First 1).FullName
+$cp = ($jars | Where-Object { $_ }) -join ';'
+
+$v = @{}
+Get-Content .env | ForEach-Object { $l=$_.Trim(); if ($l -and -not $l.StartsWith('#') -and $l.Contains('=')) { $i=$l.IndexOf('='); $v[$l.Substring(0,$i).Trim()]=$l.Substring($i+1).Trim() } }
+
+& "$env:JAVA_HOME\bin\java.exe" -cp $cp tools\AdminPasswordSync.java `
+    $v['DB_HOST'] $v['DB_PORT'] $v['DB_USER'] $v['DB_PASSWORD'] marketplace_db `
+    $v['BOOTSTRAP_ADMIN_EMAIL'] $v['BOOTSTRAP_ADMIN_PASSWORD']
+```
+
+Debe responder `VERIFICACION ... matches : true`. Después reinicia la app.
+
+**b) Borrar el administrador y dejar que se recree.** En Cloud Shell:
+
+```bash
+gcloud sql connect marketplace --user=postgres --database=marketplace_db
+# dentro de psql:
+DELETE FROM users WHERE email = 'admin@marketplace.com';
+\q
+```
+
+Al reiniciar, el bootstrap lo vuelve a crear con la contraseña actual del `.env`.
+
+> **Evitar el problema de raíz:** define `BOOTSTRAP_ADMIN_EMAIL` y `BOOTSTRAP_ADMIN_PASSWORD`
+> **con el valor definitivo antes del primer arranque**, y no los cambies después.
 
 ### 10.4 `403 Forbidden`
 
