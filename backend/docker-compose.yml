@@ -1,0 +1,26 @@
+# ============================================================================
+# Entorno PostgreSQL local para probar los endpoints SIN depender de Cloud SQL.
+# ----------------------------------------------------------------------------
+#   docker compose up -d
+#   SPRING_PROFILES_ACTIVE=local  (usa los valores por defecto de application.yml)
+# ============================================================================
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: marketplace-postgres
+    environment:
+      POSTGRES_DB: marketplace_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - marketplace_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d marketplace_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  marketplace_pgdata:

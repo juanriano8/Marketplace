@@ -119,7 +119,12 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
     @Override
     @Transactional
     public void reserveStock(UUID productId, UUID sellerId, int quantity, String reference) {
-        StockItem stockItem = requireStock(productId);
+        // Pessimistic write lock: concurrent checkouts of the same product queue here instead of
+        // racing for the last unit (spec: "Control de bloqueos JPA al reservar productos en Cloud SQL").
+        StockItem stockItem = stockRepositoryPort.findByProductIdForUpdate(productId)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "No stock record found for product id: " + productId
+            ));
 
         if (!stockItem.isOwnedBy(sellerId)) {
             throw new DomainException(
@@ -138,7 +143,7 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
     @Override
     @Transactional
     public void releaseReservation(StockReservation reservation, String reference) {
-        StockItem stockItem = requireStock(reservation.productId());
+        StockItem stockItem = requireStockForUpdate(reservation.productId());
 
         int before = stockItem.getAvailableQuantity();
         stockItem.releaseReserved(reservation.quantity());
@@ -151,7 +156,7 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
     @Override
     @Transactional
     public void commitReservation(StockReservation reservation, String reference) {
-        StockItem stockItem = requireStock(reservation.productId());
+        StockItem stockItem = requireStockForUpdate(reservation.productId());
 
         int before = stockItem.getAvailableQuantity();
         stockItem.commitReserved(reservation.quantity());
@@ -177,6 +182,14 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
 
     private StockItem requireStock(UUID productId) {
         return stockRepositoryPort.findByProductId(productId)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "No stock record found for product id: " + productId
+            ));
+    }
+
+    /** Same as {@link #requireStock(UUID)} but taking the row lock, for read-modify-write paths. */
+    private StockItem requireStockForUpdate(UUID productId) {
+        return stockRepositoryPort.findByProductIdForUpdate(productId)
             .orElseThrow(() -> new ResourceNotFoundException(
                 "No stock record found for product id: " + productId
             ));

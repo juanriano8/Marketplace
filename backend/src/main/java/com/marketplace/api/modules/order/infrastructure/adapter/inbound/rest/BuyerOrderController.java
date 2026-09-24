@@ -16,6 +16,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,9 +45,10 @@ public class BuyerOrderController {
         description = "Creates the order (split per seller), reserves stock, charges through the payment gateway and returns the resulting order."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Order created; check paymentCaptured for the outcome"),
+        @ApiResponse(responseCode = "201", description = "Order created; check paymentCaptured for the outcome"),
         @ApiResponse(responseCode = "400", description = "Empty cart, unavailable product, mixed currencies or insufficient stock"),
-        @ApiResponse(responseCode = "404", description = "Cart or buyer not found")
+        @ApiResponse(responseCode = "404", description = "Cart or buyer not found"),
+        @ApiResponse(responseCode = "409", description = "Concurrent modification while reserving stock")
     })
     @PostMapping("/orders/checkout")
     public ResponseEntity<CheckoutResponse> checkout(
@@ -54,7 +56,11 @@ public class BuyerOrderController {
         @RequestBody(required = false) CheckoutRequest request
     ) {
         String notes = request != null ? request.notes() : null;
-        return ResponseEntity.ok(checkoutUseCase.checkout(principal.id(), notes));
+        CheckoutResponse response = checkoutUseCase.checkout(principal.id(), notes);
+
+        // 201 Created: the request creates the order resource. The status code is
+        // "201" per the API contract.
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "List own orders", description = "Paginated purchase history of the authenticated buyer.")

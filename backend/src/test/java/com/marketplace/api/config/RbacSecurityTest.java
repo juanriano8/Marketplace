@@ -412,6 +412,16 @@ class RbacSecurityTest {
         }
 
         @Test
+        @DisplayName("BUYER can checkout")
+        @WithMockUserPrincipal(role = UserRole.ROLE_BUYER)
+        void buyerCanCheckout() throws Exception {
+            mockMvc.perform(post("/api/v1/orders/checkout")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{}"))
+                .andExpect(status().isCreated());
+        }
+
+        @Test
         @DisplayName("BUYER can create a review")
         @WithMockUserPrincipal(role = UserRole.ROLE_BUYER)
         void buyerCanCreateReview() throws Exception {

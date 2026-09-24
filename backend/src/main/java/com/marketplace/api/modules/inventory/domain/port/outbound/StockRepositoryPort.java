@@ -13,6 +13,14 @@ public interface StockRepositoryPort {
 
     Optional<StockItem> findByProductId(UUID productId);
 
+    /**
+     * Same lookup, but taking a pessimistic write lock on the row.
+     *
+     * <p>Used by the checkout reservation path so that concurrent checkouts of the same product are
+     * serialized by the database (Cloud SQL) instead of racing.</p>
+     */
+    Optional<StockItem> findByProductIdForUpdate(UUID productId);
+
     /** Seller-scoped stock listing. */
     Page<StockItem> findBySellerId(UUID sellerId, Pageable pageable);
 

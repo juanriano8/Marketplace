@@ -49,6 +49,12 @@ app:
       # When false the stub gateway leaves payments PENDING so the failure/retry branch of
       # checkout can be exercised locally.
       always-capture: ${PAYMENT_STUB_CAPTURE:true}
+  bootstrap:
+    admin:
+      # Set both values once to have the first administrator created on startup, otherwise the
+      # /api/v1/admin/** endpoints cannot be called (there is no public admin registration).
+      email: ${BOOTSTRAP_ADMIN_EMAIL:}
+      password: ${BOOTSTRAP_ADMIN_PASSWORD:}
 
 logging:
   level:

@@ -27,6 +27,11 @@ public class StockPersistenceAdapter implements StockRepositoryPort {
     }
 
     @Override
+    public Optional<StockItem> findByProductIdForUpdate(UUID productId) {
+        return springDataStockRepository.findByProductIdForUpdate(productId);
+    }
+
+    @Override
     public Page<StockItem> findBySellerId(UUID sellerId, Pageable pageable) {
         return springDataStockRepository.findBySellerId(sellerId, pageable);
     }
