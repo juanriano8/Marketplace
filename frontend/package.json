@@ -5,9 +5,9 @@
   "description": "Panel web del Marketplace multi-rol (comprador, vendedor, administrador)",
   "scripts": {
     "dev": "next dev -p 3000",
+    "dev:nofork": "node scripts/dev-server.mjs 3000",
     "build": "next build",
     "start": "next start -p 3000",
-    "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

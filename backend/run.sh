@@ -67,6 +67,16 @@ fi
 
 if [ "$MODE" = "local" ]; then
     export SPRING_PROFILES_ACTIVE=local
+    # El .env apunta a Cloud SQL y las variables de entorno TIENEN PRIORIDAD sobre los valores por
+    # defecto de application.yml, así que hay que sobrescribirlas para el PostgreSQL de docker-compose.
+    echo "Perfil local: usando PostgreSQL en localhost (se ignoran los datos de Cloud SQL)"
+    export DB_HOST=localhost
+    export DB_PORT=5432
+    export DB_NAME=marketplace_db
+    export DB_USER=postgres
+    export DB_PASSWORD=postgres
+    export DB_SSLMODE=disable
+    export JPA_DDL_AUTO=update
 fi
 
 PORT="${PORT:-8080}"

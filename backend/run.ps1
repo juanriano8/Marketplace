@@ -37,6 +37,21 @@ else {
     Write-Host "No se encontró .env (copia .env.example como .env si vas a usar Cloud SQL)" -ForegroundColor Yellow
 }
 
+# ---- 1b. Perfil local: forzar la base de datos local ---------------------
+# El .env apunta a Cloud SQL y las variables de entorno TIENEN PRIORIDAD sobre los valores por
+# defecto de application.yml. Sin este bloque, "-Profile local" seguiría intentando conectar a
+# Cloud SQL. Aquí se sobrescriben para apuntar al PostgreSQL de docker-compose.
+if ($Profile -eq 'local') {
+    Write-Host "Perfil local: usando PostgreSQL en localhost (se ignoran los datos de Cloud SQL)" -ForegroundColor Yellow
+    $env:DB_HOST     = 'localhost'
+    $env:DB_PORT     = '5432'
+    $env:DB_NAME     = 'marketplace_db'
+    $env:DB_USER     = 'postgres'
+    $env:DB_PASSWORD = 'postgres'
+    $env:DB_SSLMODE  = 'disable'
+    $env:JPA_DDL_AUTO = 'update'
+}
+
 # ---- 2. Comprobar JDK 21 --------------------------------------------------
 # Si JAVA_HOME no está definido o no contiene un java.exe válido, se busca el JDK 21 instalado.
 $javaHome = $env:JAVA_HOME

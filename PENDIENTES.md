@@ -1,6 +1,10 @@
 # Pendientes y cómo retomar el proyecto
 
-Última actualización: sesión de verificación contra Google Cloud SQL.
+Última actualización: sesión de documentación de entrega.
+
+> **Para levantar el proyecto usa [GUIA_ENTREGA.md](GUIA_ENTREGA.md)** y para la demo de los
+> endpoints [POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md). Este documento es el
+> estado y la lista de tareas.
 
 ---
 
@@ -8,8 +12,9 @@
 
 | | |
 |---|---|
-| **Backend** | ✅ Arrancado y respondiendo en <http://localhost:8080> |
-| **Frontend** | ✅ Implementado en `frontend/` (Next.js 16) — falta abrirlo en el navegador |
+| **Backend** | ⚠️ **No arranca ahora mismo**: la IP pública cambió y Cloud SQL la bloquea |
+| **Solución** | Autorizar la IP actual en Cloud SQL, ver [GUIA_ENTREGA.md, sección 1](GUIA_ENTREGA.md#1-antes-que-nada-autoriza-tu-ip) |
+| **Frontend** | ✅ Implementado en `frontend/` (Next.js 16), 15 páginas; sirve `200` en todas |
 | **Base de datos** | ✅ Google Cloud SQL (`marketplace_db`), 10 tablas |
 | **Compilación backend** | ✅ `BUILD SUCCESSFUL` |
 | **Tests backend** | ✅ 114 tests, 0 fallos |
@@ -18,9 +23,29 @@
 | **Admin** | `admin@marketplace.com` (contraseña en `backend/.env`) |
 | **Datos en la base** | 6 productos, 6 vendedores verificados, órdenes y reseñas de las pruebas |
 
+### Por qué el backend no arranca ahora
+
+La conexión a Cloud SQL es directa por IP pública, así que Cloud SQL sólo acepta peticiones de IPs
+autorizadas. La IP de este equipo cambió:
+
+| Fecha | IP pública | Estado |
+|---|---|---|
+| 23-sep | `186.28.26.68` | Funcionaba |
+| 24-sep | `186.31.165.104` | **Bloqueada** |
+
+El error en el log es `java.net.SocketTimeoutException: Connect timed out`. **No es un fallo del
+código**: basta autorizar la IP nueva en Cloud SQL.
+
 ---
 
 ## 2. Verlo ahora mismo
+
+### Guías principales
+
+| Documento | Para qué |
+|---|---|
+| [GUIA_ENTREGA.md](GUIA_ENTREGA.md) | Levantar backend y frontend, con checklist antes de presentar |
+| [POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md) | Los 40 pasos de la demo, con el código a pegar |
 
 ### Panel web (frontend)
 
