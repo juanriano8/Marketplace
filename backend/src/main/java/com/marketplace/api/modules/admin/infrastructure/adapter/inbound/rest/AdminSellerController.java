@@ -10,12 +10,18 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -29,6 +35,22 @@ import java.util.UUID;
 public class AdminSellerController {
 
     private final AdminService adminService;
+
+    @Operation(
+        summary = "List seller accounts",
+        description = "Moderation queue of seller accounts. Pass approved=false for the ones still pending verification, approved=true for the verified ones, or omit it to list every seller."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Seller page returned"),
+        @ApiResponse(responseCode = "403", description = "Requester is not an administrator")
+    })
+    @GetMapping
+    public ResponseEntity<Page<UserResponse>> listSellers(
+        @RequestParam(required = false) Boolean approved,
+        @ParameterObject @PageableDefault(size = 20, sort = "createdAt") Pageable pageable
+    ) {
+        return ResponseEntity.ok(adminService.listSellers(approved, pageable));
+    }
 
     @Operation(
         summary = "Verify a seller account",

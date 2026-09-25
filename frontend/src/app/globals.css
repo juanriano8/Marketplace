@@ -1,0 +1,206 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Paleta y utilidades del Marketplace
+   Tailwind 4 se configura con @theme en lugar de tailwind.config.js
+   ========================================================================== */
+@theme {
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #dbe7fe;
+  --color-brand-200: #bfd4fe;
+  --color-brand-300: #93b6fd;
+  --color-brand-400: #6090fa;
+  --color-brand-500: #3b6df6;
+  --color-brand-600: #2551eb;
+  --color-brand-700: #1c3fd8;
+  --color-brand-800: #1e36af;
+  --color-brand-900: #1e338a;
+
+  --color-ink-50: #f6f7f9;
+  --color-ink-100: #eceef2;
+  --color-ink-200: #d5d9e2;
+  --color-ink-300: #b0b8c8;
+  --color-ink-400: #8591a8;
+  --color-ink-500: #66738d;
+  --color-ink-600: #515c74;
+  --color-ink-700: #424b5e;
+  --color-ink-800: #394050;
+  --color-ink-900: #1f2430;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-ink-50);
+  color: var(--color-ink-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Componentes reutilizables */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--color-brand-600);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-brand-700);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--color-ink-800);
+  border-color: var(--color-ink-200);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-ink-100);
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.btn-success {
+  background-color: #16a34a;
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: #15803d;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+}
+
+.card {
+  background-color: white;
+  border: 1px solid var(--color-ink-200);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid var(--color-ink-200);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background-color: white;
+  color: var(--color-ink-900);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: -1px;
+  border-color: var(--color-brand-500);
+}
+
+.label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink-700);
+  margin-bottom: 0.25rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.badge-green {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.badge-yellow {
+  background-color: #fef9c3;
+  color: #a16207;
+  border-color: #fde68a;
+}
+
+.badge-red {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.badge-gray {
+  background-color: var(--color-ink-100);
+  color: var(--color-ink-700);
+  border-color: var(--color-ink-200);
+}
+
+.badge-blue {
+  background-color: var(--color-brand-100);
+  color: var(--color-brand-800);
+  border-color: var(--color-brand-200);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-ink-500);
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--color-ink-200);
+  background-color: var(--color-ink-50);
+}
+
+.table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-ink-100);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: var(--color-ink-50);
+}

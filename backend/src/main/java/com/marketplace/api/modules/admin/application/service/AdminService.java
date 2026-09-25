@@ -10,6 +10,8 @@ import com.marketplace.api.shared.exception.ResourceNotFoundException;
 import com.marketplace.api.shared.security.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,18 @@ public class AdminService {
 
     private final UserRepositoryPort userRepositoryPort;
     private final UserMapper userMapper;
+
+    /**
+     * Lists seller accounts for the moderation queue.
+     *
+     * @param approved {@code true} for verified sellers, {@code false} for those still pending,
+     *                 {@code null} for every seller
+     */
+    @Transactional(readOnly = true)
+    public Page<UserResponse> listSellers(Boolean approved, Pageable pageable) {
+        return userRepositoryPort.findSellers(approved, pageable)
+            .map(userMapper::toResponse);
+    }
 
     @Transactional
     public UserResponse verifySeller(UUID sellerId, SellerVerificationRequest request) {

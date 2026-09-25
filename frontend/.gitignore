@@ -1,0 +1,25 @@
+# Dependencias y build de Next.js
+node_modules/
+.next/
+out/
+build/
+
+# Caché de npm dentro del proyecto (ver .npmrc)
+.npm-cache/
+
+# Entorno
+.env
+.env.local
+.env*.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
