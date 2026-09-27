@@ -1,17 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CreateProductBody, Product } from '@/lib/types';
+import { agruparCategorias } from '@/lib/categorias';
+import { errorMessage } from '@/lib/api';
 
 type Props = {
   initial?: Product;
+  /** Categorías ya usadas por otros productos, para no perder ninguna al editar. */
+  categoriasEnUso?: string[];
+  /** Token del vendedor, necesario para subir la imagen. */
+  token?: string | null;
   submitting: boolean;
   error: string | null;
   onSubmit: (body: CreateProductBody) => void;
   onCancel: () => void;
 };
 
-export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: Props) {
+const TAMANO_MAXIMO = 3 * 1024 * 1024;
+
+export function ProductForm({
+  initial,
+  categoriasEnUso = [],
+  token,
+  submitting,
+  error,
+  onSubmit,
+  onCancel,
+}: Props) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -19,6 +35,13 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
   const [category, setCategory] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [currency, setCurrency] = useState('USD');
+
+  const [subiendo, setSubiendo] = useState(false);
+  const [errorImagen, setErrorImagen] = useState<string | null>(null);
+  const inputArchivo = useRef<HTMLInputElement>(null);
+
+  const grupos = useMemo(() => agruparCategorias(categoriasEnUso), [categoriasEnUso]);
+  const totalCategorias = grupos.reduce((total, grupo) => total + grupo.opciones.length, 0);
 
   useEffect(() => {
     setName(initial?.name ?? '');
@@ -28,7 +51,46 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
     setCategory(initial?.category ?? '');
     setImageUrl(initial?.imageUrl ?? '');
     setCurrency(initial?.currencyCode ?? 'USD');
+    setErrorImagen(null);
   }, [initial]);
+
+  async function subirImagen(archivo: File) {
+    setErrorImagen(null);
+
+    if (archivo.size > TAMANO_MAXIMO) {
+      setErrorImagen(
+        `La imagen pesa ${(archivo.size / 1024 / 1024).toFixed(1)} MB y el máximo es 3 MB.`,
+      );
+      return;
+    }
+
+    setSubiendo(true);
+    try {
+      const datos = new FormData();
+      datos.append('file', archivo);
+
+      const respuesta = await fetch('/api/upload', {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: datos,
+      });
+
+      const cuerpo = await respuesta.json().catch(() => null);
+
+      if (!respuesta.ok) {
+        throw new Error(cuerpo?.detail ?? `No se pudo subir la imagen (HTTP ${respuesta.status})`);
+      }
+
+      setImageUrl(cuerpo.url as string);
+    } catch (err) {
+      setErrorImagen(errorMessage(err));
+    } finally {
+      setSubiendo(false);
+      if (inputArchivo.current) {
+        inputArchivo.current.value = '';
+      }
+    }
+  }
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -66,7 +128,7 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
             value={name}
             onChange={(event) => setName(event.target.value)}
             required
-            placeholder="Audífonos inalámbricos Pro"
+            placeholder="Audifonos inalambricos Pro"
           />
         </div>
 
@@ -81,7 +143,7 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
             maxLength={5000}
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            placeholder="Características del producto…"
+            placeholder="Caracteristicas del producto…"
           />
         </div>
 
@@ -113,8 +175,8 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
             onChange={(event) => setCurrency(event.target.value)}
           >
             <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
             <option value="COP">COP</option>
+            <option value="EUR">EUR</option>
             <option value="MXN">MXN</option>
           </select>
         </div>
@@ -123,14 +185,27 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
           <label className="label" htmlFor="category">
             Categoría *
           </label>
-          <input
+          <select
             id="category"
-            className="input"
+            className="select"
             value={category}
             onChange={(event) => setCategory(event.target.value)}
             required
-            placeholder="Electrónica"
-          />
+          >
+            <option value="" disabled>
+              Selecciona una categoría…
+            </option>
+            {grupos.map((grupo) => (
+              <optgroup key={grupo.grupo} label={grupo.grupo}>
+                {grupo.opciones.map((opcion) => (
+                  <option key={opcion} value={opcion}>
+                    {opcion === grupo.grupo ? `${opcion} (general)` : opcion}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <p className="mt-1 text-[11px] text-ink-400">{totalCategorias} categorías disponibles</p>
         </div>
 
         <div>
@@ -147,24 +222,73 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
             required
             disabled={Boolean(initial)}
           />
-          {initial && (
-            <p className="mt-1 text-[11px] text-ink-400">
-              Se gestiona desde Inventario
-            </p>
-          )}
+          {initial && <p className="mt-1 text-[11px] text-ink-400">Se gestiona desde Inventario</p>}
         </div>
 
+        {/* ---------------- Imagen del producto ---------------- */}
         <div className="sm:col-span-2">
-          <label className="label" htmlFor="imageUrl">
-            URL de la imagen
-          </label>
-          <input
-            id="imageUrl"
-            className="input"
-            value={imageUrl}
-            onChange={(event) => setImageUrl(event.target.value)}
-            placeholder="https://…"
-          />
+          <span className="label">Imagen del producto</span>
+
+          <div className="flex flex-wrap items-start gap-4">
+            <div className="grid h-28 w-28 shrink-0 place-items-center overflow-hidden rounded-lg border border-ink-200 bg-ink-50 text-3xl text-ink-300">
+              {imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={imageUrl} alt="Vista previa" className="h-full w-full object-cover" />
+              ) : (
+                <span>📦</span>
+              )}
+            </div>
+
+            <div className="min-w-[220px] flex-1">
+              <input
+                ref={inputArchivo}
+                id="imageFile"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="input"
+                disabled={subiendo}
+                onChange={(event) => {
+                  const archivo = event.target.files?.[0];
+                  if (archivo) void subirImagen(archivo);
+                }}
+              />
+              <p className="mt-1 text-[11px] text-ink-400">
+                JPG, PNG, WebP o GIF · máximo 3 MB. La imagen se sube al seleccionarla.
+              </p>
+
+              {subiendo && <p className="mt-1 text-xs text-brand-700">Subiendo imagen…</p>}
+
+              {imageUrl && !subiendo && (
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="truncate font-mono text-[11px] text-ink-500">{imageUrl}</span>
+                  <button
+                    type="button"
+                    className="text-xs text-red-600 hover:underline"
+                    onClick={() => {
+                      setImageUrl('');
+                      setErrorImagen(null);
+                    }}
+                  >
+                    Quitar
+                  </button>
+                </div>
+              )}
+
+              {errorImagen && <p className="mt-2 text-xs text-red-600">{errorImagen}</p>}
+
+              <details className="mt-2">
+                <summary className="cursor-pointer text-[11px] text-ink-500">
+                  O pega una URL externa
+                </summary>
+                <input
+                  className="input mt-2"
+                  value={imageUrl}
+                  onChange={(event) => setImageUrl(event.target.value)}
+                  placeholder="https://…"
+                />
+              </details>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -175,7 +299,7 @@ export function ProductForm({ initial, submitting, error, onSubmit, onCancel }: 
       )}
 
       <div className="mt-4 flex gap-2">
-        <button type="submit" className="btn btn-primary" disabled={submitting}>
+        <button type="submit" className="btn btn-primary" disabled={submitting || subiendo}>
           {submitting ? 'Guardando…' : initial ? 'Guardar cambios' : 'Publicar producto'}
         </button>
         <button type="button" className="btn btn-secondary" onClick={onCancel}>

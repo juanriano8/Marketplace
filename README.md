@@ -13,6 +13,8 @@ Empieza por la guía de entrega.
 | [**GUIA_ENTREGA.md**](GUIA_ENTREGA.md) | **Cómo levantar el backend y el frontend**, requisitos, checklist antes de presentar y solución de problemas |
 | [**POSTMAN_DEMO_PASO_A_PASO.md**](POSTMAN_DEMO_PASO_A_PASO.md) | **Demostración de los 27 endpoints en Postman**, paso a paso con el código a pegar y el resultado esperado |
 | [**GUIA_OTRO_PC.md**](GUIA_OTRO_PC.md) | **Qué instalar y hacer en otro computador** para ejecutarlo con otra conexión, conectando a Cloud SQL |
+| [USUARIOS_PRUEBA.md](USUARIOS_PRUEBA.md) | Las 16 cuentas de prueba con sus contraseñas y qué puede hacer cada rol |
+| [ANALISIS_CSV_VS_BD.md](ANALISIS_CSV_VS_BD.md) | Qué datos de `marketplace_datos.csv` sirven para las tablas de Cloud SQL y cuáles no |
 | [ESPECIFICACION_TECNICA.md](ESPECIFICACION_TECNICA.md) | Arquitectura, modelo de datos, reglas de negocio, seguridad y estado de la conexión a Cloud SQL |
 | [frontend/README.md](frontend/README.md) | Detalle del panel web |
 | [GUIA_POSTMAN_MANUAL.md](GUIA_POSTMAN_MANUAL.md) | Referencia de cada endpoint (consulta rápida) |

@@ -1,10 +1,11 @@
-# Pendientes y cómo retomar el proyecto
+# Pendientes y estado del proyecto
 
-Última actualización: sesión de documentación de entrega.
+**Fecha:** 26 de septiembre de 2026
 
-> **Para levantar el proyecto usa [GUIA_ENTREGA.md](GUIA_ENTREGA.md)** y para la demo de los
-> endpoints [POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md). Este documento es el
-> estado y la lista de tareas.
+> **Para levantar el proyecto** usa [GUIA_ENTREGA.md](GUIA_ENTREGA.md).
+> **Para demostrar los endpoints** en Postman, [POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md).
+> **Para ejecutarlo en otro PC**, [GUIA_OTRO_PC.md](GUIA_OTRO_PC.md).
+> Este documento es el estado y la lista de lo que falta.
 
 ---
 
@@ -12,180 +13,136 @@
 
 | | |
 |---|---|
-| **Backend** | ⚠️ **No arranca ahora mismo**: la IP pública cambió y Cloud SQL la bloquea |
-| **Solución** | Autorizar la IP actual en Cloud SQL, ver [GUIA_ENTREGA.md, sección 1](GUIA_ENTREGA.md#1-antes-que-nada-autoriza-tu-ip) |
-| **Frontend** | ✅ Implementado en `frontend/` (Next.js 16), 15 páginas; sirve `200` en todas |
-| **Base de datos** | ✅ Google Cloud SQL (`marketplace_db`), 10 tablas |
+| **Backend** | ✅ Funcionando contra Google Cloud SQL |
+| **Frontend** | ✅ Implementado en `frontend/` (Next.js 16), 15 páginas |
+| **Base de datos** | ✅ `marketplace_db` (PostgreSQL 18.6), **10 tablas, 130 filas** |
+| **Acceso a la red** | ✅ `0.0.0.0/0` autorizado: conecta desde cualquier PC y red |
 | **Compilación backend** | ✅ `BUILD SUCCESSFUL` |
 | **Tests backend** | ✅ 114 tests, 0 fallos |
-| **Endpoints backend** | ✅ 31 operaciones, verificadas contra Cloud SQL |
+| **Endpoints** | ✅ 31 operaciones, **39 aserciones end-to-end, 0 fallos** |
 | **Tipos frontend** | ✅ `tsc --noEmit` sin errores |
-| **Admin** | `admin@marketplace.com` (contraseña en `backend/.env`) |
-| **Datos en la base** | 6 productos, 6 vendedores verificados, órdenes y reseñas de las pruebas |
+| **Usuarios de prueba** | ✅ **16 cuentas** creadas y verificadas con login real |
+| **Carpeta de imágenes** | ✅ `frontend/public/images/productos/` |
 
-### Por qué el backend no arranca ahora
+### El problema de la IP quedó resuelto
 
-La conexión a Cloud SQL es directa por IP pública, así que Cloud SQL sólo acepta peticiones de IPs
-autorizadas. La IP de este equipo cambió:
+Cloud SQL solo aceptaba IPs autorizadas y la del equipo cambió
+(`186.28.26.68` → `186.31.165.104`), lo que rompía el arranque con
+`SocketTimeoutException: Connect timed out`.
 
-| Fecha | IP pública | Estado |
-|---|---|---|
-| 23-sep | `186.28.26.68` | Funcionaba |
-| 24-sep | `186.31.165.104` | **Bloqueada** |
+**Solución aplicada:** se autorizó `0.0.0.0/0` en
+*Cloud SQL → marketplace → Connections → Networking → Authorized networks*.
 
-El error en el log es `java.net.SocketTimeoutException: Connect timed out`. **No es un fallo del
-código**: basta autorizar la IP nueva en Cloud SQL.
+Ahora conecta desde cualquier PC y cualquier red sin tocar nada más.
+
+> ⚠️ **Pendiente de seguridad:** quitar esa red cuando termines de presentar (ver §4).
+
+### Datos en la base
+
+| Tabla | Filas |
+|---|---|
+| `users` | 34 (2 admin, 15 vendedores, 17 compradores) |
+| `products` | 10 |
+| `stock_items` | 10 |
+| `stock_movements` | 34 |
+| `carts` | 7 |
+| `cart_items` | 10 |
+| `orders` | 7 |
+| `sub_orders` | 8 |
+| `order_items` | 10 |
+| `reviews` | 0 |
 
 ---
 
-## 2. Verlo ahora mismo
+## 2. Usuarios de prueba creados (26-sep-2026)
 
-### Guías principales
+**Listado completo con contraseñas en [USUARIOS_PRUEBA.md](USUARIOS_PRUEBA.md).**
 
-| Documento | Para qué |
-|---|---|
-| [GUIA_ENTREGA.md](GUIA_ENTREGA.md) | Levantar backend y frontend, con checklist antes de presentar |
-| [POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md) | Los 40 pasos de la demo, con el código a pegar |
+| Rol | Cantidad | Contraseña | Estado |
+|---|---|---|---|
+| Administrador | 1 | `Admin123!` | `admin.prueba@marketplace.com` |
+| Vendedor | 5 | `Vendedor123!` | **Todos verificados** |
+| Comprador | 10 | `Comprador123!` | Habilitados |
 
-### Panel web (frontend)
+Los correos y nombres provienen del dataset de referencia (`marketplace_datos.csv`).
+Se probó el login de las **16 cuentas: 16 OK / 0 fallos**.
 
-```powershell
-cd C:\Users\sebas\Desktop\marketplace\fullstack\frontend
-npm run dev
-```
-
-Abre **<http://localhost:3000>** (el backend debe estar corriendo en el 8080).
-
-### API directa (Swagger UI)
-
-| Recurso | URL | Para qué |
-|---|---|---|
-| **Swagger UI** | <http://localhost:8080/swagger-ui.html> | **Probar los endpoints desde el navegador, sin Postman** |
-| OpenAPI JSON | <http://localhost:8080/v3/api-docs> | Importar en Postman o Insomnia |
-| Health | <http://localhost:8080/actuator/health> | Confirmar que está viva |
-
-### Cómo probar en Swagger UI (sin instalar nada)
-
-1. Abre <http://localhost:8080/swagger-ui.html>
-2. Despliega **Authentication** → `POST /api/v1/auth/login` → **Try it out**
-3. Pega las credenciales del admin (`backend/.env`) y ejecuta
-4. Copia el `accessToken` de la respuesta (sin las comillas)
-5. Arriba a la derecha pulsa **Authorize**, pega el token y acepta
-6. Ya puedes ejecutar **cualquier** endpoint desde el navegador
-
----
-
-## 3. Cómo volver a arrancarlo otro día
-
-La aplicación se detiene al cerrar la terminal o al reiniciar el PC. Para volver:
-
-```powershell
-cd C:\Users\sebas\Desktop\marketplace\fullstack\backend
-.\run.ps1
-```
-
-Espera a ver `Started MarketplaceApplication` (unos 12 segundos) y abre
-<http://localhost:8080/swagger-ui.html>.
-
-### Si algo no arranca
-
-| Síntoma | Causa y solución |
-|---|---|
-| `App did not start` / error de conexión | La IP de este PC cambió: vuelve a autorizarla en Cloud SQL (ver §6) |
-| Algo ya ocupa el puerto 8080 | `.\run.ps1 -Port 9090` |
-| `JAVA_HOME no apunta a un JDK válido` | Reinstala JDK 21: `winget install EclipseAdoptium.Temurin.21.JDK` |
-| Login del admin da 401 | La contraseña del `.env` no coincide con la de la base → ver §10.3.1 de la guía |
-| La base no tiene las tablas | Debe apuntar a `marketplace_db`, **nunca** a `postgres` (tiene un esquema viejo incompatible) |
-
-### Comprobación rápida de todo
+Para recrearlos:
 
 ```powershell
 cd backend
-powershell -ExecutionPolicy Bypass -File .\tools\verify.ps1
+powershell -ExecutionPolicy Bypass -File .\tools\seed-users.ps1
 ```
+
+---
+
+## 3. Análisis del dataset `marketplace_datos.csv`
+
+**Informe completo en [ANALISIS_CSV_VS_BD.md](ANALISIS_CSV_VS_BD.md).**
+
+Resumen: el archivo **no es un CSV, es un Excel renombrado**. Tiene **16 hojas** con 778 filas, y su
+encaje con las tablas de esta aplicación es parcial:
+
+| Estado | Hojas | Filas | Nota |
+|---|---|---|---|
+| ✅ Cargable con conversión | `productos`, `categorias`, `envios`, `pagos`, `resenas` | 228 | Requiere transformar valores y remapear ids |
+| ⚠️ Cargable con pérdida | `usuarios`, `pedidos`, `pedido_items`, `carritos`, `carrito_items` | 316 | Faltan columnas obligatorias |
+| ❌ Sin tabla destino | `direcciones`, `vendedores`, `marcas`, `producto_imagenes`, `favoritos`, `cupones` | 234 | Este proyecto no tiene esas tablas |
+
+**Dos hallazgos importantes:**
+
+1. La columna `contrasena_hash` del Excel tiene valores como `hash_de_prueba_1`, que **no son
+   BCrypt válidos**: esos usuarios no pueden iniciar sesión. Por eso se crearon las cuentas por la
+   API con contraseñas nuevas.
+2. Los **precios no declaran moneda** (son pesos colombianos) y la aplicación exige
+   `currency_code`, así que habría que fijar `COP`.
+
+**Lo más rentable** sería cargar la hoja `productos` (45 filas) **por la API**, para que quede
+coherente el inventario. Está pendiente.
 
 ---
 
 ## 4. Pendientes
 
-### ✅ 4.1 Guía manual de peticiones para Postman — **HECHA**
+### 🔴 Importantes
 
-Está en **[GUIA_POSTMAN_MANUAL.md](GUIA_POSTMAN_MANUAL.md)**: los 30 endpoints listos para copiar y
-pegar, con método, URL, cabeceras, cuerpo JSON, respuesta de ejemplo, códigos HTTP reales, errores
-de validación, chuleta de roles y el orden recomendado para la demo.
+| # | Pendiente | Detalle |
+|---|---|---|
+| 1 | **Subir los cambios a GitHub** | Hay **~15 archivos** sin subir: los 3 documentos nuevos, `USUARIOS_PRUEBA.md`, `ANALISIS_CSV_VS_BD.md`, `tools/seed-users.ps1`, `tools/SeedAdminUser.java`, `tools/DbReport.java`, `frontend/public/images/`, `README.md`, `PENDIENTES.md` |
+| 2 | **Abrir el frontend en el navegador** | Está verificado que las 15 páginas se sirven con HTTP 200, pero **nunca se vio renderizado**. Falta confirmar visualmente que el CSS y el JavaScript funcionan |
+| 3 | **Probar el proxy frontend → backend con ambos vivos** | La última prueba del proxy se hizo con el backend caído. Con la base ya accesible, hay que confirmar que `http://localhost:3000/api/v1/products` devuelve datos |
+| 4 | **Quitar `0.0.0.0/0` de Cloud SQL** | Al terminar la presentación. Deja la base abierta a internet y la única defensa es la contraseña |
 
-### ✅ 4.2 Parte visual (frontend) — **IMPLEMENTADA, FALTA ABRIRLA EN EL NAVEGADOR**
+### 🟡 Cargar los datos de ejemplo
 
-Está en **`frontend/`**: **Next.js 16 + TypeScript + Tailwind CSS 4**, con **15 páginas** y tres
-paneles según el rol. Documentación completa en [frontend/README.md](frontend/README.md).
+| # | Pendiente | Detalle |
+|---|---|---|
+| 5 | **Cargar productos del dataset** | 45 productos de la hoja `productos`, por la API. Requiere remapear `id_vendedor` a los 5 vendedores creados y resolver la categoría con la hoja `categorias` |
+| 6 | **Productos "de presentación"** | Al menos uno con **1 unidad** (para demostrar el control de stock) y otro con **stock 0** |
+| 7 | **Reseñas de ejemplo** | Las 37 del dataset no se pueden crear por la API (exigen compra despachada). Habría que insertarlas por SQL y quedarían como **no verificadas** |
+| 8 | **Subir imágenes reales** | La carpeta está creada pero vacía. Ver su README para las convenciones (`/images/productos/nombre.jpg`) |
 
-```powershell
-# Terminal 1 (ya está corriendo)
-cd C:\Users\sebas\Desktop\marketplace\fullstack\backend
-.\run.ps1
+### 🟡 Funcionalidad que la especificación V2 pide y no está
 
-# Terminal 2
-cd C:\Users\sebas\Desktop\marketplace\fullstack\frontend
-npm run dev
-```
+| # | Pendiente | Impacto |
+|---|---|---|
+| 9 | **Endpoint para marcar `DELIVERED`** | Sin él una orden **nunca llega a `COMPLETED`**. El estado existe pero es inalcanzable |
+| 10 | **Rate limiting (Bucket4j)** | Dependencia declarada, sin integrar. La spec lo pide por rol |
+| 11 | **Resilience4j** | Dependencia declarada, sin integrar. Aplicable a la pasarela de pago |
+| 12 | **Memorystore Redis** | No integrado. La spec lo pide para caché de catálogo |
+| 13 | **Cloud Storage para imágenes** | Hoy el producto solo guarda una URL; no hay endpoint de subida |
+| 14 | **MFA para ADMIN y SELLER** | La spec lo recomienda |
+| 15 | **Webhook de confirmación de pago** | El `redirectUrl` está previsto en el DTO pero no hay callback |
 
-Luego abre **<http://localhost:3000>**
+### 🟢 Limpieza y deuda menor
 
-| Panel | Pantallas |
-|---|---|
-| Comprador | Catálogo, detalle con reseñas, carrito, checkout, mis compras |
-| Vendedor | Mi catálogo (crear/editar), inventario (ajustes), despachos (guías) |
-| Administrador | Moderación de productos, verificación de vendedores, órdenes, auditoría de inventario |
-
-**Verificado:** `npm install` (41 paquetes, 0 vulnerabilidades), `tsc --noEmit` con **0 errores** y
-`next build` → `Compiled successfully` con las 12 rutas generadas.
-
-**Pendiente:** abrirlo en el navegador. No pude hacerlo desde el entorno del agente porque su
-sandbox bloquea la creación de procesos hijos con tuberías, que es justo lo que Next.js usa para
-`next dev` (`spawn EPERM`) y para el comprobador de tipos del `next build`. En una terminal normal
-no ocurre.
-
-Al abrirlo por primera vez conviene este recorrido:
-
-1. Entra como **admin** (credenciales del `backend/.env`) → verás la portada de moderación.
-2. **Vendedores** → comprueba que aparecen los 6 vendedores verificados de las pruebas.
-3. **Registro** → crea un vendedor nuevo, y verifícalo desde ese mismo panel.
-4. Inicia sesión como ese vendedor → **Mi catálogo** → publica un producto.
-5. Vuelve como admin → **Moderación** → apruébalo.
-6. **Registro** → crea un comprador → catálogo → añade al carrito → **checkout** y paga.
-7. Como vendedor → **Despachos** → registra la guía.
-8. Como comprador → detalle del producto → **deja la reseña** (compra verificada).
-
-### 🟡 4.3 Datos de ejemplo en la base de datos — **PENDIENTE**
-
-La base ya tiene datos de las pruebas (6 productos, usuarios, órdenes y reseñas), así que la demo
-funciona. Si quieres datos controlados y "bonitos", falta un `tools/seed.ps1` que cree por la API:
-2-3 vendedores verificados, 6-8 productos aprobados (uno con **1 unidad** para lucir el control de
-stock y otro con **stock 0**), 2 compradores, una orden **multi-vendedor** y 2-3 reseñas.
-
-### 🟢 4.4 Subir los cambios a GitHub — **PENDIENTE**
-
-```powershell
-cd C:\Users\sebas\Desktop\marketplace\fullstack
-git add -A
-git commit -m "Frontend Next.js con paneles por rol, endpoint de listado de vendedores y guia manual de Postman"
-git push origin main
-git status -sb        # no debe decir "ahead"
-```
-
-> Los commits anteriores **sí** están en el remoto. Lo que falta es este trabajo: el frontend
-> completo, el endpoint nuevo del backend y los documentos.
-
-### 🟢 4.5 Mejoras opcionales (no bloquean nada)
-
-| Idea | Detalle |
-|---|---|
-| Endpoint para marcar `DELIVERED` | Hoy no existe, así que una orden nunca llega a `COMPLETED` |
-| Rate limiting con Bucket4j | La dependencia ya está declarada, falta integrarla |
-| Resilience4j en la pasarela de pago | Ídem |
-| Memorystore Redis | Para caché de catálogo |
-| Pasarela de pago real | Sustituir `StubPaymentGatewayAdapter` (el puerto ya está definido) |
-| Subida de imágenes a Cloud Storage | Hoy el producto guarda una URL externa |
+| # | Pendiente | Detalle |
+|---|---|---|
+| 16 | **Consolidar documentación** | Hay 9 documentos con solapamiento: `EJECUCION_Y_DEMO.md` vs `GUIA_ENTREGA.md`, y `GUIA_POSTMAN_MANUAL.md` vs `POSTMAN_DEMO_PASO_A_PASO.md` |
+| 17 | **Actualizar `task.md`** | Se escribió cuando el proyecto era solo backend: no menciona el frontend ni los usuarios de prueba |
+| 18 | **`ddl-auto: update` → `validate`** | Con migraciones versionadas (Flyway o Liquibase) antes de producción |
+| 19 | **`JWT_SECRET` a Secret Manager** | Hoy tiene un valor por defecto en `application.yml` |
+| 20 | **Desactivar `BootstrapAdminRunner`** | En producción crea un admin con contraseña conocida si las variables están puestas |
 
 ---
 
@@ -199,30 +156,16 @@ git status -sb        # no debe decir "ahead"
 | Base de datos | `marketplace_db` (PostgreSQL 18.6) |
 | Usuario de BD | `postgres` |
 | Contraseñas | En `backend/.env` (ignorado por Git) |
-| Admin de la app | `admin@marketplace.com` |
-| Documentación | `ESPECIFICACION_TECNICA.md`, `EJECUCION_Y_DEMO.md`, `GUIA_POSTMAN_MANUAL.md` |
+| Admins | `admin@marketplace.com` y `admin.prueba@marketplace.com` |
+| Panel web | <http://localhost:3000> |
+| Swagger | <http://localhost:8080/swagger-ui.html> |
 
-⚠️ **No apuntes la aplicación a la base `postgres`** de la instancia: contiene 23 tablas de otro
-proyecto con claves primarias `bigint`, incompatible con este modelo.
-
----
-
-## 6. Autorizar la IP de un PC nuevo
-
-La conexión es directa por IP pública, así que cada PC (y cada cambio de red) necesita
-autorización:
-
-1. Mira tu IP pública: <https://whatismyipaddress.com/>
-2. <https://console.cloud.google.com/sql> → instancia **`marketplace`** →
-   **Connections → Networking → Authorized networks → Add network**
-3. Añade la IP y guarda (tarda ~1 minuto)
-
-Si añades `0.0.0.0/0` funciona desde cualquier sitio, pero es menos seguro: quítalo cuando
-termines la demo.
+> ⚠️ **No apuntes la aplicación a la base `postgres`** de la instancia: contiene 23 tablas de otro
+> proyecto con claves primarias `bigint`, incompatible con este modelo.
 
 ---
 
-## 7. Herramientas incluidas
+## 6. Herramientas incluidas
 
 | Archivo | Para qué |
 |---|---|
@@ -230,14 +173,39 @@ termines la demo.
 | `backend/run.sh` | Lo mismo en Linux / macOS / WSL |
 | `backend/setup.ps1` | Configuración inicial en un PC nuevo |
 | `backend/tools/verify.ps1` | Comprobación completa antes de presentar |
+| `backend/tools/seed-users.ps1` | Crea los 5 vendedores y 10 compradores (idempotente) |
+| `backend/tools/SeedAdminUser.java` | Crea el administrador de prueba (no hay endpoint para eso) |
+| `backend/tools/DbReport.java` | Informe de tablas, columnas y filas de la base |
+| `backend/tools/AdminPasswordSync.java` | Sincronizar la contraseña del admin con la BD |
 | `backend/tools/e2e-test.ps1` | Recorrido de los 27 endpoints (39 aserciones) |
 | `backend/tools/stock-test.ps1` | Prueba de antisobreventa |
 | `backend/tools/split-test.ps1` | Prueba de orden multi-vendedor y BOLA |
-| `backend/tools/AdminPasswordSync.java` | Sincronizar la contraseña del admin con la BD |
 | `backend/postman/Marketplace-API.postman_collection.json` | 44 peticiones listas para Postman |
-| `GUIA_POSTMAN_MANUAL.md` | Referencia para escribir las peticiones a mano |
-| `frontend/` | Panel web Next.js con los tres roles |
-| `frontend/README.md` | Cómo arrancar y usar el frontend |
+| `frontend/public/images/productos/` | Carpeta para las imágenes de los productos |
 
 > Ejecuta los `.ps1` con `powershell -ExecutionPolicy Bypass -File .\ruta\script.ps1` si tu
 > política de ejecución los bloquea.
+
+---
+
+## 7. Comandos del día a día
+
+```powershell
+# Arrancar (terminal 1)
+cd backend
+.\run.ps1
+
+# Panel web (terminal 2)
+cd frontend
+npm run dev
+
+# Verificar que todo funciona
+cd backend
+powershell -ExecutionPolicy Bypass -File .\tools\verify.ps1
+
+# Ver el estado de la base
+java -cp "<postgresql.jar>" tools/DbReport.java 136.112.91.42 5432 postgres "<password>" marketplace_db
+
+# Volver a crear los usuarios de prueba
+powershell -ExecutionPolicy Bypass -File .\tools\seed-users.ps1
+```

@@ -103,6 +103,16 @@ function SellerCatalog() {
 
   const approved = session?.sellerApproved === true;
 
+  // Categorías que ya usan los productos de este vendedor: se añaden al
+  // desplegable para que ninguna quede fuera de la lista al editar.
+  const categoriasEnUso = [
+    ...new Set(
+      products
+        .map((product) => product.category)
+        .filter((valor): valor is string => Boolean(valor)),
+    ),
+  ];
+
   return (
     <div>
       <PageHeader
@@ -153,6 +163,8 @@ function SellerCatalog() {
       {creating && (
         <div className="mb-6">
           <ProductForm
+            categoriasEnUso={categoriasEnUso}
+            token={session?.token}
             submitting={submitting}
             error={formError}
             onSubmit={(body) => void createProduct(body)}
@@ -165,6 +177,8 @@ function SellerCatalog() {
         <div className="mb-6">
           <ProductForm
             initial={editing}
+            categoriasEnUso={categoriasEnUso}
+            token={session?.token}
             submitting={submitting}
             error={formError}
             onSubmit={(body) => void updateProduct(editing, body)}
