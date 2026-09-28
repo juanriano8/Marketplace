@@ -36,7 +36,7 @@
     { "key": "subOrderId", "value": "", "type": "string" },
     { "key": "reviewId", "value": "", "type": "string" },
     { "key": "adminEmail", "value": "admin@marketplace.com", "type": "string" },
-    { "key": "adminPassword", "value": "Admin123!", "type": "string" },
+    { "key": "adminPassword", "value": "Admin123.", "type": "string" },
     { "key": "sellerEmail", "value": "vendedor@marketplace.com", "type": "string" },
     { "key": "sellerEmail2", "value": "vendedor2@marketplace.com", "type": "string" },
     { "key": "buyerEmail", "value": "comprador@marketplace.com", "type": "string" },
@@ -90,11 +90,24 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
-                  "const j = pm.response.json();",
-                  "pm.collectionVariables.set('buyerToken', j.accessToken);",
-                  "pm.collectionVariables.set('buyerId', j.userId);",
-                  "pm.test('rol ROLE_BUYER', () => pm.expect(j.role).to.eql('ROLE_BUYER'));"
+                  "const email = pm.collectionVariables.get('buyerEmail');",
+                  "const password = pm.collectionVariables.get('password');",
+                  "const guardar = (j) => { pm.collectionVariables.set('buyerToken', j.accessToken); pm.collectionVariables.set('buyerId', j.userId); };",
+                  "if (pm.response.code === 201) {",
+                  "  const j = pm.response.json();",
+                  "  pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "  pm.test('rol ROLE_BUYER', () => pm.expect(j.role).to.eql('ROLE_BUYER'));",
+                  "  guardar(j);",
+                  "} else if (pm.response.code === 400) {",
+                  "  // Ya existia de una ejecucion anterior: se inicia sesion para obtener el token.",
+                  "  pm.test('ya estaba registrado: se inicia sesion', () => pm.response.to.have.status(400));",
+                  "  pm.sendRequest({ url: pm.collectionVariables.get('baseUrl') + '/api/v1/auth/login', method: 'POST', header: { 'Content-Type': 'application/json' }, body: { mode: 'raw', raw: JSON.stringify({ email: email, password: password }) } }, (err, res) => {",
+                  "    pm.test('login del comprador existente', () => pm.expect(res.code).to.eql(200));",
+                  "    guardar(res.json());",
+                  "  });",
+                  "} else {",
+                  "  pm.test('201 Created o 400 ya registrado', () => pm.expect([201, 400]).to.include(pm.response.code));",
+                  "}"
                 ]
               }
             }
@@ -120,11 +133,24 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
-                  "const j = pm.response.json();",
-                  "pm.collectionVariables.set('sellerToken', j.accessToken);",
-                  "pm.collectionVariables.set('sellerId', j.userId);",
-                  "pm.test('sellerApproved = false (queda pendiente de aprobación)', () => pm.expect(j.sellerApproved).to.eql(false));"
+                  "const email = pm.collectionVariables.get('sellerEmail');",
+                  "const password = pm.collectionVariables.get('password');",
+                  "const guardar = (j) => { pm.collectionVariables.set('sellerToken', j.accessToken); pm.collectionVariables.set('sellerId', j.userId); };",
+                  "if (pm.response.code === 201) {",
+                  "  const j = pm.response.json();",
+                  "  pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "  pm.test('sellerApproved = false (queda pendiente de aprobación)', () => pm.expect(j.sellerApproved).to.eql(false));",
+                  "  guardar(j);",
+                  "} else if (pm.response.code === 400) {",
+                  "  // Ya existia de una ejecucion anterior: se inicia sesion para obtener el token.",
+                  "  pm.test('ya estaba registrado: se inicia sesion', () => pm.response.to.have.status(400));",
+                  "  pm.sendRequest({ url: pm.collectionVariables.get('baseUrl') + '/api/v1/auth/login', method: 'POST', header: { 'Content-Type': 'application/json' }, body: { mode: 'raw', raw: JSON.stringify({ email: email, password: password }) } }, (err, res) => {",
+                  "    pm.test('login del vendedor existente', () => pm.expect(res.code).to.eql(200));",
+                  "    guardar(res.json());",
+                  "  });",
+                  "} else {",
+                  "  pm.test('201 Created o 400 ya registrado', () => pm.expect([201, 400]).to.include(pm.response.code));",
+                  "}"
                 ]
               }
             }
@@ -150,8 +176,21 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
-                  "pm.collectionVariables.set('seller2Id', pm.response.json().userId);"
+                  "const email = pm.collectionVariables.get('sellerEmail2');",
+                  "const password = pm.collectionVariables.get('password');",
+                  "if (pm.response.code === 201) {",
+                  "  pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "  pm.collectionVariables.set('seller2Id', pm.response.json().userId);",
+                  "} else if (pm.response.code === 400) {",
+                  "  // Ya existia de una ejecucion anterior: se obtiene su id iniciando sesion.",
+                  "  pm.test('ya estaba registrado: se obtiene su id', () => pm.response.to.have.status(400));",
+                  "  pm.sendRequest({ url: pm.collectionVariables.get('baseUrl') + '/api/v1/auth/login', method: 'POST', header: { 'Content-Type': 'application/json' }, body: { mode: 'raw', raw: JSON.stringify({ email: email, password: password }) } }, (err, res) => {",
+                  "    pm.test('login del segundo vendedor existente', () => pm.expect(res.code).to.eql(200));",
+                  "    pm.collectionVariables.set('seller2Id', res.json().userId);",
+                  "  });",
+                  "} else {",
+                  "  pm.test('201 Created o 400 ya registrado', () => pm.expect([201, 400]).to.include(pm.response.code));",
+                  "}"
                 ]
               }
             }

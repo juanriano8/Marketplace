@@ -1,14 +1,21 @@
 # ============================================================================
 # Prueba end-to-end de los endpoints contra Cloud SQL
 # Ejecuta el mismo recorrido que hará el usuario en Postman.
+# ----------------------------------------------------------------------------
+# Uso:  powershell -ExecutionPolicy Bypass -File .\tools\e2e-test.ps1
+#       powershell -ExecutionPolicy Bypass -File .\tools\e2e-test.ps1 -BaseUrl http://192.168.10.22:8080
 # ============================================================================
+param(
+    [string]$BaseUrl = 'http://localhost:8080'
+)
 $ErrorActionPreference = 'Continue'
-$B = 'http://localhost:8080'
+$B = $BaseUrl
 $dir = Join-Path $env:TEMP 'mke2e'; New-Item -ItemType Directory -Force -Path $dir | Out-Null
 $global:ok = 0; $global:fail = 0
 
 $v = @{}
-Get-Content backend\.env | ForEach-Object { $l=$_.Trim(); if ($l -and -not $l.StartsWith('#') -and $l.Contains('=')) { $i=$l.IndexOf('='); $v[$l.Substring(0,$i).Trim()]=$l.Substring($i+1).Trim() } }
+$envPath = Join-Path (Split-Path $PSScriptRoot -Parent) '.env'
+Get-Content $envPath | ForEach-Object { $l=$_.Trim(); if ($l -and -not $l.StartsWith('#') -and $l.Contains('=')) { $i=$l.IndexOf('='); $v[$l.Substring(0,$i).Trim()]=$l.Substring($i+1).Trim() } }
 
 function Req {
   param([string]$Name, [string]$Method, [string]$Path, $Obj, [string]$Token, [int[]]$Expect)
