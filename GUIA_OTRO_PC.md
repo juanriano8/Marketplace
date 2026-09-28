@@ -1,7 +1,11 @@
-# Guía: ejecutar el proyecto en otro PC
+# Guía: ejecutar el proyecto en otro PC (Windows)
 
 Objetivo: que el proyecto **arranque y se conecte a Google Cloud SQL** desde otro computador con
 otra conexión a internet, sin tocar nada en Google Cloud.
+
+> **Este documento es para Windows.** Si el otro PC tiene **Linux** (Ubuntu, Debian, Fedora, Arch,
+> openSUSE), usa [GUIA_OTRO_PC_LINUX.md](GUIA_OTRO_PC_LINUX.md): cambian la instalación de Java, los
+> permisos de los scripts y varios comandos.
 
 > **Ya no hay que autorizar IPs.** La instancia tiene `0.0.0.0/0` en Authorized networks, así que
 > **cualquier PC y cualquier red** se conecta directamente. Ese problema quedó resuelto.
