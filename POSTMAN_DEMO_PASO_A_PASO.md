@@ -53,6 +53,35 @@ autenticación, el código a pegar y el resultado que debes ver.
 > En las URLs escribe las variables con **doble llave**: `{{baseUrl}}`. Postman las sustituye por su
 > valor automáticamente.
 
+### ¿Local o nube? Solo cambia `baseUrl`
+
+El backend también está **desplegado en Google Cloud Run**, así que puedes hacer la demo sin arrancar
+nada en tu PC. Para apuntar la colección allí, cambia **únicamente la variable `baseUrl`**:
+
+| Dónde corre el backend | Valor de `baseUrl` |
+|---|---|
+| Tu PC (desarrollo) | `http://localhost:8080` |
+| **Google Cloud (demo)** | `https://marketplace-api-805790031718.us-central1.run.app` |
+
+Pasos: tres puntos sobre la colección → **Edit** → pestaña **Variables** → cambia el valor de
+`baseUrl` → **Save**. No hay que tocar ninguna petición: las 44 usan `{{baseUrl}}`.
+
+> ⚠️ **No vuelvas a importar la colección para cambiar esto.** Reimportar **no actualiza** la que ya
+> tienes: crea una copia nueva (o te pregunta si quieres reemplazarla, según la versión). Si
+> reemplazas, pierdes lo que hayas editado en Postman. Y como la URL es una *variable*, no hace
+> falta: se cambia el valor y listo.
+
+> ❄️ **Arranque en frío:** el servicio está configurado con **0 instancias mínimas**, así que tras
+> varios minutos sin uso Google lo apaga. La primera petición puede tardar **10-30 segundos** porque
+> tiene que arrancar Spring Boot. **Antes de presentar**, abre esta URL en el navegador y espera a
+> que responda; luego ya va en milisegundos:
+> `https://marketplace-api-805790031718.us-central1.run.app/actuator/health`
+
+**Si vas a alternar entre local y nube con frecuencia**, lo cómodo es un *Environment*:
+**Environments → Create** con `baseUrl` = la URL de la nube, y otro con la de localhost. Pero ojo con
+la precedencia de Postman: **una variable de colección gana sobre una de entorno**, así que para que
+el entorno manda hay que **dejar vacía** la variable `baseUrl` de la colección.
+
 ## 0.3 Cómo crear cada petición
 
 Para cada paso de esta guía repite siempre lo mismo:
