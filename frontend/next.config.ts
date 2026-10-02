@@ -1,6 +1,18 @@
 import type { NextConfig } from 'next';
 
-const API_URL = process.env.MARKETPLACE_API_URL ?? 'http://localhost:8080';
+// ---------------------------------------------------------------------------
+// Destino del proxy
+// ---------------------------------------------------------------------------
+// Por defecto apunta al backend DESPLEGADO EN CLOUD RUN, para que el panel
+// funcione en cualquier PC (Windows o Linux) sin configurar nada: basta con
+// clonar el repositorio y hacer `npm run dev`.
+//
+// Para usar un backend LOCAL en su lugar, crea `frontend/.env.local` con:
+//     MARKETPLACE_API_URL=http://localhost:8080
+// y reinicia `npm run dev`. Ese archivo está en .gitignore, así que es
+// configuración solo de tu PC (por eso no viaja con `git pull`).
+const API_URL =
+  process.env.MARKETPLACE_API_URL ?? 'https://marketplace-api-805790031718.us-central1.run.app';
 
 const nextConfig: NextConfig = {
   // ---------------------------------------------------------------------------

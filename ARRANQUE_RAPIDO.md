@@ -79,6 +79,103 @@ Luego abre **<http://localhost:3000>**
 
 ---
 
+## 🌐 Páginas para verificar los endpoints
+
+### Con el backend en Google Cloud (recomendado)
+
+Funcionan desde **cualquier PC y cualquier red**, incluido el PC con Linux. No dependen de tu red
+local ni de que tengas algo instalado.
+
+| Página | URL | Qué debe mostrar |
+|---|---|---|
+| **Health** | `https://marketplace-api-805790031718.us-central1.run.app/actuator/health` | `{"status":"UP"}` |
+| **Swagger UI** | `https://marketplace-api-805790031718.us-central1.run.app/swagger-ui.html` | Las **31 operaciones**, con el botón *Authorize* |
+| **OpenAPI JSON** | `https://marketplace-api-805790031718.us-central1.run.app/v3/api-docs` | El contrato completo de la API |
+| **Catálogo (público)** | `https://marketplace-api-805790031718.us-central1.run.app/api/v1/products` | La lista de productos en JSON |
+
+> **Desde el PC Linux son exactamente las mismas URLs.** No hay que cambiar nada: son públicas y no
+> dependen de la red. Para probar endpoints protegidos desde Swagger: **Authorize** → pega el token
+> que devuelve el login.
+
+### Comprobar desde la terminal
+
+**Windows (PowerShell):**
+
+```powershell
+curl.exe -s https://marketplace-api-805790031718.us-central1.run.app/actuator/health
+```
+
+**Linux / macOS:**
+
+```bash
+curl -s https://marketplace-api-805790031718.us-central1.run.app/actuator/health
+```
+
+**Login del administrador** (igual en las dos plataformas; solo cambia `curl.exe` por `curl`):
+
+```bash
+curl -s -X POST https://marketplace-api-805790031718.us-central1.run.app/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@marketplace.com","password":"Admin123."}'
+```
+
+### Con el backend LOCAL (solo si lo arrancaste en tu PC)
+
+| Página | URL |
+|---|---|
+| Health | <http://localhost:8080/actuator/health> |
+| Swagger UI | <http://localhost:8080/swagger-ui.html> |
+| OpenAPI JSON | <http://localhost:8080/v3/api-docs> |
+
+### Páginas del panel web
+
+| Página | URL | Para qué |
+|---|---|---|
+| Portada | <http://localhost:3000> | Los tres roles |
+| Catálogo | <http://localhost:3000/productos> | Ver los productos (es público) |
+| Login | <http://localhost:3000/login> | Entrar con cualquier cuenta |
+| Carrito | <http://localhost:3000/carrito> | Requiere sesión de comprador |
+| Panel vendedor | <http://localhost:3000/vendedor> | Publicar y gestionar productos |
+| Panel admin | <http://localhost:3000/admin> | Aprobar productos y verificar vendedores |
+
+> **Usa `localhost`, no la IP de red.** Si abres el panel con la URL que Next muestra como
+> `- Network:` verás la página "cargando" para siempre, porque Next bloquea el JavaScript desde
+> otros orígenes. Si necesitas entrar por la IP, añádela a `allowedDevOrigins` en
+> `frontend/next.config.ts`.
+
+### ⚠️ Si el backend devuelve 503 y la base no responde
+
+Un `503 Service Unavailable` en Cloud Run casi siempre significa que **el contenedor no pudo
+arrancar porque no alcanza la base de datos**. Comprueba en este orden:
+
+1. **¿Está encendida?** Cloud SQL → instancia `marketplace` → el estado debe ser **RUNNABLE**.
+   Justo después de encenderla tarda **2-3 minutos**; hasta entonces no acepta conexiones.
+2. **¿Cambió la IP?** Cloud SQL → `marketplace` → **Conexiones** → *IP pública*. Al detener y volver
+   a iniciar una instancia, la IP pública **puede cambiar**. Si ya no es `136.112.91.42`, hay que
+   actualizarla en **tres sitios**:
+   - En Cloud Run:
+     ```bash
+     gcloud run services update marketplace-api --region us-central1 \
+       --update-env-vars DB_HOST=LA_NUEVA_IP
+     ```
+   - En el `backend/.env` de este PC (`DB_HOST=`)
+   - En el `backend/.env` del PC con Linux
+3. **🔴 ¿Sigue autorizada la red `0.0.0.0/0`?** Este es el fallo silencioso más frecuente. Si
+   quitaste esa red de **Authorized networks** (era la recomendación de seguridad al terminar),
+   **Cloud Run ya no puede conectar a la base** y verás exactamente este 503.
+   - Cloud SQL → `marketplace` → **Conexiones** → **Redes autorizadas** → debe estar `0.0.0.0/0`
+   - **Mientras uses Cloud Run hay que dejarla**: la IP de salida de Cloud Run es dinámica, así que
+     no se puede autorizar una IP fija. La alternativa correcta es el conector de Cloud SQL
+     (ver [DESPLIEGUE_CLOUD_RUN.md](DESPLIEGUE_CLOUD_RUN.md)), que no necesita IP pública.
+4. **Comprueba la conexión** desde Cloud Shell: `nc -zv LA_IP 5432`. Si no conecta, el problema es
+   la base o el firewall, no el backend.
+
+> Para diagnosticar sin adivinar: `gcloud run services logs read marketplace-api --region
+> us-central1 --limit 30`. Si ves `SocketTimeoutException` o `Connection refused`, es lo de arriba.
+> Si ves `password authentication failed`, es la contraseña.
+
+---
+
 ## 🛑 APAGAR (para no gastar créditos)
 
 ### Opción 1 — Apagar solo la base de datos (recomendado)
