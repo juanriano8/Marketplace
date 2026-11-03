@@ -1,0 +1,126 @@
+/* ==========================================================================
+   Design tokens extraidos de Figma
+   Archivo: "Sin título" · frames "Origen · Marketplace" / "Consola del
+   vendedor" / "Administración"
+   Extraido el 2026-10-09 con la API de Figma sobre 849 nodos.
+
+   ESTE ARCHIVO ES UNA PROPUESTA: no se importa todavía. Para aplicarlo hay que
+   reemplazar el bloque @theme de frontend/src/app/globals.css.
+
+   ---------------------------------------------------------------------------
+   POR QUE ESTO FUNCIONA SIN TOCAR COMPONENTES
+   ---------------------------------------------------------------------------
+   globals.css ya nombra los colores de forma generica (brand-*, ink-*), y los
+   componentes usan clases tipo bg-brand-600, text-ink-500, border-ink-200.
+   Cambiando SOLO los valores de esos tokens, toda la interfaz adopta la nueva
+   paleta de golpe. Despues se rehacen los componentes uno a uno.
+   ========================================================================== */
+
+@theme {
+  /* ------------------------------------------------------------------------
+     MARCA (verde)
+     Exactos del diseno: #17675B (principal, 113 usos), #143D35 (oscuro),
+     #E8F2EC (fondo suave), #C6D6CE (borde tenue).
+     Los pasos 200-500 y 900 son interpolados para completar la escala.
+     ------------------------------------------------------------------------ */
+  --color-brand-50: #e8f2ec; /* exacto: fondo suave / badge de exito */
+  --color-brand-100: #c6d6ce; /* exacto: borde tenue */
+  --color-brand-200: #a3c2b7; /* interpolado */
+  --color-brand-300: #7fae9f; /* interpolado */
+  --color-brand-400: #4f8e7f; /* interpolado */
+  --color-brand-500: #228274; /* interpolado */
+  --color-brand-600: #17675b; /* EXACTO: verde principal del diseno */
+  --color-brand-700: #14574d; /* interpolado (hover) */
+  --color-brand-800: #143d35; /* exacto: verde oscuro del diseno */
+  --color-brand-900: #0f2f29; /* interpolado */
+
+  /* ------------------------------------------------------------------------
+     NEUTROS
+     Exactos del diseno: #202C28 (tinta), #69746E (texto secundario, el color
+     MAS usado: 181 veces), #E1E6DF (bordes), #F7F8F5 (fondo de pagina).
+     ------------------------------------------------------------------------ */
+  --color-ink-50: #f7f8f5; /* EXACTO: fondo de pagina */
+  --color-ink-100: #e1e6df; /* EXACTO: bordes y separadores */
+  --color-ink-200: #cdd3cc; /* interpolado */
+  --color-ink-300: #b4bbb4; /* interpolado */
+  --color-ink-400: #8f978f; /* interpolado */
+  --color-ink-500: #69746e; /* EXACTO: texto secundario */
+  --color-ink-600: #4e5c56; /* interpolado */
+  --color-ink-700: #3a4943; /* interpolado */
+  --color-ink-800: #2a3833; /* interpolado */
+  --color-ink-900: #202c28; /* EXACTO: titulos y texto fuerte */
+
+  /* ------------------------------------------------------------------------
+     ESTADOS (badges del diseno)
+     Cada estado tiene su color de texto y su fondo, tal como aparecen.
+     ------------------------------------------------------------------------ */
+  --color-success: #17675b; /* exacto */
+  --color-success-soft: #e8f2ec; /* exacto */
+  --color-warning: #8b6018; /* exacto */
+  --color-warning-soft: #fbf2de; /* exacto */
+  --color-danger: #a94439; /* exacto */
+  --color-danger-soft: #faebe7; /* exacto */
+
+  /* ------------------------------------------------------------------------
+     SUPERFICIES
+     ------------------------------------------------------------------------ */
+  --color-surface: #ffffff; /* exacto: tarjetas */
+  --color-surface-alt: #f0eee7; /* exacto: crema, para bloques destacados */
+
+  /* ------------------------------------------------------------------------
+     TIPOGRAFIA
+     El diseno usa UNA sola familia: Inter (365 capas de texto).
+     ------------------------------------------------------------------------ */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* ------------------------------------------------------------------------
+     RADIOS
+     Los mas usados en el diseno: 8px (43), 100px (30, pildoras), 12px (24),
+     3px (24), 16px (9), 6px (9).
+     ------------------------------------------------------------------------ */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 8px; /* el mas comun: botones, inputs, tarjetas pequenas */
+  --radius-xl: 12px; /* tarjetas medianas */
+  --radius-2xl: 16px; /* bloques grandes */
+  --radius-pill: 100px; /* badges y chips */
+}
+
+/* ==========================================================================
+   ESCALA TIPOGRAFICA OBSERVADA
+   No son tokens de Tailwind, es la referencia de tamanos reales del diseno
+   (peso 400/500/600). El cuerpo es 12px: es una interfaz DENSA, no espaciosa.
+
+     9px   x8     badges diminutos
+    10px  x23     metadatos
+    11px  x105    etiquetas y texto secundario
+    12px  x122    CUERPO (el mas usado)
+    13px  x42     texto destacado
+    15px  x6      subtitulos
+    16px  x6      subtitulos
+    18px  x4      titulos de seccion
+    28px  x4      titular de portada
+    30px  x10     titulo grande
+
+   Al implementar conviene mapearlo a utilidades de Tailwind:
+     text-[9px]/[10px]  ->  etiquetas y badges
+     text-[11px]/[12px] ->  cuerpo
+     text-sm/[13px]     ->  destacado
+     text-lg/[18px]     ->  titulos de seccion
+     text-3xl/[28px]/[30px] ->  titulares
+   ========================================================================== */
+
+/* ==========================================================================
+   LO QUE FALTA EN EL ARCHIVO DE FIGMA (y conviene arreglar alli)
+
+   - No hay COMPONENTES (0). Todo son capas sueltas, asi que no se puede mapear
+     1:1 a los componentes de React: hay que inferirlos por repeticion.
+   - No hay ESTILOS publicados (0 de relleno, texto o efectos). Los valores se
+     sacaron recorriendo las capas.
+   - No hay VARIABLES de Figma: la API respondio 403 (requiere plan Enterprise).
+   - Hay 12 rellenos de imagen ("Product photograph", "Still life photograph").
+
+   Recomendacion: crear en Figma una pagina "Design system" con estilos de color
+   y texto con nombres semanticos. Asi los tokens dejan de ser inferidos y pasan
+   a ser declarados, y la proxima extraccion sera exacta y con nombres.
+   ========================================================================== */

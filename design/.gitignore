@@ -1,0 +1,6 @@
+# Datos crudos descargados de la API de Figma (varios MB, se regeneran con
+# `node figma-extract.mjs <file-key>`). No hace falta versionarlos.
+figma-data/
+
+# Capturas y miniaturas temporales
+*.webp
