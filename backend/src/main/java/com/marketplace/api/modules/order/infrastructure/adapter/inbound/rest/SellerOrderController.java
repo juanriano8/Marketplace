@@ -75,4 +75,21 @@ public class SellerOrderController {
             request.carrier()
         ));
     }
+
+    @Operation(
+        summary = "Confirm delivery",
+        description = "Marks the seller's SHIPPED sub-order as DELIVERED. When every sub-order of the order is delivered, the parent order becomes COMPLETED. Only the owning seller can do it."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sub-order delivered"),
+        @ApiResponse(responseCode = "400", description = "Invalid state transition or the sub-order belongs to another seller"),
+        @ApiResponse(responseCode = "404", description = "Sub-order not found")
+    })
+    @PatchMapping("/{subOrderId}/deliver")
+    public ResponseEntity<OrderResponse.SubOrderResponse> markSubOrderDelivered(
+        @AuthenticationPrincipal UserPrincipal principal,
+        @PathVariable UUID subOrderId
+    ) {
+        return ResponseEntity.ok(orderQueryUseCase.markSubOrderDelivered(principal.id(), subOrderId));
+    }
 }

@@ -46,7 +46,10 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .headers(headers -> headers
-                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'; sandbox"))
+                // NOTA: se quito la directiva "sandbox" porque, al no incluir "allow-scripts",
+                // el navegador bloquea TODO el JavaScript de la pagina y Swagger UI
+                // (/swagger-ui.html) se quedaba en blanco. El resto de la CSP se mantiene.
+                .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"))
                 .frameOptions(frameOptions -> frameOptions.deny())
                 .xssProtection(xss -> xss.disable()) // Deshabilitado en favor de CSP
             )

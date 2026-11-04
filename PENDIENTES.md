@@ -127,9 +127,9 @@ con mejor relación esfuerzo/impacto de todo el documento.
 | # | Tarea | Esfuerzo |
 |---|---|---|
 | 1 | **Quitar credenciales del código**: `JWT_SECRET` fuera de `application.yml`; contraseña fuera de la colección de Postman | Bajo |
-| 2 | **Crear `TROUBLESHOOTING.md`** con las 16 entradas del Anexo A | Bajo (material listo) |
-| 3 | **Crear `DESIGN.md`** desde `design/tokens-origen.css` | Bajo (material listo) |
-| 4 | **Crear `UX_MAPPING.md`** con las 27 rutas y sus payloads | Medio (material listo) |
+| 2 | ✅ **`TROUBLESHOOTING.md`** creado (16 incidencias + 4 recientes) | Hecho 2026-11-03 |
+| 3 | ✅ **`DESIGN.md`** creado desde los tokens de Figma | Hecho 2026-11-03 |
+| 4 | ✅ **`UX_MAPPING.md`** creado (31 operaciones / 27 rutas) | Hecho 2026-11-03 |
 | 5 | **Añadir reintento en los 4 estados** de las 15 páginas | Medio |
 | 6 | **Completar los estados** que faltan en `/`, `/registro` y `/login` | Bajo |
 | 7 | **Seguridad del cliente**: CSP, sanitización, revisar el token en `localStorage` | Medio |
@@ -142,7 +142,7 @@ con mejor relación esfuerzo/impacto de todo el documento.
 | 9 | **Bucket4j**: rate limiting real por rol | Medio |
 | 10 | **Librería de componentes**: adoptar Shadcn UI o justificar `ui.tsx` | Medio |
 | 11 | **Cloud Armor + reCAPTCHA Enterprise** en el formulario de login/registro | Alto |
-| 12 | **Endpoint `DELIVERED`**: hoy ninguna orden llega a `COMPLETED` | Bajo |
+| 12 | ✅ **Endpoint `DELIVERED`** implementado: `PATCH /api/v1/seller/orders/{id}/deliver` | Hecho 2026-11-03 |
 | 13 | **Caché de catálogo** (Redis o Caffeine) | Medio |
 
 ### 🟡 Medio (mejoran la nota, no bloquean)
@@ -160,7 +160,7 @@ con mejor relación esfuerzo/impacto de todo el documento.
 
 | # | Tarea | Esfuerzo |
 |---|---|---|
-| 20 | **`.gitignore` en la raíz** (solo existe en `frontend/` y `backend/`) | Bajo |
+| 20 | ✅ **`.gitignore` en la raíz** creado (secretos, backups, builds) | Hecho 2026-11-03 |
 | 21 | **Backup de la base** antes de que expire el trial | Bajo |
 | 22 | **Tag `entrega-v1`** y rama `rediseno-frontend` | Bajo |
 | 23 | Consolidar los 15 documentos (hay solape entre guías) | Medio |
@@ -208,34 +208,139 @@ Estas son incidencias **reales** del proyecto, ya diagnosticadas y resueltas:
 
 ---
 
-## Anexo B · NotebookLM (aparcado)
+## Anexo B · NotebookLM
 
-Cuando toque, hay que conectar el servidor MCP de NotebookLM y consultar dos cuadernos:
+Cuaderno que se usará como fuente para el rediseño del frontend:
 
 | Cuaderno | ID | Estado |
 |---|---|---|
-| Arquitectura, Backend y GCP | `b4ae7351-4ea8-4726-815d-3c05dfaaab41` | ✅ ID disponible |
-| Diseño y Desarrollo Seguro en Frontend | *(pendiente de asignar en clase)* | ❌ Falta el ID |
+| Diseño y Desarrollo Seguro en Frontend | `9bb773f4-7b01-4be5-a382-7d3990d848b0` | ✅ ID disponible |
 
 **Nota:** mi entorno no tiene cliente MCP, igual que con Figma/Stitch. Para usarlos hay que ir por API
 o por un cliente que soporte MCP. Lo evaluamos cuando llegue el momento.
 
 ---
 
-## Anexo C · Reorganización de base de datos (cuando expire el trial)
+## Anexo C · Migración a Postgres gratuito (salida de Google Cloud)
 
-Ya planificado en [PLAN_REDISENO.md](PLAN_REDISENO.md):
+**Objetivo:** dejar de depender del trial de GCP sin perder datos ni funcionalidad.
+El backend **no cambia**: solo se reapunta `DB_HOST` (y credenciales).
 
-- **Backup primero** (`pg_dump` con Docker, imagen `postgres:18`)
-- **Tablas que faltan** según la especificación y el dataset: `marcas`, `direcciones`, `cupones`,
-  `favoritos`, `producto_imagenes` (el diseño de Figma ya pide **3 imágenes por producto**), perfil
-  de vendedor
-- **Hosting alternativo** al trial: Neon o Supabase (gratis); el backend solo cambia `DB_HOST`
-- **Migraciones versionadas** en vez de `ddl-auto: update`
+### Estado de partida
+
+| Qué | Estado |
+|---|---|
+| Datos reales (usuarios, productos, órdenes) | Solo en Cloud SQL `marketplace-509503` |
+| Backup en el repo | ❌ No existe |
+| Código y documentación | ✅ En el repo/GitHub |
+| Facturación del proyecto | ⚠️ Activa: al acabar el crédito se cobra a la tarjeta |
+
+### Paso 0 — Backup (obligatorio antes de tocar nada)
+
+```bash
+export PATH="$HOME/google-cloud-sdk/bin:$PATH"
+gcloud sql instances patch marketplace --activation-policy ALWAYS --project marketplace-509503
+gcloud storage buckets create gs://marketplace-backups-509503 --project marketplace-509503 --location us-central1
+gcloud sql export sql marketplace gs://marketplace-backups-509503/backup_marketplace_$(date +%F).sql \
+  --database=marketplace_db --project marketplace-509503
+mkdir -p ~/backups
+gcloud storage cp gs://marketplace-backups-509503/backup_marketplace_$(date +%F).sql ~/backups/
+```
+
+> El dump contiene emails y hashes BCrypt: **no subirlo al repo**. Guardarlo en `~/backups/` y en una copia externa.
+
+### Paso 1 — Crear el Postgres gratuito (Neon)
+
+1. <https://neon.tech> → cuenta gratis → **New project** (región `us-east-1` o la más cercana).
+2. Copiar la cadena de conexión (`postgresql://user:pass@host/db?sslmode=require`).
+3. Guardar los datos en `backend/.env` (no en Git).
+
+### Paso 2 — Restaurar el dump
+
+```bash
+psql "postgresql://...@.../neondb?sslmode=require" < ~/backups/backup_marketplace_YYYY-MM-DD.sql
+```
+
+Sin `psql` local: usar el **SQL Editor** de Neon y subir el archivo, o
+`docker run --rm -i postgres:18 psql ...`.
+
+### Paso 3 — Reapuntar el backend
+
+`backend/.env`:
+
+```ini
+DB_HOST=<host-neon>
+DB_PORT=5432
+DB_NAME=<db>
+DB_USER=<user>
+DB_PASSWORD=<pass>
+DB_SSLMODE=require
+```
+
+Cloud Run:
+
+```bash
+gcloud run services update marketplace-api --region us-central1 \
+  --update-env-vars DB_HOST=...,DB_PORT=5432,DB_NAME=...,DB_USER=...,DB_PASSWORD=...,DB_SSLMODE=require
+```
+
+### Paso 4 — Verificar
+
+```bash
+BASE_URL=https://marketplace-api-805790031718.us-central1.run.app ./backend/tools/verify.sh
+```
+
+Debe terminar en **TODO CORRECTO**.
+
+### Paso 5 — Apagar/liberar Cloud SQL
+
+```bash
+gcloud sql instances patch marketplace --activation-policy NEVER --project marketplace-509503
+# cuando ya no se necesite:
+# gcloud sql instances delete marketplace --project marketplace-509503
+```
+
+### Tablas que faltan (aprovechar la migración)
+
+Según la especificación y el dataset: `marcas`, `direcciones`, `cupones`, `favoritos`,
+`producto_imagenes` (el diseño de Figma ya pide **3 imágenes por producto**) y perfil de vendedor.
+Aprovechar para pasar de `ddl-auto: update` a **migraciones versionadas** (Flyway/Liquibase).
+
+### Alternativas de hosting
+
+| Opción | Coste | Notas |
+|---|---|---|
+| **Neon** | $0 | Recomendada: Postgres real, sin tarjeta, con ramas/restore |
+| Supabase | $0 | 500 MB; pausa por inactividad |
+| Aiven | $0 | 1 GB; algunos planes piden tarjeta |
+| Cloud SQL | ~$10–50/mes | Solo si hay presupuesto |
+| Docker local | $0 | Desarrollo; no para presentar |
+
+### Checklist
+
+- [x] Backup exportado y descargado a `~/backups/` (2026-11-03 · 96 KB · 10 tablas)
+- [ ] Copia externa del `.sql`
+- [x] `backend/.env` y `~/backups/backend.env` guardados
+- [x] Variables de Cloud Run respaldadas (`~/backups/cloudrun-env.yaml`)
+- [ ] Proyecto Neon creado
+- [ ] Dump restaurado y verificado (`verify.sh`)
+- [ ] Cloud Run reapuntado
+- [ ] Cloud SQL apagado
+- [ ] Bucket temporal borrado si no se usa
+
+**Backup actual:**
+
+```
+~/backups/backup_marketplace_2026-11-03.sql   (96 KB, 10 tablas)
+sha256: c1c9ce078a4ae4cd621c31f9b46911127dbc938063befcd8b5a568b6b8b6c477
+```
 
 ---
 
 ## Resumen ejecutivo
+
+> ⚠️ **Urgente e independiente de la rúbrica:** migrar la base a un Postgres gratuito antes de que
+> acabe el crédito de GCP (ver Anexo C). La base **no está respaldada en el repo**.
 
 | Bloque | Pendientes | Esfuerzo estimado |
 |---|---|---|

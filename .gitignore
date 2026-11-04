@@ -1,0 +1,48 @@
+# ============================================================================
+# Raíz del monorepo (backend/ y frontend/ tienen los suyos, más específicos)
+# ============================================================================
+
+# ---- Entorno y secretos (NUNCA subir) ----
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.local
+.neon-url
+.stitch-key
+.figma-token
+
+# ---- Backups de base de datos ----
+backups/
+*.dump
+*backup*.sql
+
+# ---- Node / Next.js ----
+node_modules/
+.next/
+out/
+.npm-cache/
+
+# ---- Java / Gradle ----
+.gradle/
+build/
+bin/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ---- Sistema ----
+.DS_Store
+Thumbs.db
+*.log
+
+# ---- IDE ----
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ---- Instaladores pesados ----
+google-cloud-cli-*.tar.gz

@@ -19,6 +19,12 @@ public interface OrderQueryUseCase {
 
     OrderResponse.SubOrderResponse shipSubOrder(UUID sellerId, UUID subOrderId, String trackingNumber, String carrier);
 
+    /**
+     * Marks a shipped sub-order as delivered. When every sub-order of the parent order is
+     * delivered, the order transitions to COMPLETED.
+     */
+    OrderResponse.SubOrderResponse markSubOrderDelivered(UUID sellerId, UUID subOrderId);
+
     /** Global transaction view for administrators, optionally filtered by status. */
     Page<OrderResponse> listAllOrders(Pageable pageable);
 }

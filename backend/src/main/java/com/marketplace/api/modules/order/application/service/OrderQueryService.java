@@ -86,6 +86,31 @@ public class OrderQueryService implements OrderQueryUseCase {
     }
 
     @Override
+    @Transactional
+    public OrderResponse.SubOrderResponse markSubOrderDelivered(UUID sellerId, UUID subOrderId) {
+        SubOrder subOrder = subOrderRepositoryPort.findByIdWithOrder(subOrderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Sub-order not found with id: " + subOrderId));
+
+        // BOLA check — a seller may only close their own portion of an order.
+        if (!subOrder.isOwnedBy(sellerId)) {
+            throw new DomainException("You are not authorized to update this sub-order");
+        }
+
+        subOrder.markDelivered();
+        SubOrder saved = subOrderRepositoryPort.save(subOrder);
+
+        // Close the parent order when every seller has delivered.
+        Order order = saved.getOrder();
+        if (order != null) {
+            order.completeIfFullyDelivered();
+            orderRepositoryPort.save(order);
+        }
+
+        log.info("Seller {} marked sub-order {} as delivered", sellerId, subOrderId);
+        return orderMapper.toResponse(saved);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<OrderResponse> listAllOrders(Pageable pageable) {
         return orderRepositoryPort.findAll(pageable)
