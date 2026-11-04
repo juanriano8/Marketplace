@@ -41,7 +41,9 @@ spring:
 
 app:
   jwt:
-    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    # Obligatorio: se define en backend/.env (local) y en las variables de Cloud Run.
+    # Sin JWT_SECRET la aplicacion falla al arrancar (fail-fast).
+    secret: ${JWT_SECRET}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
   payment:

@@ -12,7 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JwtTokenProviderTest {
 
     private JwtTokenProvider jwtTokenProvider;
-    private final String secret = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+    // Secreto SOLO para tests (no es el de produccion).
+    private final String secret = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
     @BeforeEach
     void setUp() {

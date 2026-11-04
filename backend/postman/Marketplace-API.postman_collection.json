@@ -21,26 +21,106 @@
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
-    { "key": "token", "value": "", "type": "string" },
-    { "key": "adminToken", "value": "", "type": "string" },
-    { "key": "sellerToken", "value": "", "type": "string" },
-    { "key": "buyerToken", "value": "", "type": "string" },
-    { "key": "sellerId", "value": "", "type": "string" },
-    { "key": "seller2Id", "value": "", "type": "string" },
-    { "key": "buyerId", "value": "", "type": "string" },
-    { "key": "productId", "value": "", "type": "string" },
-    { "key": "productSlug", "value": "", "type": "string" },
-    { "key": "product2Id", "value": "", "type": "string" },
-    { "key": "orderId", "value": "", "type": "string" },
-    { "key": "subOrderId", "value": "", "type": "string" },
-    { "key": "reviewId", "value": "", "type": "string" },
-    { "key": "adminEmail", "value": "admin@marketplace.com", "type": "string" },
-    { "key": "adminPassword", "value": "Admin123.", "type": "string" },
-    { "key": "sellerEmail", "value": "vendedor@marketplace.com", "type": "string" },
-    { "key": "sellerEmail2", "value": "vendedor2@marketplace.com", "type": "string" },
-    { "key": "buyerEmail", "value": "comprador@marketplace.com", "type": "string" },
-    { "key": "password", "value": "Password123!", "type": "string" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sellerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "buyerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sellerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "seller2Id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "buyerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productSlug",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "product2Id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "subOrderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "reviewId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@marketplace.com",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sellerEmail",
+      "value": "vendedor@marketplace.com",
+      "type": "string"
+    },
+    {
+      "key": "sellerEmail2",
+      "value": "vendedor2@marketplace.com",
+      "type": "string"
+    },
+    {
+      "key": "buyerEmail",
+      "value": "comprador@marketplace.com",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "Password123!",
+      "type": "string"
+    }
   ],
   "item": [
     {
@@ -60,20 +140,42 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/actuator/health", "host": ["{{baseUrl}}"], "path": ["actuator", "health"] },
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
             "description": "Público. Sirve para confirmar que la app arrancó y (si el perfil cloud está activo) que la conexión a Cloud SQL quedó establecida."
           }
         },
         {
           "name": "OpenAPI JSON",
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/v3/api-docs", "host": ["{{baseUrl}}"], "path": ["v3", "api-docs"] },
+            "url": {
+              "raw": "{{baseUrl}}/v3/api-docs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v3",
+                "api-docs"
+              ]
+            },
             "description": "Documento OpenAPI 3 completo con los 34 endpoints."
           }
         }
@@ -113,15 +215,38 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{buyerEmail}}\",\n  \"password\": \"{{password}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/auth/register/buyer", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "register", "buyer"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register/buyer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register",
+                "buyer"
+              ]
+            },
             "description": "Público. Si vuelves a ejecutarlo con el mismo email devuelve 400 (email ya registrado)."
           }
         },
@@ -156,15 +281,38 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{sellerEmail}}\",\n  \"password\": \"{{password}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/auth/register/seller", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "register", "seller"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register/seller",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register",
+                "seller"
+              ]
+            },
             "description": "Público. El vendedor nace con sellerApproved=false: no podrá crear productos hasta que un admin lo verifique."
           }
         },
@@ -196,15 +344,38 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{sellerEmail2}}\",\n  \"password\": \"{{password}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/auth/register/seller", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "register", "seller"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register/seller",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register",
+                "seller"
+              ]
+            },
             "description": "Segundo vendedor: sirve para demostrar que una orden se divide en una sub-orden por vendedor."
           }
         },
@@ -225,15 +396,37 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{buyerEmail}}\",\n  \"password\": \"{{password}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "login"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
             "description": "Público. Guarda el accessToken en la variable buyerToken."
           }
         },
@@ -255,15 +448,37 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{sellerEmail}}\",\n  \"password\": \"{{password}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "login"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
             "description": "Público. Guarda el token del vendedor y también en {{token}} para las peticiones de vendedor."
           }
         }
@@ -290,15 +505,37 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "login"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
             "description": "Público. Requiere haber arrancado la app con BOOTSTRAP_ADMIN_EMAIL y BOOTSTRAP_ADMIN_PASSWORD la primera vez."
           }
         },
@@ -317,15 +554,46 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"approved\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/admin/sellers/{{sellerId}}/verify", "host": ["{{baseUrl}}"], "path": ["api", "v1", "admin", "sellers", "{{sellerId}}", "verify"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sellers/{{sellerId}}/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "sellers",
+                "{{sellerId}}",
+                "verify"
+              ]
+            },
             "description": "ADMIN. Sin esto el vendedor no puede publicar productos (400: 'seller account is not verified yet'). Ejecútalo también con {{seller2Id}} si quieres usar el segundo vendedor."
           }
         },
@@ -343,15 +611,46 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"approved\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/admin/sellers/{{seller2Id}}/verify", "host": ["{{baseUrl}}"], "path": ["api", "v1", "admin", "sellers", "{{seller2Id}}", "verify"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/sellers/{{seller2Id}}/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "sellers",
+                "{{seller2Id}}",
+                "verify"
+              ]
+            },
             "description": "ADMIN."
           }
         },
@@ -374,17 +673,42 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/products?status=PENDING_APPROVAL&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "products"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "products"
+              ],
               "query": [
-                { "key": "status", "value": "PENDING_APPROVAL" },
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "20" }
+                {
+                  "key": "status",
+                  "value": "PENDING_APPROVAL"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
               ]
             },
             "description": "ADMIN. Endpoint extra (bandeja de moderación). Toma el primer producto pendiente y guarda su id/slug."
@@ -405,15 +729,46 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"approved\": true\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/admin/products/{{productId}}/approval", "host": ["{{baseUrl}}"], "path": ["api", "v1", "admin", "products", "{{productId}}", "approval"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/products/{{productId}}/approval",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "products",
+                "{{productId}}",
+                "approval"
+              ]
+            },
             "description": "ADMIN. Sólo entonces el producto aparece en el catálogo público (GET /api/v1/products)."
           }
         }
@@ -442,17 +797,34 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/products?page=0&size=20&sort=createdAt,desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "products"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products"
+              ],
               "query": [
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "20" },
-                { "key": "sort", "value": "createdAt,desc" }
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "createdAt,desc"
+                }
               ]
             },
             "description": "PÚBLICO (sin token). Sólo muestra productos en estado ACTIVE."
@@ -472,10 +844,23 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/products/{{productSlug}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "products", "{{productSlug}}"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/{{productSlug}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "{{productSlug}}"
+              ]
+            },
             "description": "PÚBLICO. El campo stockQuantity que devuelve es el stock vendible real del ledger de inventario."
           }
         }
@@ -502,15 +887,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Audifonos Inalambricos Pro\",\n  \"description\": \"Cancelacion de ruido activa, 40h de bateria\",\n  \"price\": 149.99,\n  \"currencyCode\": \"USD\",\n  \"stockQuantity\": 25,\n  \"category\": \"Electronics\",\n  \"imageUrl\": \"https://storage.googleapis.com/mi-bucket/audifonos.jpg\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/products", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "products"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "products"
+              ]
+            },
             "description": "VENDEDOR. Requiere que un admin lo haya verificado antes. El stock inicial (25) se copia al ledger de inventario."
           }
         },
@@ -529,15 +943,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Teclado Mecanico RGB\",\n  \"description\": \"Switches rojos, layout ISO\",\n  \"price\": 89.50,\n  \"currencyCode\": \"USD\",\n  \"stockQuantity\": 3,\n  \"category\": \"Electronics\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/products", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "products"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "products"
+              ]
+            },
             "description": "VENDEDOR. Sólo 3 unidades: úsalo para demostrar el control de stock (409/400) en el carrito."
           }
         },
@@ -555,16 +998,38 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/seller/products?page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "seller", "products"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "products"
+              ],
               "query": [
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "20" }
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
               ]
             },
             "description": "VENDEDOR. Incluye los productos todavía pendientes de aprobación."
@@ -584,15 +1049,45 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Audifonos Inalambricos Pro v2\",\n  \"price\": 139.99,\n  \"description\": \"Version mejorada con estuche de carga\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "products", "{{productId}}"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "products",
+                "{{productId}}"
+              ]
+            },
             "description": "VENDEDOR. Nota: 'stockQuantity' se ignora aquí; el stock se cambia con POST /api/v1/seller/inventory/adjust. Si intentas editar un producto de OTRO vendedor devuelve 400 (BOLA)."
           }
         }
@@ -617,10 +1112,24 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/inventory/check/{{productId}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "inventory", "check", "{{productId}}"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/inventory/check/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "inventory",
+                "check",
+                "{{productId}}"
+              ]
+            },
             "description": "PÚBLICO. Devuelve availableQuantity, reservedQuantity y sellableQuantity."
           }
         },
@@ -638,15 +1147,45 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"quantityDelta\": -2,\n  \"reason\": \"2 unidades dañadas en bodega\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/inventory/adjust", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "inventory", "adjust"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/inventory/adjust",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "inventory",
+                "adjust"
+              ]
+            },
             "description": "VENDEDOR. Debes enviar SÓLO uno de los dos campos: quantityDelta (relativo) o physicalQuantity (recuento absoluto). Si mandas los dos, o ninguno, devuelve 400."
           }
         },
@@ -664,15 +1203,45 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"physicalQuantity\": 50,\n  \"reason\": \"Recuento fisico trimestral\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/inventory/adjust", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "inventory", "adjust"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/inventory/adjust",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "inventory",
+                "adjust"
+              ]
+            },
             "description": "VENDEDOR. Fija el stock físico en 50 unidades."
           }
         },
@@ -690,10 +1259,40 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/inventory?page=0&size=20", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "inventory"], "query": [{ "key": "page", "value": "0" }, { "key": "size", "value": "20" }] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/inventory?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "inventory"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
             "description": "VENDEDOR. Endpoint extra para revisar el stock propio."
           }
         },
@@ -712,16 +1311,39 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/inventory/audit?page=0&size=50",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "inventory", "audit"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "inventory",
+                "audit"
+              ],
               "query": [
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "50" }
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "50"
+                }
               ]
             },
             "description": "ADMIN. Ledger append-only de cada movimiento de stock (INITIAL, ADJUSTMENT, RESERVATION, SALE, CANCELLATION). Puedes filtrar con &productId={{productId}}"
@@ -746,10 +1368,29 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/cart", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
             "description": "COMPRADOR. Si no hay carrito, crea uno vacío automáticamente."
           }
         },
@@ -769,15 +1410,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 2\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/cart/items", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart", "items"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items"
+              ]
+            },
             "description": "COMPRADOR. Valida que el producto esté ACTIVE y con stock. Si pides más unidades que el stock devuelve 400."
           }
         },
@@ -795,15 +1465,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{product2Id}}\",\n  \"quantity\": 1\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/cart/items", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart", "items"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items"
+              ]
+            },
             "description": "COMPRADOR. Requiere haber aprobado el segundo producto como admin."
           }
         },
@@ -821,35 +1520,105 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"quantity\": 1\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/cart/items/{{productId}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart", "items", "{{productId}}"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart/items/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items",
+                "{{productId}}"
+              ]
+            },
             "description": "COMPRADOR. Endpoint extra. Cantidad 0 elimina la línea."
           }
         },
         {
           "name": "Quitar línea del carrito",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/cart/items/{{product2Id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart", "items", "{{product2Id}}"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart/items/{{product2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items",
+                "{{product2Id}}"
+              ]
+            },
             "description": "COMPRADOR. Endpoint extra."
           }
         },
         {
           "name": "Vaciar carrito",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/cart", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
             "description": "COMPRADOR. Endpoint extra. Vacía el carrito sin crear orden."
           }
         }
@@ -880,15 +1649,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"notes\": \"Entregar por la tarde\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/orders/checkout", "host": ["{{baseUrl}}"], "path": ["api", "v1", "orders", "checkout"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/orders/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "checkout"
+              ]
+            },
             "description": "COMPRADOR. Convierte el carrito en orden(es) por vendedor, reserva stock con bloqueo pesimista y cobra con la pasarela simulada. El carrito debe tener items."
           }
         },
@@ -906,16 +1704,38 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/buyer/orders?page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "buyer", "orders"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyer",
+                "orders"
+              ],
               "query": [
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "20" }
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
               ]
             },
             "description": "COMPRADOR. Sólo las órdenes propias."
@@ -924,10 +1744,31 @@
         {
           "name": "Detalle de una orden propia",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/buyer/orders/{{orderId}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "buyer", "orders", "{{orderId}}"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/buyer/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyer",
+                "orders",
+                "{{orderId}}"
+              ]
+            },
             "description": "COMPRADOR. Endpoint extra. Si la orden es de otro comprador devuelve 404 (BOLA)."
           }
         },
@@ -949,17 +1790,42 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/seller/orders?status=PROCESSING&page=0&size=20",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "seller", "orders"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "orders"
+              ],
               "query": [
-                { "key": "status", "value": "PROCESSING" },
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "20" }
+                {
+                  "key": "status",
+                  "value": "PROCESSING"
+                },
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
               ]
             },
             "description": "VENDEDOR. Sub-órdenes por despachar. Omite 'status' para ver todas las del vendedor."
@@ -980,15 +1846,46 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PATCH",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"trackingNumber\": \"TRK-9938472635\",\n  \"carrier\": \"DHL\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/orders/{{subOrderId}}/ship", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "orders", "{{subOrderId}}", "ship"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/orders/{{subOrderId}}/ship",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "orders",
+                "{{subOrderId}}",
+                "ship"
+              ]
+            },
             "description": "VENDEDOR. Sólo puede despachar sub-órdenes propias y en estado PROCESSING. Este paso es requisito para poder dejar una reseña (compra verificada)."
           }
         },
@@ -1006,17 +1903,42 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/admin/orders?page=0&size=20&sort=createdAt,desc",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "admin", "orders"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders"
+              ],
               "query": [
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "20" },
-                { "key": "sort", "value": "createdAt,desc" }
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "createdAt,desc"
+                }
               ]
             },
             "description": "ADMIN. Vista global con sub-órdenes, estados de despacho y referencias de pago."
@@ -1044,15 +1966,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"rating\": 5,\n  \"title\": \"Excelente calidad\",\n  \"comment\": \"La cancelacion de ruido funciona muy bien y la bateria dura toda la semana.\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/buyer/reviews", "host": ["{{baseUrl}}"], "path": ["api", "v1", "buyer", "reviews"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/buyer/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buyer",
+                "reviews"
+              ]
+            },
             "description": "COMPRADOR. Requisito: tener una sub-orden SHIPPED o DELIVERED de ese producto. Si no la tienes devuelve 400. Sólo una reseña por comprador y producto."
           }
         },
@@ -1072,16 +2023,32 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/v1/reviews/product/{{productId}}?page=0&size=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "reviews", "product", "{{productId}}"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "product",
+                "{{productId}}"
+              ],
               "query": [
-                { "key": "page", "value": "0" },
-                { "key": "size", "value": "10" }
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
               ]
             },
             "description": "PÚBLICO. Sólo reseñas visibles, con la nota media agregada."
@@ -1090,10 +2057,40 @@
         {
           "name": "Listar todas las reseñas (admin)",
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/admin/reviews?page=0&size=20", "host": ["{{baseUrl}}"], "path": ["api", "v1", "admin", "reviews"], "query": [{ "key": "page", "value": "0" }, { "key": "size", "value": "20" }] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews?page=0&size=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                }
+              ]
+            },
             "description": "ADMIN. Endpoint extra: incluye reseñas ocultas por moderación."
           }
         },
@@ -1111,10 +2108,31 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/admin/reviews/{{reviewId}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "admin", "reviews", "{{reviewId}}"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "reviews",
+                "{{reviewId}}"
+              ]
+            },
             "description": "ADMIN. Moderación: elimina la reseña indicada."
           }
         }
@@ -1137,10 +2155,23 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/admin/orders", "host": ["{{baseUrl}}"], "path": ["api", "v1", "admin", "orders"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders"
+              ]
+            },
             "description": "Demuestra que los endpoints protegidos rechazan peticiones anónimas."
           }
         },
@@ -1158,10 +2189,30 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/v1/admin/orders", "host": ["{{baseUrl}}"], "path": ["api", "v1", "admin", "orders"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "orders"
+              ]
+            },
             "description": "Un COMPRADOR intentando entrar al panel de administración: 403 con ProblemDetail RFC 7807."
           }
         },
@@ -1179,15 +2230,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{sellerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{sellerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Producto de prueba\",\n  \"price\": 10.00,\n  \"stockQuantity\": 5,\n  \"category\": \"Test\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/seller/products", "host": ["{{baseUrl}}"], "path": ["api", "v1", "seller", "products"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/seller/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "seller",
+                "products"
+              ]
+            },
             "description": "Si ejecutas esto ANTES de que el admin verifique al vendedor, devuelve 400 con el mensaje de cuenta no verificada."
           }
         },
@@ -1206,15 +2286,38 @@
             }
           ],
           "request": {
-            "auth": { "type": "noauth" },
+            "auth": {
+              "type": "noauth"
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"no-es-un-email\",\n  \"password\": \"123\"\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/auth/register/buyer", "host": ["{{baseUrl}}"], "path": ["api", "v1", "auth", "register", "buyer"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register/buyer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register",
+                "buyer"
+              ]
+            },
             "description": "Bean Validation: email inválido y contraseña corta. Respuesta RFC 7807 con el mapa invalidParams."
           }
         },
@@ -1232,15 +2335,44 @@
             }
           ],
           "request": {
-            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{buyerToken}}", "type": "string" }] },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{buyerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 9999\n}",
-              "options": { "raw": { "language": "json" } }
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
-            "url": { "raw": "{{baseUrl}}/api/v1/cart/items", "host": ["{{baseUrl}}"], "path": ["api", "v1", "cart", "items"] },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "items"
+              ]
+            },
             "description": "Demuestra el control de stock: no se puede agregar más de lo disponible."
           }
         }

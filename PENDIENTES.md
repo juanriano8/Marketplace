@@ -92,7 +92,7 @@ con mejor relación esfuerzo/impacto de todo el documento.
 
 | Requisito | Estado | Detalle |
 |---|---|---|
-| **Cero credenciales en el código** | ❌ **INCUMPLE** | `JWT_SECRET` con valor por defecto en `application.yml` · contraseña del admin en la colección de Postman |
+| **Cero credenciales en el código** | ✅ **Cumple** | `JWT_SECRET` obligatorio (sin valor por defecto) · contraseña del admin vacía en la colección de Postman |
 | **Google Secret Manager** | ⚠️ Parcial | Usamos variables de entorno del servicio, no Secret Manager |
 | **Seguridad cliente** | ❌ Falta | Sin CSP, sin sanitización, token en `localStorage` (expuesto a XSS), sin CSRF explícito |
 | **Cloud Armor + reCAPTCHA Enterprise** | ❌ Falta | Sin perímetro ni puntuación de riesgo |
@@ -129,7 +129,7 @@ con mejor relación esfuerzo/impacto de todo el documento.
 
 | # | Tarea | Esfuerzo |
 |---|---|---|
-| 1 | **Quitar credenciales del código**: `JWT_SECRET` fuera de `application.yml`; contraseña fuera de la colección de Postman | Bajo |
+| 1 | ✅ **Credenciales fuera del código**: `JWT_SECRET` obligatorio y `adminPassword` vacía en Postman | Hecho 2026-11-03 |
 | 2 | ✅ **`TROUBLESHOOTING.md`** creado (16 incidencias + 4 recientes) | Hecho 2026-11-03 |
 | 3 | ✅ **`DESIGN.md`** creado desde los tokens de Figma | Hecho 2026-11-03 |
 | 4 | ✅ **`UX_MAPPING.md`** creado (31 operaciones / 27 rutas) | Hecho 2026-11-03 |

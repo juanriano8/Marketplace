@@ -112,7 +112,7 @@ gcloud run deploy marketplace-api \
   --max-instances 2 \
   --timeout 60 \
   --port 8080 \
-  --set-env-vars "SPRING_PROFILES_ACTIVE=cloud,DB_HOST=136.112.91.42,DB_PORT=5432,DB_NAME=marketplace_db,DB_USER=postgres,DB_SSLMODE=require,DB_POOL_SIZE=5,DB_POOL_MIN_IDLE=1,JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970,JWT_EXPIRATION_MS=86400000,BOOTSTRAP_ADMIN_EMAIL=admin@marketplace.com,BOOTSTRAP_ADMIN_PASSWORD=Admin123."
+  --set-env-vars "SPRING_PROFILES_ACTIVE=cloud,DB_HOST=136.112.91.42,DB_PORT=5432,DB_NAME=marketplace_db,DB_USER=postgres,DB_SSLMODE=require,DB_POOL_SIZE=5,DB_POOL_MIN_IDLE=1,JWT_SECRET=<TU_JWT_SECRET>,JWT_EXPIRATION_MS=86400000,BOOTSTRAP_ADMIN_EMAIL=admin@marketplace.com,BOOTSTRAP_ADMIN_PASSWORD=Admin123."
 ```
 
 La primera vez te preguntará si quieres **crear un repositorio en Artifact Registry**: di que sí
@@ -219,7 +219,7 @@ Estas son **las que tu código realmente lee**, sacadas de `application.yml` y `
 | `DB_USER` | `postgres` | **Sí** |
 | `DB_PASSWORD` | *(la de tu `.env`)* | **Sí** |
 | `DB_SSLMODE` | `require` | Sí |
-| `JWT_SECRET` | `404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970` | Sí |
+| `JWT_SECRET` | `<TU_JWT_SECRET>` | Sí |
 | `JWT_EXPIRATION_MS` | `86400000` | Recomendada |
 | `BOOTSTRAP_ADMIN_EMAIL` | `admin@marketplace.com` | Opcional |
 | `BOOTSTRAP_ADMIN_PASSWORD` | *(la de tu `.env`)* | Opcional |
@@ -507,7 +507,7 @@ git clone https://github.com/juanriano8/Marketplace.git && cd Marketplace/backen
 gcloud run deploy marketplace-api --source . --region us-central1 \
   --allow-unauthenticated --memory 1Gi --cpu 1 --cpu-boost \
   --min-instances 0 --max-instances 2 --port 8080 \
-  --set-env-vars "SPRING_PROFILES_ACTIVE=cloud,DB_HOST=136.112.91.42,DB_PORT=5432,DB_NAME=marketplace_db,DB_USER=postgres,DB_SSLMODE=require,DB_POOL_SIZE=5,DB_POOL_MIN_IDLE=1,JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970,JWT_EXPIRATION_MS=86400000,BOOTSTRAP_ADMIN_EMAIL=admin@marketplace.com,BOOTSTRAP_ADMIN_PASSWORD=TU_PASSWORD"
+  --set-env-vars "SPRING_PROFILES_ACTIVE=cloud,DB_HOST=136.112.91.42,DB_PORT=5432,DB_NAME=marketplace_db,DB_USER=postgres,DB_SSLMODE=require,DB_POOL_SIZE=5,DB_POOL_MIN_IDLE=1,JWT_SECRET=<TU_JWT_SECRET>,JWT_EXPIRATION_MS=86400000,BOOTSTRAP_ADMIN_EMAIL=admin@marketplace.com,BOOTSTRAP_ADMIN_PASSWORD=TU_PASSWORD"
 
 # 4. Comprobar
 curl -s "$(gcloud run services describe marketplace-api --region us-central1 --format='value(status.url)')/actuator/health"

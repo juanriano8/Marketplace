@@ -22,7 +22,9 @@ import java.util.function.Function;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${app.jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
+    // Obligatorio: se define en backend/.env (local) y en las variables de Cloud Run.
+    // Sin JWT_SECRET la aplicacion falla al arrancar (fail-fast) en vez de usar un secreto conocido.
+    @Value("${app.jwt.secret}")
     private String jwtSecret;
 
     @Value("${app.jwt.expiration-ms:86400000}")
