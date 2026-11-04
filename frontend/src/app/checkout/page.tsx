@@ -7,7 +7,7 @@ import { apiFetch, errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Cart, CheckoutResponse } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
 import { StatusBadge, formatMoney } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 
@@ -178,11 +178,7 @@ function CheckoutContent() {
     <div>
       <PageHeader title="Confirmar compra" description="Revisa el pedido antes de pagar." />
 
-      {error && (
-        <div className="mb-4">
-          <ErrorBox>{error}</ErrorBox>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="card overflow-hidden lg:col-span-2">

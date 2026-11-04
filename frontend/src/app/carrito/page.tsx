@@ -6,7 +6,7 @@ import { apiFetch, errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Cart } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
 import { formatMoney } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 
@@ -121,11 +121,7 @@ function CartContent() {
         }
       />
 
-      {error && (
-        <div className="mb-4">
-          <ErrorBox>{error}</ErrorBox>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       {items.length === 0 ? (
         <EmptyState

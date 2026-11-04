@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Product } from '@/lib/types';
-import { EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
 import { formatMoney } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 const PAGE_SIZE = 9;
@@ -81,7 +81,7 @@ export default function CatalogPage() {
       )}
 
       {loading && <Loading />}
-      {error && <ErrorBox>{error}</ErrorBox>}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       {!loading && !error && products.length === 0 && (
         <EmptyState

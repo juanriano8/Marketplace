@@ -2,16 +2,17 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { errorMessage } from '@/lib/api';
-import { ErrorBox, Info } from '@/components/feedback';
+import { ErrorState, Info } from '@/components/feedback';
 import { homeForRole } from '@/components/RequireAuth';
 
 type Kind = 'buyer' | 'seller';
 
 export default function RegisterPage() {
   const { register } = useAuth();
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const [kind, setKind] = useState<Kind>('buyer');
   const [email, setEmail] = useState('');
@@ -73,7 +74,7 @@ export default function RegisterPage() {
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div>
             <label className="label" htmlFor="email">
               Correo electrónico
@@ -122,7 +123,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {error && <ErrorBox>{error}</ErrorBox>}
+          {error && <ErrorState message={error} onRetry={() => formRef.current?.requestSubmit()} />}
 
           {kind === 'seller' && (
             <Info>

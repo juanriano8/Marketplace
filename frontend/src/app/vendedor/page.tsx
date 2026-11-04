@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { CreateProductBody, Product } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorBox, Info, Loading, PageHeader, Warning } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Info, Loading, PageHeader, Warning } from '@/components/feedback';
 import { ProductForm } from '@/components/ProductForm';
 import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
 
@@ -154,11 +154,7 @@ function SellerCatalog() {
         </div>
       )}
 
-      {error && (
-        <div className="mb-4">
-          <ErrorBox>{error}</ErrorBox>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       {creating && (
         <div className="mb-6">

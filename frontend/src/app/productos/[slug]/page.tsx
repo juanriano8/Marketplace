@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiFetch, errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Product, ProductReviews, Review } from '@/lib/types';
-import { EmptyState, ErrorBox, Loading, Success } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, Success } from '@/components/feedback';
 import { Stars, formatDate, formatMoney } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 
@@ -103,7 +103,7 @@ export default function ProductDetailPage() {
   }
 
   if (loading) return <Loading />;
-  if (error) return <ErrorBox>{error}</ErrorBox>;
+  if (error) return <ErrorState message={error} onRetry={loadProduct} />;
   if (!product) {
     return (
       <EmptyState

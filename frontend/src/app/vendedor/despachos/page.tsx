@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { SubOrder, SubOrderStatus } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorBox, Loading, PageHeader, Success } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader, Success } from '@/components/feedback';
 import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
 
 const FILTERS: { value: SubOrderStatus | 'ALL'; label: string }[] = [
@@ -122,11 +122,7 @@ function Shipments() {
         </div>
       )}
 
-      {error && (
-        <div className="mb-4">
-          <ErrorBox>{error}</ErrorBox>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       {shipping && (
         <form onSubmit={submitShipment} className="card mb-6 p-5">

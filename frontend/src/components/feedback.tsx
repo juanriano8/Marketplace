@@ -27,6 +27,37 @@ export function ErrorBox({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Estado de error de una vista con acción de reintento.
+ * Se usa cuando falla la carga inicial de datos (no para errores de formulario).
+ */
+export function ErrorState({
+  message,
+  onRetry,
+  retryLabel = 'Reintentar',
+}: {
+  message: string;
+  onRetry?: () => void;
+  retryLabel?: string;
+}) {
+  return (
+    <div className="card border border-red-200 bg-red-50 p-6 text-center">
+      <p className="font-semibold text-red-800">No se pudo cargar la información</p>
+      <p className="mt-1 text-sm text-red-700">{message}</p>
+      {onRetry && (
+        <button type="button" className="btn btn-primary mt-4" onClick={onRetry}>
+          {retryLabel}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** Bloque de esqueleto para estados de carga. */
+export function Skeleton({ className = '' }: { className?: string }) {
+  return <div className={`animate-pulse rounded-lg bg-ink-100 ${className}`} />;
+}
+
 /** Aviso de advertencia. */
 export function Warning({ children }: { children: ReactNode }) {
   return (

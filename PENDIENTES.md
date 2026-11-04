@@ -55,24 +55,27 @@ reintento.** Verificado página por página:
 
 | Página | Carga | Vacío | Error | Reintento |
 |---|---|---|---|---|
-| `/` portada | ❌ | ❌ | ❌ | ❌ |
-| `/productos` | ✅ | ✅ | ✅ | ❌ |
-| `/productos/[slug]` | ✅ | ✅ | ✅ | ❌ |
-| `/login` | ✅ | ❌ | ✅ | ❌ |
-| `/registro` | ❌ | ❌ | ✅ | ❌ |
-| `/carrito` | ✅ | ✅ | ✅ | ❌ |
-| `/checkout` | ✅ | ✅ | ✅ | ❌ |
-| `/mis-compras` | ✅ | ✅ | ✅ | ❌ |
-| `/vendedor` | ✅ | ✅ | ✅ | ❌ |
-| `/vendedor/inventario` | ✅ | ✅ | ✅ | ❌ |
-| `/vendedor/despachos` | ✅ | ✅ | ✅ | ❌ |
-| `/admin` | ✅ | ✅ | ✅ | ❌ |
-| `/admin/vendedores` | ✅ | ✅ | ✅ | ❌ |
-| `/admin/ordenes` | ✅ | ✅ | ✅ | ❌ |
-| `/admin/inventario` | ✅ | ✅ | ✅ | ❌ |
-| **Total** | **13/15** | **12/15** | **14/15** | **0/15** 🔴 |
+| `/` portada | ✅ | ✅ | ✅ | ✅ |
+| `/productos` | ✅ | ✅ | ✅ | ✅ |
+| `/productos/[slug]` | ✅ | — | ✅ | ✅ |
+| `/login` | ✅ | — | ✅ | ✅ |
+| `/registro` | ✅ | — | ✅ | ✅ |
+| `/carrito` | ✅ | ✅ | ✅ | ✅ |
+| `/checkout` | ✅ | ✅ | ✅ | ✅ |
+| `/mis-compras` | ✅ | ✅ | ✅ | ✅ |
+| `/vendedor` | ✅ | ✅ | ✅ | ✅ |
+| `/vendedor/inventario` | ✅ | ✅ | ✅ | ✅ |
+| `/vendedor/despachos` | ✅ | ✅ | ✅ | ✅ |
+| `/admin` | ✅ | ✅ | ✅ | ✅ |
+| `/admin/vendedores` | ✅ | ✅ | ✅ | ✅ |
+| `/admin/ordenes` | ✅ | ✅ | ✅ | ✅ |
+| `/admin/inventario` | ✅ | ✅ | ✅ | ✅ |
+| **Total** | **15/15** | **13/15 + 2 N/A** | **15/15** | **15/15** ✅ |
 
-**El botón de reintento no existe en ninguna página.** Es el hueco más visible de la rúbrica.
+**Actualización 2026-11-03:** el reintento se añadió a las **15 vistas** con el componente
+`<ErrorState message onRetry={load}>`; `/` incorpora la sección «Productos destacados» con los 4
+estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el formulario
+(`requestSubmit`). `—` = estado vacío no aplica (formularios y detalle).
 
 ### 2.3 Archivos de contexto exigidos
 
@@ -130,8 +133,8 @@ con mejor relación esfuerzo/impacto de todo el documento.
 | 2 | ✅ **`TROUBLESHOOTING.md`** creado (16 incidencias + 4 recientes) | Hecho 2026-11-03 |
 | 3 | ✅ **`DESIGN.md`** creado desde los tokens de Figma | Hecho 2026-11-03 |
 | 4 | ✅ **`UX_MAPPING.md`** creado (31 operaciones / 27 rutas) | Hecho 2026-11-03 |
-| 5 | **Añadir reintento en los 4 estados** de las 15 páginas | Medio |
-| 6 | **Completar los estados** que faltan en `/`, `/registro` y `/login` | Bajo |
+| 5 | ✅ **Reintento en los 4 estados** de las 15 páginas (`<ErrorState onRetry>`) | Hecho 2026-11-03 |
+| 6 | ✅ **Estados completos** en `/`, `/registro` y `/login` (portada con datos + reintento) | Hecho 2026-11-03 |
 | 7 | **Seguridad del cliente**: CSP, sanitización, revisar el token en `localStorage` | Medio |
 
 ### 🟠 Alto (lo pide la rúbrica y se nota)

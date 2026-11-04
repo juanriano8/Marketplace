@@ -2,14 +2,15 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { errorMessage } from '@/lib/api';
-import { ErrorBox } from '@/components/feedback';
+import { ErrorState } from '@/components/feedback';
 import { homeForRole } from '@/components/RequireAuth';
 
 export default function LoginPage() {
   const { login, session, loading } = useAuth();
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,7 +46,7 @@ export default function LoginPage() {
           El sistema te llevará al panel que corresponde a tu rol.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+        <form ref={formRef} onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div>
             <label className="label" htmlFor="email">
               Correo electrónico
@@ -78,7 +79,7 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <ErrorBox>{error}</ErrorBox>}
+          {error && <ErrorState message={error} onRetry={() => formRef.current?.requestSubmit()} />}
 
           <button type="submit" className="btn btn-primary w-full" disabled={submitting}>
             {submitting ? 'Entrando…' : 'Entrar'}

@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { UserResponse } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorBox, Loading, PageHeader, Success, Warning } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader, Success, Warning } from '@/components/feedback';
 import { formatDate } from '@/components/ui';
 
 type Filter = 'pending' | 'approved' | 'all';
@@ -110,11 +110,7 @@ function SellerVerification() {
         </div>
       )}
 
-      {error && (
-        <div className="mb-4">
-          <ErrorBox>{error}</ErrorBox>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       {filter === 'pending' && sellers.length > 0 && (
         <div className="mb-4">

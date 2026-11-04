@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Order } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
 import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
 
 export default function AdminOrdersPage() {
@@ -65,11 +65,7 @@ function AllOrders() {
         }
       />
 
-      {error && (
-        <div className="mb-4">
-          <ErrorBox>{error}</ErrorBox>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
         <div className="card p-4">

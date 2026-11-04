@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { StockMovement } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
 import { StatusBadge, formatDate } from '@/components/ui';
 
 export default function AdminInventoryAuditPage() {
@@ -94,11 +94,7 @@ function Audit() {
         />
       </div>
 
-      {error && (
-        <div className="mb-4">
-          <ErrorBox>{error}</ErrorBox>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={load} />}
 
       {loading ? (
         <Loading />
