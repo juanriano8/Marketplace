@@ -111,7 +111,7 @@ En el formulario hay un desplegable **"O pega una URL externa"**, y el campo sig
 > **Nota:** el modelo de datos actual soporta **una sola imagen por producto** (`products.image_url`).
 > El dataset de referencia (`marketplace_datos.csv`, hoja `producto_imagenes`) contempla varias
 > imágenes por producto, pero eso requeriría una tabla nueva. Ver
-> [ANALISIS_CSV_VS_BD.md](../../../ANALISIS_CSV_VS_BD.md).
+> [ANALISIS_CSV_VS_BD.md](../../../../docs/datos/ANALISIS_CSV_VS_BD.md).
 
 ## Si prefieres que las sirva el backend
 

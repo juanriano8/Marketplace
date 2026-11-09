@@ -4,7 +4,7 @@ Guía para **ejecutar cada endpoint a mano** y demostrar que funciona. Cada paso
 autenticación, el código a pegar y el resultado que debes ver.
 
 > **Requisito:** el backend debe estar arrancado y respondiendo. Ver
-> [GUIA_ENTREGA.md](GUIA_ENTREGA.md). Comprueba con
+> [GUIA_ENTREGA.md](../operacion/GUIA_ENTREGA.md). Comprueba con
 > `curl.exe http://localhost:8080/actuator/health` y debe dar `{"status":"UP"}`.
 
 ## Índice
@@ -129,7 +129,7 @@ token a mano.
 **Qué demuestra:** que el servidor está vivo y conectado a la base de datos.
 
 > Si sale `Could not get response`, el backend está apagado. Vuelve a
-> [GUIA_ENTREGA.md](GUIA_ENTREGA.md#paso-2-levantar-el-backend).
+> [GUIA_ENTREGA.md](../operacion/GUIA_ENTREGA.md#paso-2-levantar-el-backend).
 
 ---
 
@@ -171,7 +171,7 @@ token a mano.
 **Códigos posibles:** `200` correcto, `400` falta un campo, `401` credenciales incorrectas.
 
 **Si da `401`:** la contraseña del `.env` no coincide con la de la base. Ver
-[GUIA_ENTREGA.md](GUIA_ENTREGA.md#el-login-del-administrador-da-401).
+[GUIA_ENTREGA.md](../operacion/GUIA_ENTREGA.md#el-login-del-administrador-da-401).
 
 ---
 

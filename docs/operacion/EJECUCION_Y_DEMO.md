@@ -6,7 +6,7 @@
 > Para la puesta en marcha actual consulta [ARRANQUE_RAPIDO.md](ARRANQUE_RAPIDO.md).
 
 **Marketplace API — Spring Boot 3.3.4 + Java 21 + PostgreSQL (Google Cloud SQL)**
-Proyecto: `backend/` · Documento técnico: [ESPECIFICACION_TECNICA.md](ESPECIFICACION_TECNICA.md)
+Proyecto: `backend/` · Documento técnico: [ESPECIFICACION_TECNICA.md](../arquitectura/ESPECIFICACION_TECNICA.md)
 
 > **✅ ESTADO ACTUAL: el proyecto está funcionando contra Cloud SQL.**
 > Compila, los **114 tests pasan** y los **30 endpoints fueron probados end-to-end** contra la
@@ -520,7 +520,7 @@ lo correcto en producción).
 
 1. Abre Postman → **Import**
 2. Selecciona el archivo:
-   [`backend/postman/Marketplace-API.postman_collection.json`](backend/postman/Marketplace-API.postman_collection.json)
+   [`backend/postman/Marketplace-API.postman_collection.json`](../../backend/postman/Marketplace-API.postman_collection.json)
 3. Aparecerán **10 carpetas con 44 peticiones**.
 
 ### 7.2 Cómo funciona la colección

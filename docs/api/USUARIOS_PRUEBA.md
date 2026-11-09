@@ -3,7 +3,7 @@
 > **anterior**, basada en Google Cloud SQL. Desde esa fecha el proyecto usa
 > **Neon** (PostgreSQL en la nube, plan gratuito) y la base se llama `neondb`.
 > Las referencias a `136.112.91.42` y a `marketplace_db` son **históricas**.
-> Para la puesta en marcha actual consulta [ARRANQUE_RAPIDO.md](ARRANQUE_RAPIDO.md).
+> Para la puesta en marcha actual consulta [ARRANQUE_RAPIDO.md](../operacion/ARRANQUE_RAPIDO.md).
 
 **Fecha de creación:** 26 de septiembre de 2026
 **Base de datos:** `marketplace_db` en Google Cloud SQL
@@ -232,7 +232,7 @@ contraseñas nuevas.
 teléfono, así que esos datos del CSV no se conservan: solo se usaron los correos.
 
 **El teléfono, la dirección y los datos de tienda tampoco se guardan.** No existen tablas para
-ellos. Ver el detalle completo en [ANALISIS_CSV_VS_BD.md](ANALISIS_CSV_VS_BD.md).
+ellos. Ver el detalle completo en [ANALISIS_CSV_VS_BD.md](../datos/ANALISIS_CSV_VS_BD.md).
 
 **Contraseñas simples a propósito.** Son cuentas de prueba sobre una base de datos de práctica. No
 las uses como referencia para producción.

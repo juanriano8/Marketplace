@@ -3,13 +3,13 @@
 > **anterior**, basada en Google Cloud SQL. Desde esa fecha el proyecto usa
 > **Neon** (PostgreSQL en la nube, plan gratuito) y la base se llama `neondb`.
 > Las referencias a `136.112.91.42` y a `marketplace_db` son **históricas**.
-> Para la puesta en marcha actual consulta [ARRANQUE_RAPIDO.md](ARRANQUE_RAPIDO.md).
+> Para la puesta en marcha actual consulta [ARRANQUE_RAPIDO.md](../operacion/ARRANQUE_RAPIDO.md).
 
 **Backend Spring Boot 3.3.4 · Java 21 · PostgreSQL (Cloud SQL) · Arquitectura Hexagonal**
 Conformidad con *«Especificación Técnica y Arquitectura del Sistema Marketplace Multi-Rol
 (Spring Boot + GCP) V2»*
 
-Guía de ejecución paso a paso: [EJECUCION_Y_DEMO.md](EJECUCION_Y_DEMO.md)
+Guía de ejecución paso a paso: [EJECUCION_Y_DEMO.md](../operacion/EJECUCION_Y_DEMO.md)
 
 ---
 
@@ -123,7 +123,7 @@ Las tres últimas filas se detallan en [§13](#13-limitaciones-conocidas-y-traba
 
 ## 3. Stack tecnológico implementado
 
-Definido en [`backend/build.gradle`](backend/build.gradle):
+Definido en [`backend/build.gradle`](../../backend/build.gradle):
 
 | Componente | Versión | Uso real en el código |
 |---|---|---|
@@ -668,13 +668,13 @@ Formato **RFC 7807 `ProblemDetail`** en todos los errores:
 
 | Archivo | Propósito |
 |---|---|
-| [`backend/application-cloud.yml`](backend/src/main/resources/application-cloud.yml) | Perfil Cloud SQL |
-| [`backend/.env.example`](backend/.env.example) | Plantilla de credenciales |
-| [`backend/run.ps1`](backend/run.ps1) | Arranque que lee `.env` y localiza el JDK 21 |
-| [`backend/Dockerfile`](backend/Dockerfile) | Imagen multi-etapa (formato Cloud Run) |
-| [`backend/docker-compose.yml`](backend/docker-compose.yml) | PostgreSQL local para la demo |
-| [`backend/postman/Marketplace-API.postman_collection.json`](backend/postman/Marketplace-API.postman_collection.json) | 44 peticiones en 10 carpetas con captura automática de tokens/IDs |
-| [`EJECUCION_Y_DEMO.md`](EJECUCION_Y_DEMO.md) | Guía de ejecución y demo |
+| [`backend/application-cloud.yml`](../../backend/src/main/resources/application-cloud.yml) | Perfil Cloud SQL |
+| [`backend/.env.example`](../../backend/.env.example) | Plantilla de credenciales |
+| [`backend/run.ps1`](../../backend/run.ps1) | Arranque que lee `.env` y localiza el JDK 21 |
+| [`backend/Dockerfile`](../../backend/Dockerfile) | Imagen multi-etapa (formato Cloud Run) |
+| [`backend/docker-compose.yml`](../../backend/docker-compose.yml) | PostgreSQL local para la demo |
+| [`backend/postman/Marketplace-API.postman_collection.json`](../../backend/postman/Marketplace-API.postman_collection.json) | 44 peticiones en 10 carpetas con captura automática de tokens/IDs |
+| [`EJECUCION_Y_DEMO.md`](../operacion/EJECUCION_Y_DEMO.md) | Guía de ejecución y demo |
 
 ---
 
@@ -741,7 +741,7 @@ ESCENARIO multi-vendedor:
 
 La colección incluye una carpeta **`09 - Pruebas de seguridad (RBAC)`** con 5 peticiones que
 verifican 401, 403, 400 por cuenta no verificada, validación de payload y control de stock. La
-secuencia completa (23 pasos) está en la [guía de ejecución](EJECUCION_Y_DEMO.md#8-orden-de-ejecución-de-la-demo).
+secuencia completa (23 pasos) está en la [guía de ejecución](../operacion/EJECUCION_Y_DEMO.md#8-orden-de-ejecución-de-la-demo).
 
 ---
 

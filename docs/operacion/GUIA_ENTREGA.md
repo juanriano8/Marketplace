@@ -14,10 +14,10 @@ es este.
 | Documento | Para qué |
 |---|---|
 | **GUIA_ENTREGA.md** (este) | Levantar backend y frontend |
-| [POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md) | Demostrar los endpoints uno por uno |
-| [ESPECIFICACION_TECNICA.md](ESPECIFICACION_TECNICA.md) | Arquitectura, modelo de datos, seguridad |
-| [frontend/README.md](frontend/README.md) | Detalle del panel web |
-| [PENDIENTES.md](PENDIENTES.md) | Qué queda por hacer |
+| [POSTMAN_DEMO_PASO_A_PASO.md](../api/POSTMAN_DEMO_PASO_A_PASO.md) | Demostrar los endpoints uno por uno |
+| [ESPECIFICACION_TECNICA.md](../arquitectura/ESPECIFICACION_TECNICA.md) | Arquitectura, modelo de datos, seguridad |
+| [frontend/README.md](../../frontend/README.md) | Detalle del panel web |
+| [PENDIENTES.md](../../PENDIENTES.md) | Qué queda por hacer |
 
 ---
 
@@ -285,7 +285,7 @@ Ejecútalo en orden el mismo día:
 - [ ] **Login del admin funciona** en <http://localhost:3000/login> con las credenciales del `.env`
 - [ ] **Hay productos en el catálogo**: abre <http://localhost:3000/productos>
 - [ ] **Postman preparado**: colección importada y `baseUrl` correcta
-      (ver [POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md))
+      (ver [POSTMAN_DEMO_PASO_A_PASO.md](../api/POSTMAN_DEMO_PASO_A_PASO.md))
 - [ ] **Puerto 8080 libre** antes de arrancar
 - [ ] **PostgreSQL local como respaldo** (opcional): `docker compose up -d` y probar
       `.\run.ps1 -Profile local`
@@ -412,5 +412,5 @@ npm run dev
 # 4. Abre http://localhost:3000 y entra con admin@marketplace.com
 ```
 
-Ya puedes seguir con **[POSTMAN_DEMO_PASO_A_PASO.md](POSTMAN_DEMO_PASO_A_PASO.md)** para demostrar
+Ya puedes seguir con **[POSTMAN_DEMO_PASO_A_PASO.md](../api/POSTMAN_DEMO_PASO_A_PASO.md)** para demostrar
 los endpoints uno por uno.

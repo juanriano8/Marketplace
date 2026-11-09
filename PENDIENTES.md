@@ -29,7 +29,7 @@
 | **Diseño** | ✅ Paleta «Origen» **aplicada** + design system de Stitch | `globals.css` con tokens y componentes |
 | **Stitch** | ✅ **Conectado** (CLI) y design system extraído | 1 pantalla móvil + `designMd` de 10,8 KB en `design/stitch-design-md.md` |
 | **NotebookLM** | ✅ Cuaderno OWASP configurado | MCP conectado (Anexo B) |
-| **Documentación** | ✅ 18 documentos | + `TROUBLESHOOTING.md`, `DESIGN.md`, `UX_MAPPING.md` |
+| **Documentación** | ✅ 19 documentos organizados en `docs/` (3 en la raíz) | + `TROUBLESHOOTING.md`, `DESIGN.md`, `UX_MAPPING.md` |
 | **Backup de la base** | ⚠️ Solo existe en el **otro PC** | `backup_marketplace_2026-11-03.sql` (96 KB), no restaurado en Neon |
 
 **Este es el activo.** Lo que sigue es lo que falta para la rúbrica.
@@ -120,7 +120,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | **NotebookLM MCP** | ✅ **Configurado** | `notebooklm-mcp` autenticado con cookies de Firefox; cuaderno OWASP en Anexo B |
 | **Stitch MCP** | ✅ **Configurado** | `serverUrl` + API key; proyecto «Marketplace» visible (Anexo B) |
 | Skills `react-components` / `stitch-loop` | ⏸️ | Aún no usadas (Stitch tiene `upload_design_md` / `build_site`) |
-| `TROUBLESHOOTING.md` | ✅ **Creado** | Ver [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
+| `TROUBLESHOOTING.md` | ✅ **Creado** | Ver [TROUBLESHOOTING.md](docs/operacion/TROUBLESHOOTING.md) |
 
 ---
 
@@ -167,7 +167,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | 20 | `.gitignore` en la raíz | ✅ Hecho | — |
 | 21 | Backup de la base antes de que expire el trial | ✅ Hecho | — |
 | 22 | Tag `entrega-v1` y rama `rediseno-frontend` (los commits los hace el usuario) | ❌ Pendiente | Bajo |
-| 23 | Consolidar los 18 documentos (hay solape entre guías) | ❌ Pendiente | Medio |
+| 23 | Consolidar los 19 documentos (hay solape entre guías; ya están agrupados en `docs/`) | ❌ Pendiente | Medio |
 | 24 | Revocar el token de Figma **y la API key de Stitch** expuestos en el chat | ❌ Pendiente | Bajo |
 
 ---
@@ -220,7 +220,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 
 ## Anexo A · Incidencias (ya volcadas a `TROUBLESHOOTING.md`)
 
-> El listado completo, con fecha y formato exigido, está en [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+> El listado completo, con fecha y formato exigido, está en [TROUBLESHOOTING.md](docs/operacion/TROUBLESHOOTING.md).
 > Se mantiene aquí como referencia histórica.
 
 Formato: `[Fecha] | [Capa] | [Descripción del Error] | [Solución Aplicada]`.

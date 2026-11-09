@@ -97,7 +97,7 @@ npm run dev
 | Vendedor | `diego.herrera3@marketplace.com` | `Vendedor123!` |
 | Comprador | `tomas.rodriguez1@marketplace.com` | `Comprador123!` |
 
-Lista completa en [USUARIOS_PRUEBA.md](USUARIOS_PRUEBA.md).
+Lista completa en [USUARIOS_PRUEBA.md](docs/api/USUARIOS_PRUEBA.md).
 
 ### Pendiente de seguridad
 
@@ -187,13 +187,13 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 | **Flyway** | `V1` aplicada en Neon; arranque real verificado |
 | **Diseño** | Paleta «Origen» + design system de Stitch en `globals.css` |
 | **4 estados de UI** | 15/15 páginas con carga / vacío / error / **reintento** |
-| **Documentación** | 18 documentos, incluidos `DESIGN.md`, `UX_MAPPING.md`, `TROUBLESHOOTING.md` |
+| **Documentación** | 19 documentos (3 en la raíz + 16 en `docs/`), incluidos `DESIGN.md`, `UX_MAPPING.md`, `TROUBLESHOOTING.md` |
 
 ### Números clave
 
 - 15 controladores · 32 operaciones · 9 clases de test · **121 tests**
 - 15 páginas · 6 componentes · ~3.700 líneas de TSX
-- 18 documentos en la raíz
+- 19 documentos: 3 en la raíz y 16 en `docs/`
 
 ---
 
@@ -219,7 +219,7 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 | 9 | Notificaciones | 1 día |
 | 10 | Ranking con decaimiento temporal | 3 h |
 | 11 | Adoptar Shadcn UI o justificar `ui.tsx` | 4 h |
-| 12 | Consolidar los 18 documentos (hay solape) | 3 h |
+| 12 | Consolidar los 19 documentos (hay solape; ya están agrupados en `docs/`) | 3 h |
 
 ### 🟢 Higiene
 
@@ -264,14 +264,23 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 ## 10. Mapa de archivos
 
 ### Raíz
-`README.md` (entrada) · `ARRANQUE_RAPIDO.md` (**el operativo, al día**) · `CONTEXTO.md` (este) ·
-`PENDIENTES.md` · `TROUBLESHOOTING.md` · `DESIGN.md` · `UX_MAPPING.md` · `ESPECIFICACION_TECNICA.md` ·
-`GUIA_ENTREGA.md` · `EJECUCION_Y_DEMO.md` · `POSTMAN_DEMO_PASO_A_PASO.md` · `USUARIOS_PRUEBA.md` ·
-`GUIA_OTRO_PC.md` · `GUIA_OTRO_PC_LINUX.md` · `DESPLIEGUE_CLOUD_RUN.md` · `PLAN_REDISENO.md` ·
-`ANALISIS_CSV_VS_BD.md` · `GUIA_POSTMAN_MANUAL.md` · `task.md`
+**Solo tres documentos:** `README.md` (entrada) · `CONTEXTO.md` (este) · `PENDIENTES.md`
+(estado y tareas).
 
-> Los 7 documentos con aviso *«Nota de vigencia»* describen la infraestructura **anterior**
-> (Cloud SQL). Son históricos; lo operativo está en `ARRANQUE_RAPIDO.md`.
+### Documentación (`docs/`)
+Índice completo en `docs/README.md`.
+
+- `docs/operacion/` — `ARRANQUE_RAPIDO.md` (**el operativo, al día**), `TROUBLESHOOTING.md`,
+  `GUIA_ENTREGA.md`, `EJECUCION_Y_DEMO.md`, `GUIA_OTRO_PC.md`, `GUIA_OTRO_PC_LINUX.md`,
+  `DESPLIEGUE_CLOUD_RUN.md`.
+- `docs/api/` — `POSTMAN_DEMO_PASO_A_PASO.md`, `GUIA_POSTMAN_MANUAL.md`, `USUARIOS_PRUEBA.md`.
+- `docs/arquitectura/` — `ESPECIFICACION_TECNICA.md`.
+- `docs/diseno/` — `DESIGN.md`, `UX_MAPPING.md`, `PLAN_REDISENO.md`.
+- `docs/datos/` — `ANALISIS_CSV_VS_BD.md` y `marketplace_datos.csv`.
+- `docs/referencia/` — PDF y `.txt` de la especificación original, `task.md`.
+
+> Los documentos con aviso *«Nota de vigencia»* describen la infraestructura **anterior**
+> (Cloud SQL). Son históricos; lo operativo está en `docs/operacion/ARRANQUE_RAPIDO.md`.
 
 ### Backend (`backend/`)
 - `src/main/java/com/marketplace/api/modules/{auth,user,admin,product,inventory,order,review,payment}`
@@ -304,7 +313,7 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 
 1. **Comprobar el estado**: `git log --oneline -3` y abrir <http://localhost:3000>.
    Si los servidores no están corriendo: los 3 comandos del punto 3.
-2. **Leer** `ARRANQUE_RAPIDO.md` (operativo) y este `CONTEXTO.md`.
+2. **Leer** `docs/operacion/ARRANQUE_RAPIDO.md` (operativo) y este `CONTEXTO.md`.
 3. **Revisar** `PENDIENTES.md` → sección 7 de este documento.
 4. **Decidir la siguiente tarea**:
    - Si hay **pantallas nuevas en Stitch** → implementarlas (leerlas con los comandos del punto 5).
@@ -320,5 +329,6 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 ## 12. Frase para retomar
 
 > «El proyecto está en `C:\Users\sebas\Desktop\marketplace\fullstack`, commit `d351655`.
-> Backend y panel funcionando contra Neon. Lee `CONTEXTO.md` y `ARRANQUE_RAPIDO.md`
-> antes de tocar nada. Lo que falta está en la sección 7 de `CONTEXTO.md`.»
+> Backend y panel funcionando contra Neon. Lee `CONTEXTO.md` y
+> `docs/operacion/ARRANQUE_RAPIDO.md` antes de tocar nada. Lo que falta está en la
+> sección 7 de `CONTEXTO.md`.»

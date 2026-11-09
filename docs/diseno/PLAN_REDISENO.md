@@ -217,7 +217,7 @@ generar.
 
 ### 5.1 Qué le falta al esquema actual
 
-Hoy hay **10 tablas**. Según el análisis del dataset ([ANALISIS_CSV_VS_BD.md](ANALISIS_CSV_VS_BD.md)),
+Hoy hay **10 tablas**. Según el análisis del dataset ([ANALISIS_CSV_VS_BD.md](../datos/ANALISIS_CSV_VS_BD.md)),
 la especificación pide cosas que **no existen**:
 
 | Falta | Impacto |
@@ -257,7 +257,7 @@ proveedor). Todo lo demás sigue igual.
 ### 5.4 Si hay que re-desplegar
 
 Cloud Run + Artifact Registry se recrean con lo que ya está documentado en
-[DESPLIEGUE_CLOUD_RUN.md](DESPLIEGUE_CLOUD_RUN.md). Los dos tropiezos que ya conoces (permisos de la
+[DESPLIEGUE_CLOUD_RUN.md](../operacion/DESPLIEGUE_CLOUD_RUN.md). Los dos tropiezos que ya conoces (permisos de la
 cuenta de servicio y la contraseña) están documentados con su solución.
 
 ---

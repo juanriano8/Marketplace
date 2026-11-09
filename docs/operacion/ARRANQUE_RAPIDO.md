@@ -114,7 +114,7 @@ Batería completa de verificación (27 endpoints, 39 comprobaciones):
 | **Vendedores** (5) | `diego.herrera3@`, `jorge.ramirez4@`, `santiago.flores9@`, `daniel.herrera17@`, `andres.medina21@marketplace.com` | `Vendedor123!` |
 | **Compradores** (10) | `tomas.rodriguez1@`, `veronica.medina2@`, … `alejandra.rojas15@marketplace.com` | `Comprador123!` |
 
-Detalle completo en [USUARIOS_PRUEBA.md](USUARIOS_PRUEBA.md).
+Detalle completo en [USUARIOS_PRUEBA.md](../api/USUARIOS_PRUEBA.md).
 
 > **Los vendedores deben estar verificados** por el administrador antes de publicar
 > productos. Los que siembra `tools/seed-users.ps1` ya salen verificados.

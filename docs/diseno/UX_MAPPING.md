@@ -117,7 +117,7 @@ Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-80579
 | `/admin/inventario` | skeleton | «Sin movimientos» | sí |
 
 > El **botón «Reintentar»** debe repetir la misma petición que falló. Es el hueco más visible de la
-> rúbrica ([PENDIENTES.md §2.2](PENDIENTES.md#L51)).
+> rúbrica ([PENDIENTES.md §2.2](../../PENDIENTES.md#L51)).
 
 ## 9. Códigos de error
 

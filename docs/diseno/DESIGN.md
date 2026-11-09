@@ -1,8 +1,8 @@
 # DESIGN.md — Sistema de diseño del Marketplace
 
 **Fuente de verdad visual:** Figma «Origen» → tokens extraídos en
-[design/tokens-origen.css](design/tokens-origen.css) (849 nodos, 2026-10-09).
-**Reglas de seguridad/UX:** [design/notebooklm/owasp-frontend.md](design/notebooklm/owasp-frontend.md).
+[design/tokens-origen.css](../../design/tokens-origen.css) (849 nodos, 2026-10-09).
+**Reglas de seguridad/UX:** [design/notebooklm/owasp-frontend.md](../../design/notebooklm/owasp-frontend.md).
 **Implementación:** `frontend/src/app/globals.css` (bloque `@theme`) + `frontend/src/components/ui.tsx`.
 
 > Este documento es el contrato visual. Si un color, radio o tamaño no está aquí, no debería
@@ -169,7 +169,7 @@ Gutter de grid: 16 px. Padding de tarjeta: 12–16 px.
 | **Error** | Mensaje claro + **botón «Reintentar»** que vuelve a lanzar el fetch |
 
 > El botón de reintento es el hueco más visible de la rúbrica
-> ([PENDIENTES.md §2.2](PENDIENTES.md#L51)). Debe existir en **todas** las vistas.
+> ([PENDIENTES.md §2.2](../../PENDIENTES.md#L51)). Debe existir en **todas** las vistas.
 
 ---
 

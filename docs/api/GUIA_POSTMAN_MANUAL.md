@@ -198,7 +198,7 @@ Mismo cuerpo que el comprador, cambiando el email.
 | `401` | Credenciales incorrectas |
 
 > **Error típico:** si el admin da `401` con la contraseña del `.env`, es porque el administrador
-> se creó con otra contraseña. Ver §10.3.1 de [EJECUCION_Y_DEMO.md](EJECUCION_Y_DEMO.md).
+> se creó con otra contraseña. Ver §10.3.1 de [EJECUCION_Y_DEMO.md](../operacion/EJECUCION_Y_DEMO.md).
 
 ---
 

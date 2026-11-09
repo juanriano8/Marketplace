@@ -361,7 +361,7 @@ curl -s -X POST http://localhost:8080/api/v1/auth/login \
 | Vendedor | `diego.herrera3@marketplace.com` | `Vendedor123!` |
 | Comprador | `tomas.rodriguez1@marketplace.com` | `Comprador123!` |
 
-Lista completa en [USUARIOS_PRUEBA.md](USUARIOS_PRUEBA.md).
+Lista completa en [USUARIOS_PRUEBA.md](../api/USUARIOS_PRUEBA.md).
 
 ---
 

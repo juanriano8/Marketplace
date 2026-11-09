@@ -1,7 +1,7 @@
 # Análisis: `marketplace_datos.csv` frente a las tablas de Google Cloud
 
 **Fecha:** 26 de septiembre de 2026
-**Archivo analizado:** `marketplace_datos.csv` (50.302 bytes, en la raíz del proyecto)
+**Archivo analizado:** `marketplace_datos.csv` (50.302 bytes, en `docs/datos/`)
 **Base de datos:** `marketplace_db` en Google Cloud SQL (PostgreSQL 18.6)
 
 ---
@@ -163,7 +163,7 @@ corresponde cada envío, y el Excel no tiene esa información.
 
 > **Este fue el bloqueo real:** los hashes de relleno no permiten iniciar sesión. Se solucionó
 > creando las cuentas por la API con contraseñas nuevas (ver
-> [USUARIOS_PRUEBA.md](USUARIOS_PRUEBA.md)), reutilizando los correos y nombres del Excel.
+> [USUARIOS_PRUEBA.md](../api/USUARIOS_PRUEBA.md)), reutilizando los correos y nombres del Excel.
 
 #### `pedidos` (40 filas) → `orders`
 
@@ -284,7 +284,7 @@ Si vas a cargar los datos, ten en cuenta estas incompatibilidades de modelo:
 1. **No intentes cargar el dataset completo.** El 30 % no tiene tabla destino y otro 40 % requiere
    transformaciones que perderían datos.
 2. **Usa los usuarios del dataset** (ya hecho): se crearon 15 cuentas con los correos y nombres
-   reales, con contraseñas nuevas. Ver [USUARIOS_PRUEBA.md](USUARIOS_PRUEBA.md).
+   reales, con contraseñas nuevas. Ver [USUARIOS_PRUEBA.md](../api/USUARIOS_PRUEBA.md).
 3. **Para los productos, usa la hoja `productos`** con la opción A (por API), que mantiene la
    coherencia del inventario.
 4. **Si la entrega exige el modelo de datos del dataset** (con marcas, direcciones, cupones,
