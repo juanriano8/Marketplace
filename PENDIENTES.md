@@ -26,6 +26,7 @@
 | **Despliegue** Cloud Run | ✅ Activo (imagen 2026-10-05) | `{"status":"UP"}`; pendiente redesplegar cambios |
 | **Frontend** Next.js 16 / Tailwind 4 / TS | ✅ 15 páginas con **4 estados + reintento** | `tsc --noEmit` sin errores |
 | **Reglas de negocio** | ✅ Verificadas | Antisobreventa (400 + ledger), multi-vendedor (350.00 USD), BOLA (400) |
+| **Rate limiting** | ✅ Bucket4j integrado | 60 anónimo · 600 autenticado · 30 auth por minuto · `429` + `Retry-After` |
 | **Diseño** | ✅ Figma «Origen» + `DESIGN.md` | 849 nodos → `design/tokens-origen.css` |
 | **Stitch** | ✅ Proyecto «Marketplace» + 1 pantalla | MCP conectado (Anexo B) |
 | **NotebookLM** | ✅ Cuaderno OWASP configurado | MCP conectado (Anexo B) |
@@ -111,7 +112,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | Ranking con decaimiento temporal | ⏸️ No aplica al dominio |
 | *Write-behind* para reputación por lotes | ⏸️ Aplicable: los ratings de vendedor se calculan en consulta |
 | Notificaciones en Firestore | ⏸️ No existe (equivalente: tabla `notifications`) |
-| Redis para presencia / rate limit / caché | ❌ Bucket4j declarado y **no integrado** |
+| Redis para presencia / rate limit / caché | ⚠️ **Bucket4j integrado** (60/600/30 req/min); Redis sigue sin integrar |
 
 ### 2.6 Herramientas de la rúbrica
 
@@ -143,7 +144,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | # | Tarea | Estado | Esfuerzo |
 |---|---|---|---|
 | 8 | Secret Manager para las credenciales del backend | ❌ Pendiente | Medio |
-| 9 | Bucket4j: rate limiting real por rol | ❌ Pendiente | Medio |
+| 9 | Bucket4j: rate limiting real por rol | ✅ Hecho | — |
 | 10 | Librería de componentes: adoptar Shadcn UI o justificar `ui.tsx` | ❌ Pendiente | Medio |
 | 11 | Cloud Armor + reCAPTCHA Enterprise en login/registro | ❌ Pendiente | Alto |
 | 12 | Endpoint `DELIVERED` (`PATCH /seller/orders/{id}/deliver`) | ✅ Hecho | — |
@@ -190,15 +191,14 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 
 | Orden | Tarea | Estado |
 |---|---|---|
-| 1 | #9 Bucket4j (rate limiting) | ❌ |
-| 2 | #14 Flyway: probar arranque y corregir si falla `validate` | ⚠️ |
-| 3 | #13 Caché de catálogo | ❌ |
-| 4 | #7 Sanitización + token fuera de `localStorage` | ⚠️ |
-| 5 | #22 Tag/branch + push | ❌ |
-| 6 | #23 Consolidar documentos | ❌ |
-| 7 | #8 / #11 Secret Manager + Cloud Armor | ❌ (GCP) |
-| 8 | #15 Reorganizar la base | ❌ |
-| 9 | #19 Rediseño (Stitch → código) | ⚠️ |
+| 1 | #14 Flyway: probar arranque y corregir si falla `validate` | ⚠️ |
+| 2 | #13 Caché de catálogo | ❌ |
+| 3 | #7 Sanitización + token fuera de `localStorage` | ⚠️ |
+| 4 | #22 Tag/branch + push | ❌ |
+| 5 | #23 Consolidar documentos | ❌ |
+| 6 | #8 / #11 Secret Manager + Cloud Armor | ❌ (GCP) |
+| 7 | #15 Reorganizar la base | ❌ |
+| 8 | #19 Rediseño (Stitch → código) | ⚠️ |
 
 ---
 
@@ -381,7 +381,7 @@ sha256: c1c9ce078a4ae4cd621c31f9b46911127dbc938063befcd8b5a568b6b8b6c477
 | Bloque | Hechos | Pendientes |
 |---|---|---|
 | 🔴 Bloqueantes | **6/7** | 1 (seguridad del cliente, parcial) |
-| 🟠 Alto | **1/6** | 5 |
+| 🟠 Alto | **2/6** | 4 |
 | 🟡 Medio | **0/6** | 5 pendientes + 1 en progreso (Flyway) |
 | 🟢 Higiene | **2/5** | 3 |
 
