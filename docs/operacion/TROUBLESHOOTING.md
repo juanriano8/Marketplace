@@ -50,6 +50,8 @@ Estas se detectaron al verificar el despliegue y configurar las herramientas de 
 | 2026-11-03 | Google Cloud | `doctor` de Stitch: `403 — Stitch API has not been used in project` | La API `stitch.googleapis.com` estaba deshabilitada; se habilitó con `gcloud services enable` |
 | 2026-11-03 | NotebookLM | `notebooklm login` fallaba con `Executable doesn't exist … chrome-linux64/chrome` | La descarga de Chromium (191 MB) se cortaba por un pre-flight de 300 s. Se usó `notebooklm login --browser-cookies firefox` (sin navegador propio) |
 | 2026-11-03 | Google Cloud | `gcloud sql export sql` devolvía `409 The instance or operation is not in an appropriate state` | La operación de arranque seguía `RUNNING`; se esperó a que terminara antes de exportar |
+| 2026-11-09 | Google Cloud | Cloud Run no arrancaba **ningún** contenedor en `us-central1`: `HealthCheckContainerError` tras 4 minutos, sin logs del contenedor. Fallaba incluso la imagen oficial `cloudrun/container/hello` | Se descartó la red (Cloud Build alcanza Neon: `TCP_OK`) y el código (`next build` y la app local funcionan). Era la **región**: en `us-east1` arranca sin problema. Los servicios `marketplace-api` y `marketplace-web` se desplegaron en `us-east1`, más cerca además de Neon (`us-east-1`) |
+| 2026-11-09 | Google Cloud | `Flyway` abortaba al migrar a Neon con `role "cloudsqlsuperuser" does not exist` (SQLState 42704) | El `V1` venía de un `pg_dump` de Cloud SQL con un `GRANT` a ese rol, que solo existe allí. Se eliminó la sentencia del `.sql` |
 
 ---
 

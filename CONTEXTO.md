@@ -126,11 +126,32 @@ Lista completa en [USUARIOS_PRUEBA.md](docs/api/USUARIOS_PRUEBA.md).
 **Neon no necesita encender/apagar nada** y **no requiere autorizar IPs** (a diferencia de
 Cloud SQL). Eso elimina el `0.0.0.0/0` que había antes.
 
-### Render + Vercel (pendiente)
+### Cloud Run — **DESPLEGADO** (2026-11-09)
 
-El despliegue objetivo es **Vercel → Render → Neon**, con las imágenes en **Neon Object Storage**.
-Neon ya está listo; faltan las cuentas de Render/Vercel y conectar el repositorio. Guía:
-`docs/operacion/DESPLIEGUE_RENDER_VERCEL.md`.
+| Servicio | Región | URL pública | Estado |
+|---|---|---|---|
+| `marketplace-api` | **us-east1** | `https://marketplace-api-805790031718.us-east1.run.app` | ✅ health `UP`, catálogo, login |
+| `marketplace-web` | **us-east1** | `https://marketplace-web-805790031718.us-east1.run.app` | ✅ panel, proxy BFF, cookies |
+
+- Ambas con `min-instances 1` (sin arranque en frío) y `max-instances 2`.
+- Imágenes: `backend/Dockerfile` (multi-etapa) y `frontend/Dockerfile` (salida *standalone*).
+- **`us-central1` está roto para Cloud Run**: no arranca **ningún** contenedor, ni siquiera la
+  imagen oficial `us-docker.pkg.dev/cloudrun/container/hello`. Se probó en `us-east1` y
+  `europe-west1` y funciona al instante. Por eso los servicios viven en `us-east1`, que además
+  está más cerca de Neon (`us-east-1`).
+- El servicio **antiguo** `marketplace-api` de `us-central1` sigue existiendo y responde **500**
+  (apunta a la Cloud SQL apagada). Es duplicado: se puede borrar.
+
+> ⚠️ **Coste.** Con `min-instances 1` en los dos servicios, 24/7 son
+> `2 × 1 vCPU × 730 h × 3600 = 5.256.000 vCPU-s` frente a los **180.000 gratuitos** →
+> **≈ $127/mes**. Para la demo (8 h) entra en la capa gratuita. Para dejarlo barato:
+> `gcloud run services update <servicio> --min-instances 0 --region us-east1`.
+
+### Alternativa sin Google Cloud: Render + Vercel
+
+El `render.yaml` ya declara los dos servicios y `docs/operacion/DESPLIEGUE_RENDER_VERCEL.md`
+tiene la guía. Sirve si se prefiere no usar GCP; el panel es idéntico.
+
 
 ### Stitch (herramienta de diseño)
 
