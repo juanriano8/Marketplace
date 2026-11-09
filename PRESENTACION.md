@@ -123,9 +123,24 @@ Administrador  admin@marketplace.com                 Admin123.
 1. Abre el panel → aterriza en la portada.
 2. Entra en **Catálogo**.
 3. **Qué destacar:**
+   - **15 productos, cada uno con su fotografía**, repartidos en 5 categorías y 5 vendedores.
    - Buscador, filtros por categoría, orden y paginación funcionando.
    - Cada tarjeta muestra **chip de stock** (Disponible / Últimas uds. / Agotado) con los colores del diseño.
    - Los datos vienen de Neon (base real, en la nube).
+   - Las **imágenes las sirve el propio panel**, no un servicio externo.
+
+**Catálogo sembrado** (3 productos por vendedor):
+
+| Categoría | Productos | Vendedor |
+|---|---|---|
+| **Electrónica** | Multímetro Digital RMS · Cámara Térmica Mini · Estación de Soldadura | `diego.herrera3@` |
+| **Herramientas** | Atornillador Brushless 18V · Medidor Láser 60m · Engrapadora Neumática | `jorge.ramirez4@` |
+| **Oficina** | Silla Ergonómica · Teclado Mecánico RGB · Audífonos con Cancelación | `santiago.flores9@` |
+| **Materiales** | Cable Cobre 100m · Cinta Aislante x10 · Tubería PVC 2" | `daniel.herrera17@` |
+| **Tecnología** | Laptop 14" i5 · Monitor 27" QHD · Mouse Inalámbrico | `andres.medina21@` |
+
+> Hay **tres productos con stock bajo o cero** a propósito, para que se vean los tres chips:
+> *Cámara Térmica* (8), *Audífonos* (2 → «Últimas uds.») y *Tubería PVC* (0 → «Agotado»).
 
 ### 4.2 Los 4 estados obligatorios — 2 min ⭐
 
