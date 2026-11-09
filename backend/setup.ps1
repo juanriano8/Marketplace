@@ -71,21 +71,20 @@ if (Test-Path $envFile) {
 
     $content = Get-Content $exampleFile -Raw
 
-    # Valores por defecto del proyecto
-    $content = $content -replace '(?m)^DB_HOST=.*$',        'DB_HOST=136.112.91.42'
-    $content = $content -replace '(?m)^DB_NAME=.*$',        'DB_NAME=marketplace_db'
-    $content = $content -replace '(?m)^DB_USER=.*$',        'DB_USER=postgres'
-    $content = $content -replace '(?m)^SPRING_PROFILES_ACTIVE=.*$', 'SPRING_PROFILES_ACTIVE=cloud'
+    # La plantilla (.env.example) ya trae los valores de Neon correctos, asi que
+    # se copia tal cual. No se fuerzan valores aqui: si cambia el proveedor de
+    # base de datos, se cambia en .env.example y este script sigue funcionando.
 
     Set-Content -Path $envFile -Value $content -Encoding UTF8
     Write-Host "  [OK] Creado $envFile" -ForegroundColor Green
-    Write-Host "       Ya viene con el host, la base y el usuario correctos." -ForegroundColor Gray
-    Write-Host "  [ACCION] Abre el archivo y pon tu contraseña en DB_PASSWORD:" -ForegroundColor Yellow
+    Write-Host "  [ACCION] Abre el archivo y rellena DB_PASSWORD y JWT_SECRET:" -ForegroundColor Yellow
     Write-Host "           notepad `"$envFile`"" -ForegroundColor Yellow
+    Write-Host "           La cadena de conexion sale de https://console.neon.tech" -ForegroundColor Gray
+    Write-Host "           (Project -> Connect -> conexion DIRECTA, sin -pooler)" -ForegroundColor Gray
 }
 
 # ---------------------------------------------------------------- 3. Red
-Write-Host "`n[3/3] Acceso de red a Cloud SQL" -ForegroundColor Cyan
+Write-Host "`n[3/3] Acceso de red a la base de datos" -ForegroundColor Cyan
 if (Test-Path $envFile) {
     $cfg = @{}
     Get-Content $envFile | ForEach-Object {
@@ -107,10 +106,11 @@ if (Test-Path $envFile) {
             Write-Host "  [OK] Se alcanza $($cfg['DB_HOST']):$($cfg['DB_PORT'])" -ForegroundColor Green
         } else {
             Write-Host "  [FALLA] No se alcanza $($cfg['DB_HOST']):$($cfg['DB_PORT'])" -ForegroundColor Red
-            Write-Host "          La IP pública de ESTE PC debe estar autorizada en Cloud SQL:" -ForegroundColor Yellow
-            Write-Host "          Cloud SQL -> tu instancia -> Connections -> Networking ->" -ForegroundColor Yellow
-            Write-Host "          Authorized networks -> Add network" -ForegroundColor Yellow
-            Write-Host "          Tu IP actual: https://whatismyipaddress.com/" -ForegroundColor Yellow
+            Write-Host "          Comprueba, en este orden:" -ForegroundColor Yellow
+            Write-Host "            1. Que el host este bien copiado (sin '-pooler')." -ForegroundColor Yellow
+            Write-Host "            2. Que el proyecto de Neon no este suspendido." -ForegroundColor Yellow
+            Write-Host "            3. Que tu red no bloquee el puerto 5432." -ForegroundColor Yellow
+            Write-Host "          Neon no necesita autorizar IPs: es publico con TLS." -ForegroundColor Gray
         }
     }
 }
@@ -122,4 +122,4 @@ Write-Host "  1. Edita backend\.env y pon tu DB_PASSWORD"
 Write-Host "  2. Compila y prueba:   .\run.ps1 -Test"
 Write-Host "  3. Arranca la API:     .\run.ps1"
 Write-Host "  4. Verifica todo:      powershell -ExecutionPolicy Bypass -File .\tools\verify.ps1"
-Write-Host "  5. Abre Swagger:       http://localhost:8080/swagger-ui.html`n"
+Write-Host "  5. Abre Swagger:       http://localhost:8080/swagger-ui/index.html`n"

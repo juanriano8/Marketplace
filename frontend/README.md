@@ -62,7 +62,7 @@ Esto tiene tres ventajas:
 - Si el backend está en otra máquina, solo hay que definir una variable de entorno:
 
 ```powershell
-$env:MARKETPLACE_API_URL = "http://136.112.91.42:8080"
+$env:MARKETPLACE_API_URL = "http://localhost:8080"
 npm run dev
 ```
 
@@ -159,7 +159,7 @@ frontend/
 | `next build` (compilación) | ✅ `Compiled successfully` — 12 rutas compiladas |
 | Renderizado en navegador | ⚠️ **no ejecutado** (ver abajo) |
 | Proxy `/api/v1/**` → backend | ⚠️ no ejecutado en vivo |
-| API del backend | ✅ verificada aparte: 39 aserciones end-to-end contra Cloud SQL |
+| API del backend | ✅ verificada aparte: 39 aserciones end-to-end contra Neon |
 
 ### Por qué no pude abrir la interfaz desde el entorno de desarrollo
 
