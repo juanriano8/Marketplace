@@ -41,6 +41,10 @@ dependencies {
     // Database Driver
     runtimeOnly 'org.postgresql:postgresql'
 
+    // Migraciones versionadas (el esquema lo gestiona Flyway, no Hibernate)
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+
     // JWT (JJWT 0.12.6)
     implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"

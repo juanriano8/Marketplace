@@ -1,6 +1,6 @@
 # Pendientes del proyecto
 
-**Octubre de 2026** · Documento único de estado y tareas.
+**Noviembre de 2026** · Documento único de estado y tareas.
 
 > Este documento sustituye al anterior. Combina:
 > - el estado real del proyecto (Marketplace: Spring Boot + PostgreSQL + Next.js, desplegado en Cloud Run)
@@ -10,7 +10,7 @@
 > Lo que se revisa es el **cumplimiento de los principios**, no la tecnología concreta. Por eso cada
 > requisito se evalúa contra su equivalente en nuestro stack.
 >
-> **NotebookLM queda aparcado** por indicación tuya. Ver Anexo B.
+> **NotebookLM y Stitch MCP ya están configurados y funcionando** (ver Anexo B).
 
 ---
 
@@ -19,14 +19,18 @@
 | Componente | Estado | Evidencia |
 |---|---|---|
 | **Backend** Spring Boot 3.3.4 / Java 21 | ✅ Completo | Arquitectura hexagonal, 8 módulos |
-| **Endpoints** | ✅ **27 rutas / 31 operaciones** | `39 aserciones end-to-end, 0 fallos` |
-| **Tests unitarios** | ✅ **114, 0 fallos** | `gradlew test` |
-| **Base de datos** Cloud SQL PostgreSQL 18.6 | ✅ 10 tablas con datos | 45 usuarios, 24 productos |
-| **Despliegue** Cloud Run | ✅ Activo | `marketplace-api-...run.app`, `{"status":"UP"}` |
-| **Frontend** Next.js 16 / Tailwind 4 / TS | ✅ 15 páginas | `tsc` sin errores |
+| **Endpoints** | ✅ **28 rutas / 32 operaciones** | + `DELIVERED`; 39 aserciones end-to-end históricas |
+| **Tests unitarios** | ✅ 114 (histórico) | `JwtTokenProviderTest` re-ejecutado ✅ |
+| **Base de datos** Cloud SQL PostgreSQL 18.6 | ✅ 10 tablas · **72 usuarios · 31 productos** | Dump verificado (365 filas) |
+| **Migraciones** | ⚠️ **Flyway V1 creada** + `ddl-auto: validate` | Compila; falta probar arranque |
+| **Despliegue** Cloud Run | ✅ Activo (imagen 2026-10-05) | `{"status":"UP"}`; pendiente redesplegar cambios |
+| **Frontend** Next.js 16 / Tailwind 4 / TS | ✅ 15 páginas con **4 estados + reintento** | `tsc --noEmit` sin errores |
 | **Reglas de negocio** | ✅ Verificadas | Antisobreventa (400 + ledger), multi-vendedor (350.00 USD), BOLA (400) |
-| **Diseño** Figma "Origen" | ✅ Extraído | 849 nodos, paleta y tipografía en `design/tokens-origen.css` |
-| **Documentación** | ✅ 15 documentos | Guías de despliegue, Postman, usuarios, análisis del dataset |
+| **Diseño** | ✅ Figma «Origen» + `DESIGN.md` | 849 nodos → `design/tokens-origen.css` |
+| **Stitch** | ✅ Proyecto «Marketplace» + 1 pantalla | MCP conectado (Anexo B) |
+| **NotebookLM** | ✅ Cuaderno OWASP configurado | MCP conectado (Anexo B) |
+| **Documentación** | ✅ 18 documentos | + `TROUBLESHOOTING.md`, `DESIGN.md`, `UX_MAPPING.md` |
+| **Backup de la base** | ✅ `~/backups/backup_marketplace_2026-11-03.sql` | 96 KB · SHA-256 verificado |
 
 **Este es el activo.** Lo que sigue es lo que falta para la rúbrica.
 
@@ -79,14 +83,11 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 
 ### 2.3 Archivos de contexto exigidos
 
-| Archivo | Estado | Qué contiene hoy |
+| Archivo | Estado | Qué contiene |
 |---|---|---|
-| **`DESIGN.md`** | ❌ **No existe** | El material sí: `design/tokens-origen.css` (paleta, tipografía, radios extraídos de Figma) |
-| **`UX_MAPPING.md`** | ❌ **No existe** | El material sí: 27 endpoints documentados + guías de Postman |
-| **`TROUBLESHOOTING.md`** | ❌ **No existe** | El material sí: **16 incidencias reales** documentadas (Anexo A) |
-
-Los tres son **exigidos explícitamente** y los tres tienen el contenido ya preparado. Son las tareas
-con mejor relación esfuerzo/impacto de todo el documento.
+| **`DESIGN.md`** | ✅ **Creado** | Tokens de Figma, tipografía, componentes, 4 estados, accesibilidad y seguridad de UI |
+| **`UX_MAPPING.md`** | ✅ **Creado** | 31 operaciones / 27 rutas con payloads, roles y pantalla asociada |
+| **`TROUBLESHOOTING.md`** | ✅ **Creado** | 16 incidencias reales + 4 recientes, con el formato exigido |
 
 ### 2.4 Seguridad
 
@@ -94,7 +95,7 @@ con mejor relación esfuerzo/impacto de todo el documento.
 |---|---|---|
 | **Cero credenciales en el código** | ✅ **Cumple** | `JWT_SECRET` obligatorio (sin valor por defecto) · contraseña del admin vacía en la colección de Postman |
 | **Google Secret Manager** | ⚠️ Parcial | Usamos variables de entorno del servicio, no Secret Manager |
-| **Seguridad cliente** | ❌ Falta | Sin CSP, sin sanitización, token en `localStorage` (expuesto a XSS), sin CSRF explícito |
+| **Seguridad cliente** | ⚠️ **Parcial** | ✅ CSP activa (sin `sandbox`) · ❌ falta sanitización · ❌ token en `localStorage` |
 | **Cloud Armor + reCAPTCHA Enterprise** | ❌ Falta | Sin perímetro ni puntuación de riesgo |
 | Autorización por rol | ✅ Cumple | RBAC por URL + `@PreAuthorize` + BOLA en servicios |
 | Contraseñas | ✅ Cumple | BCrypt |
@@ -116,10 +117,10 @@ con mejor relación esfuerzo/impacto de todo el documento.
 
 | Herramienta | Estado | Nota |
 |---|---|---|
-| **NotebookLM MCP** | ⏸️ Aparcado | IDs en el Anexo B |
-| **Stitch MCP** | ⚠️ Sustituido | Usamos **Figma** como fuente de verdad del diseño (equivalente funcional) |
-| Skills `react-components` / `stitch-loop` | ⏸️ | No usadas |
-| `TROUBLESHOOTING.md` | ❌ Falta | Ver Anexo A |
+| **NotebookLM MCP** | ✅ **Configurado** | `notebooklm-mcp` autenticado con cookies de Firefox; cuaderno OWASP en Anexo B |
+| **Stitch MCP** | ✅ **Configurado** | `serverUrl` + API key; proyecto «Marketplace» visible (Anexo B) |
+| Skills `react-components` / `stitch-loop` | ⏸️ | Aún no usadas (Stitch tiene `upload_design_md` / `build_site`) |
+| `TROUBLESHOOTING.md` | ✅ **Creado** | Ver [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
 
 ---
 
@@ -127,68 +128,86 @@ con mejor relación esfuerzo/impacto de todo el documento.
 
 ### 🔴 Bloqueantes (incumplen una regla explícita)
 
-| # | Tarea | Esfuerzo |
-|---|---|---|
-| 1 | ✅ **Credenciales fuera del código**: `JWT_SECRET` obligatorio y `adminPassword` vacía en Postman | Hecho 2026-11-03 |
-| 2 | ✅ **`TROUBLESHOOTING.md`** creado (16 incidencias + 4 recientes) | Hecho 2026-11-03 |
-| 3 | ✅ **`DESIGN.md`** creado desde los tokens de Figma | Hecho 2026-11-03 |
-| 4 | ✅ **`UX_MAPPING.md`** creado (31 operaciones / 27 rutas) | Hecho 2026-11-03 |
-| 5 | ✅ **Reintento en los 4 estados** de las 15 páginas (`<ErrorState onRetry>`) | Hecho 2026-11-03 |
-| 6 | ✅ **Estados completos** en `/`, `/registro` y `/login` (portada con datos + reintento) | Hecho 2026-11-03 |
-| 7 | **Seguridad del cliente**: CSP, sanitización, revisar el token en `localStorage` | Medio |
+| # | Tarea | Estado | Esfuerzo |
+|---|---|---|---|
+| 1 | Credenciales fuera del código (`JWT_SECRET` obligatorio, Postman sin contraseña) | ✅ Hecho | — |
+| 2 | `TROUBLESHOOTING.md` (16 incidencias + 4 recientes) | ✅ Hecho | — |
+| 3 | `DESIGN.md` desde los tokens de Figma | ✅ Hecho | — |
+| 4 | `UX_MAPPING.md` (31 operaciones / 27 rutas) | ✅ Hecho | — |
+| 5 | Reintento en los 4 estados de las 15 vistas (`<ErrorState>`) | ✅ Hecho | — |
+| 6 | Estados completos en `/`, `/registro` y `/login` | ✅ Hecho | — |
+| 7 | Seguridad del cliente: sanitización + sacar el token de `localStorage` | ⚠️ Parcial | Medio |
 
 ### 🟠 Alto (lo pide la rúbrica y se nota)
 
-| # | Tarea | Esfuerzo |
-|---|---|---|
-| 8 | **Secret Manager** para las credenciales del backend | Medio |
-| 9 | **Bucket4j**: rate limiting real por rol | Medio |
-| 10 | **Librería de componentes**: adoptar Shadcn UI o justificar `ui.tsx` | Medio |
-| 11 | **Cloud Armor + reCAPTCHA Enterprise** en el formulario de login/registro | Alto |
-| 12 | ✅ **Endpoint `DELIVERED`** implementado: `PATCH /api/v1/seller/orders/{id}/deliver` | Hecho 2026-11-03 |
-| 13 | **Caché de catálogo** (Redis o Caffeine) | Medio |
+| # | Tarea | Estado | Esfuerzo |
+|---|---|---|---|
+| 8 | Secret Manager para las credenciales del backend | ❌ Pendiente | Medio |
+| 9 | Bucket4j: rate limiting real por rol | ❌ Pendiente | Medio |
+| 10 | Librería de componentes: adoptar Shadcn UI o justificar `ui.tsx` | ❌ Pendiente | Medio |
+| 11 | Cloud Armor + reCAPTCHA Enterprise en login/registro | ❌ Pendiente | Alto |
+| 12 | Endpoint `DELIVERED` (`PATCH /seller/orders/{id}/deliver`) | ✅ Hecho | — |
+| 13 | Caché de catálogo (Redis o Caffeine) | ❌ Pendiente | Medio |
 
 ### 🟡 Medio (mejoran la nota, no bloquean)
 
-| # | Tarea | Esfuerzo |
-|---|---|---|
-| 14 | Migraciones versionadas (Flyway) en vez de `ddl-auto: update` | Medio |
-| 15 | Reorganizar la base: tablas que pide la especificación (`marcas`, `direcciones`, `cupones`, `favoritos`, `producto_imagenes`, perfil de vendedor) | Alto |
-| 16 | *Write-behind* para el rating agregado de vendedor | Medio |
-| 17 | Notificaciones (tabla propia o Firestore) | Medio |
-| 18 | Ranking de productos con decaimiento temporal (equivalente a *Hot Ranking Decay*) | Bajo |
-| 19 | Rediseño del frontend con Figma "Origen" (tokens ya extraídos) | Alto |
+| # | Tarea | Estado | Esfuerzo |
+|---|---|---|---|
+| 14 | Migraciones versionadas con Flyway | ⚠️ En progreso | Medio |
+| 15 | Reorganizar la base (`marcas`, `direcciones`, `cupones`, `favoritos`, `producto_imagenes`, perfil de vendedor) | ❌ Pendiente | Alto |
+| 16 | *Write-behind* para el rating agregado de vendedor | ❌ Pendiente | Medio |
+| 17 | Notificaciones (tabla propia o Firestore) | ❌ Pendiente | Medio |
+| 18 | Ranking de productos con decaimiento temporal | ❌ Pendiente | Bajo |
+| 19 | Rediseño del frontend con Stitch / Figma «Origen» | ⚠️ En progreso | Alto |
 
 ### 🟢 Higiene del repositorio
 
-| # | Tarea | Esfuerzo |
+| # | Tarea | Estado | Esfuerzo |
+|---|---|---|---|
+| 20 | `.gitignore` en la raíz | ✅ Hecho | — |
+| 21 | Backup de la base antes de que expire el trial | ✅ Hecho | — |
+| 22 | Tag `entrega-v1` y rama `rediseno-frontend` (los commits los hace el usuario) | ❌ Pendiente | Bajo |
+| 23 | Consolidar los 18 documentos (hay solape entre guías) | ❌ Pendiente | Medio |
+| 24 | Revocar el token de Figma **y la API key de Stitch** expuestos en el chat | ❌ Pendiente | Bajo |
+
+---
+
+## 4. Registro de la sesión (2026-11-03)
+
+| Qué | Resultado |
+|---|---|
+| Cuenta correcta de GCP | `jsebas8tian@gmail.com` (no `sebas00hola@…`) |
+| Cloud SQL | Arrancada y verificada (`RUNNABLE`) |
+| Backup | `~/backups/backup_marketplace_2026-11-03.sql` · 96 KB · 10 tablas · SHA-256 |
+| Stitch | API habilitada, MCP conectado, proyecto «Marketplace» |
+| NotebookLM | Login con cookies de Firefox; cuaderno OWASP accedido |
+| Documentos | `DESIGN.md`, `TROUBLESHOOTING.md`, `UX_MAPPING.md`, `.gitignore` |
+| Backend | `DELIVERED` · Flyway V1 · `JWT_SECRET` obligatorio |
+| Frontend | 4 estados + reintento en las 15 vistas · `tsc` OK |
+| Commits | Los hace el usuario (no se hacen más desde el agente) |
+
+### Orden sugerido para continuar
+
+| Orden | Tarea | Estado |
 |---|---|---|
-| 20 | ✅ **`.gitignore` en la raíz** creado (secretos, backups, builds) | Hecho 2026-11-03 |
-| 21 | **Backup de la base** antes de que expire el trial | Bajo |
-| 22 | **Tag `entrega-v1`** y rama `rediseno-frontend` | Bajo |
-| 23 | Consolidar los 15 documentos (hay solape entre guías) | Medio |
-| 24 | Revocar el token de Figma compartido en el chat | Bajo |
+| 1 | #9 Bucket4j (rate limiting) | ❌ |
+| 2 | #14 Flyway: probar arranque y corregir si falla `validate` | ⚠️ |
+| 3 | #13 Caché de catálogo | ❌ |
+| 4 | #7 Sanitización + token fuera de `localStorage` | ⚠️ |
+| 5 | #22 Tag/branch + push | ❌ |
+| 6 | #23 Consolidar documentos | ❌ |
+| 7 | #8 / #11 Secret Manager + Cloud Armor | ❌ (GCP) |
+| 8 | #15 Reorganizar la base | ❌ |
+| 9 | #19 Rediseño (Stitch → código) | ⚠️ |
 
 ---
 
-## 4. Lo que se puede hacer ya (barato y suma)
+## Anexo A · Incidencias (ya volcadas a `TROUBLESHOOTING.md`)
 
-Ordenado por relación impacto/esfuerzo. **Todo esto son horas, no días:**
+> El listado completo, con fecha y formato exigido, está en [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+> Se mantiene aquí como referencia histórica.
 
-1. **`TROUBLESHOOTING.md`** — copiar y pegar el Anexo A. Cumple una directriz entera.
-2. **`DESIGN.md`** — volcar `tokens-origen.css` a Markdown con la paleta, tipografía y radios.
-3. **`UX_MAPPING.md`** — tabla de las 27 rutas con método, payload y respuesta.
-4. **Quitar credenciales** — dos archivos, 15 minutos.
-5. **Reintento en los 4 estados** — un hook común y aplicarlo a las 15 páginas.
-6. **`.gitignore` raíz** — 5 líneas.
-7. **Tag `entrega-v1`** — un comando, y te da red de seguridad.
-
----
-
-## Anexo A · Material listo para `TROUBLESHOOTING.md`
-
-La directriz exige este formato: `[Fecha] | [Capa] | [Descripción del Error] | [Solución Aplicada]`.
-Estas son incidencias **reales** del proyecto, ya diagnosticadas y resueltas:
+Formato: `[Fecha] | [Capa] | [Descripción del Error] | [Solución Aplicada]`.
 
 | # | Capa | Error | Solución |
 |---|---|---|---|
@@ -211,16 +230,30 @@ Estas son incidencias **reales** del proyecto, ya diagnosticadas y resueltas:
 
 ---
 
-## Anexo B · NotebookLM
+## Anexo B · Herramientas MCP configuradas
 
-Cuaderno que se usará como fuente para el rediseño del frontend:
+### NotebookLM
 
 | Cuaderno | ID | Estado |
 |---|---|---|
-| Diseño y Desarrollo Seguro en Frontend | `9bb773f4-7b01-4be5-a382-7d3990d848b0` | ✅ ID disponible |
+| Diseño y Desarrollo Seguro en Frontend | `9bb773f4-7b01-4be5-a382-7d3990d848b0` | ✅ Accedido |
 
-**Nota:** mi entorno no tiene cliente MCP, igual que con Figma/Stitch. Para usarlos hay que ir por API
-o por un cliente que soporte MCP. Lo evaluamos cuando llegue el momento.
+- CLI: `notebooklm` 0.8.6 + `notebooklm-mcp` (instalados con `uv tool`).
+- Login con **cookies de Firefox** (`notebooklm login --browser-cookies firefox`); no requiere Chromium.
+- Si caduca la sesión: repetir ese comando (perfil en `~/.notebooklm/`).
+
+### Stitch
+
+| Dato | Valor |
+|---|---|
+| Endpoint MCP | `https://stitch.googleapis.com/mcp` |
+| API | `stitch.googleapis.com` habilitada en `marketplace-509503` |
+| Proyecto | «Marketplace» (`projects/16417096205034790396`) |
+| Pantallas | 1 (`Catálogo Marketplace`, móvil 780×1768) |
+| Config | `~/.gemini/config/mcp_config.json` (`serverUrl` + `X-Goog-Api-Key`) |
+
+> ⚠️ **Rotar la API key de Stitch**: la actual se pegó en el chat.
+> Para escritorio, generar la pantalla con `deviceType: "DESKTOP"`.
 
 ---
 
@@ -234,7 +267,7 @@ El backend **no cambia**: solo se reapunta `DB_HOST` (y credenciales).
 | Qué | Estado |
 |---|---|
 | Datos reales (usuarios, productos, órdenes) | Solo en Cloud SQL `marketplace-509503` |
-| Backup en el repo | ❌ No existe |
+| Backup | ✅ `~/backups/` (fuera del repo) |
 | Código y documentación | ✅ En el repo/GitHub |
 | Facturación del proyecto | ⚠️ Activa: al acabar el crédito se cobra a la tarjeta |
 
@@ -343,15 +376,17 @@ sha256: c1c9ce078a4ae4cd621c31f9b46911127dbc938063befcd8b5a568b6b8b6c477
 ## Resumen ejecutivo
 
 > ⚠️ **Urgente e independiente de la rúbrica:** migrar la base a un Postgres gratuito antes de que
-> acabe el crédito de GCP (ver Anexo C). La base **no está respaldada en el repo**.
+> acabe el crédito de GCP (ver Anexo C). El backup ya está en `~/backups/`; **falta crear el Neon**.
 
-| Bloque | Pendientes | Esfuerzo estimado |
+| Bloque | Hechos | Pendientes |
 |---|---|---|
-| 🔴 Bloqueantes | 7 | 2-3 días |
-| 🟠 Alto | 6 | 1-2 semanas |
-| 🟡 Medio | 6 | 1-2 semanas |
-| 🟢 Higiene | 5 | 2 horas |
+| 🔴 Bloqueantes | **6/7** | 1 (seguridad del cliente, parcial) |
+| 🟠 Alto | **1/6** | 5 |
+| 🟡 Medio | **0/6** | 5 pendientes + 1 en progreso (Flyway) |
+| 🟢 Higiene | **2/5** | 3 |
 
-**El proyecto está funcionalmente completo y verificado.** Lo que falta no es funcionalidad: es
-**cumplimiento formal** de la rúbrica. Y de los 7 bloqueantes, **3 tienen ya todo el material
-preparado** (TROUBLESHOOTING, DESIGN, UX_MAPPING).
+**El proyecto está funcionalmente completo y verificado.** Los bloqueantes de documentación y
+credenciales están cerrados; quedan la seguridad del cliente y las tareas de infraestructura
+(Neon, Secret Manager, Cloud Armor), que dependen de cuentas o permisos.
+
+**Urgente:** migrar la base a Neon antes de que acabe el crédito de GCP (Anexo C).
