@@ -22,13 +22,63 @@
 
 ## 2. Cuentas de prueba
 
-| Rol | Correo | Contraseña | Para qué sirve en la demo |
-|---|---|---|---|
-| **Comprador** | `tomas.rodriguez1@marketplace.com` | `Comprador123!` | Catálogo, carrito, checkout, favoritos, reseñas |
-| **Vendedor** | `diego.herrera3@marketplace.com` | `Vendedor123!` | Publicar producto, inventario, despachos |
-| **Administrador** | `admin@marketplace.com` | `Admin123.` | Aprobar vendedores y productos, ver órdenes |
+> **Las tres están verificadas contra el entorno desplegado** (`2026-11-09`):
+> login correcto, rol correcto y vendedor ya aprobado. Se pueden usar tal cual.
 
-Hay 14 cuentas más en `docs/api/USUARIOS_PRUEBA.md`.
+### 2.1 Las tres cuentas de la demo
+
+| Rol | Correo | Contraseña | Qué hacer con ella en la demo |
+|---|---|---|---|
+| 🛒 **Comprador** | `tomas.rodriguez1@marketplace.com` | `Comprador123!` | Catálogo, carrito, checkout, favoritos, reseñas, notificaciones |
+| 🏪 **Vendedor** | `diego.herrera3@marketplace.com` | `Vendedor123!` | Publicar producto, ajustar inventario, despachar pedidos |
+| 🛡️ **Administrador** | `admin@marketplace.com` | `Admin123.` | Verificar vendedores, aprobar productos, ver órdenes, moderar reseñas |
+
+**Copiar y pegar:**
+
+```
+Comprador      tomas.rodriguez1@marketplace.com      Comprador123!
+Vendedor       diego.herrera3@marketplace.com        Vendedor123!
+Administrador  admin@marketplace.com                 Admin123.
+```
+
+> ⚠️ La contraseña del administrador termina en **punto**, no en exclamación.
+> Es el error más habitual al copiarla.
+
+### 2.2 Cuentas de respaldo (si alguna falla o se bloquea)
+
+**Vendedores** — todos con `Vendedor123!`, todos ya verificados:
+
+| Correo |
+|---|
+| `jorge.ramirez4@marketplace.com` |
+| `santiago.flores9@marketplace.com` |
+| `daniel.herrera17@marketplace.com` |
+| `andres.medina21@marketplace.com` |
+
+**Compradores** — todos con `Comprador123!`:
+
+| Correo |
+|---|
+| `veronica.medina2@marketplace.com` |
+| `daniela.rodriguez6@marketplace.com` |
+| `isabella.jimenez8@marketplace.com` |
+| `miguel.torres10@marketplace.com` |
+| `natalia.guzman11@marketplace.com` |
+| `juliana.ortiz12@marketplace.com` |
+| `diana.perez13@marketplace.com` |
+| `julian.munoz14@marketplace.com` |
+| `alejandra.rojas15@marketplace.com` |
+
+### 2.3 Tres cosas que conviene saber
+
+1. **El administrador no se registra por API.** Se crea solo en el primer arranque con
+   `BOOTSTRAP_ADMIN_EMAIL` y `BOOTSTRAP_ADMIN_PASSWORD`. No existe endpoint público para
+   crear administradores, y eso es intencionado.
+2. **Un vendedor sin verificar no puede publicar** (la API responde `400 Your seller account is
+   not verified yet`). Por eso la demo empieza verificando al vendedor desde el panel de admin.
+   Las cuentas de arriba ya están verificadas.
+3. **Si aparece un `429`** al hacer login repetido, es el *rate limit* (30/min por IP).
+   Espera un minuto. Se puede usar otra de las cuentas de respaldo.
 
 ---
 
