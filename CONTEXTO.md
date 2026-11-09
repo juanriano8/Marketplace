@@ -191,13 +191,14 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 | **Robustez de la API** | `sort` inválido → 400 · método no permitido → 405 · `size` tope 100 |
 | **Flyway** | `V1` aplicada en Neon; arranque real verificado |
 | **Diseño** | Paleta «Origen» + design system de Stitch en `globals.css` |
+| **Rediseño Stitch** | Shell con sidebar/topbar, portada, catálogo con filtros, auth e Inter; tablas y paneles heredan el sistema |
 | **4 estados de UI** | 17/17 páginas con carga / vacío / error / **reintento** |
 | **Documentación** | 3 documentos en la raíz y el resto agrupado en `docs/`, incluidos `DESIGN.md`, `UX_MAPPING.md`, `DECISION_UI.md`, `ACTIVACION.md` |
 
 ### Números clave
 
 - 18 controladores · 44 operaciones · 14 clases de test · **137 tests**
-- 17 páginas · 8 componentes · ~4.100 líneas de TSX
+- 17 páginas · 10 componentes · ~4.500 líneas de TSX
 - Documentación: 3 documentos en la raíz y el resto en `docs/`
 
 ---
@@ -208,7 +209,7 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 
 | # | Tarea | Esfuerzo | Nota |
 |---|---|---|---|
-| 1 | **Rediseñar el layout de las 17 vistas** | Días | La paleta y los componentes ya están; falta la **composición**. Solo hay 1 pantalla de referencia (catálogo) y es **móvil**; el panel es **escritorio** |
+| 1 | **Rediseñar el layout de las 17 vistas** | ⚠️ **Base aplicada** | Shell, portada, catálogo, auth, Inter y skeletons; faltan role-switcher, búsqueda global, filtros avanzados, hoja móvil, quick-view/batch selection e imágenes reales |
 | 2 | **Desplegar el backend en Render** | 1-2 h | Blueprint `render.yaml` + variables de Neon |
 | 3 | **Desplegar el panel en Vercel** | 1 h | `MARKETPLACE_API_URL` + Neon Object Storage |
 | 4 | ~~**Seguridad del cliente (#7)**~~ ✅ **Hecho**: JWT en cookie httpOnly + saneamiento | — | BFF en `/api/session/*` y proxy `/api/v1/**` |
@@ -304,7 +305,8 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 - `src/app/api/v1/[...path]/route.ts` — proxy que añade `Authorization` desde la cookie
 - `src/components/` — `ui.tsx` (Badge, **StockChip**, Stars, formatMoney), `feedback.tsx`
   (Loading / EmptyState / ErrorState con reintento), `Navbar.tsx`, `RequireAuth.tsx`,
-  `ProductForm.tsx`, `CartCount.tsx`, `NotificationBell.tsx`, `FavoriteButton.tsx`
+  `ProductForm.tsx`, `CartCount.tsx`, `NotificationBell.tsx`, `FavoriteButton.tsx`,
+  `AppShell.tsx` y `AuthShell.tsx`
 - `src/lib/` — `api.ts`, `auth.tsx`, `server-session.ts`, `sanitize.ts`, `favorites.tsx`
 - `src/app/globals.css` — tokens + componentes del design system
 - `next.config.ts` · `.env.local` · `scripts/dev-server.mjs`

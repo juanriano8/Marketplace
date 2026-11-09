@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Order } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, PageHeader, TableSkeleton } from '@/components/feedback';
 import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
 
 export default function AdminOrdersPage() {
@@ -84,7 +84,7 @@ function AllOrders() {
       </div>
 
       {loading ? (
-        <Loading />
+        <TableSkeleton rows={7} />
       ) : orders.length === 0 ? (
         <EmptyState
           title="Todavía no hay transacciones"

@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Product, ProductStatus } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader, Success } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, PageHeader, Success, TableSkeleton } from '@/components/feedback';
 import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
 
 const TABS: { value: ProductStatus; label: string }[] = [
@@ -109,7 +109,7 @@ function Moderation() {
       {error && <ErrorState message={error} onRetry={load} />}
 
       {loading ? (
-        <Loading />
+        <TableSkeleton rows={7} />
       ) : products.length === 0 ? (
         <EmptyState
           title="No hay productos en este estado"

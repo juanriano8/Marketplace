@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { SubOrder, SubOrderStatus } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader, Success } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, PageHeader, Success, TableSkeleton } from '@/components/feedback';
 import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
 
 const FILTERS: { value: SubOrderStatus | 'ALL'; label: string }[] = [
@@ -179,7 +179,7 @@ function Shipments() {
       )}
 
       {loading ? (
-        <Loading />
+        <TableSkeleton rows={5} />
       ) : subOrders.length === 0 ? (
         <EmptyState
           title="No hay sub-órdenes en este estado"

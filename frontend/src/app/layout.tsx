@@ -1,8 +1,15 @@
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
 import { FavoritesProvider } from '@/lib/favorites';
-import { Navbar } from '@/components/Navbar';
+import { AppShell } from '@/components/AppShell';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Marketplace — Panel Multi-Rol',
@@ -12,27 +19,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <body className="min-h-screen flex flex-col">
+    <html lang="es" className={inter.variable}>
+      <body className="min-h-screen font-sans">
         <AuthProvider>
           <FavoritesProvider>
-            <Navbar />
-            <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-6">{children}</main>
-            <footer className="border-t border-ink-200 bg-white">
-              <div className="mx-auto max-w-7xl px-4 py-4 text-xs text-ink-500 flex flex-wrap items-center justify-between gap-2">
-                <span>
-                  Marketplace API · Spring Boot 3.3.4 + Java 21 + PostgreSQL (Neon)
-                </span>
-                <a
-                  href="/api/v1/products"
-                  className="hover:text-brand-600"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  API pública
-                </a>
-              </div>
-            </footer>
+            <AppShell>{children}</AppShell>
           </FavoritesProvider>
         </AuthProvider>
       </body>

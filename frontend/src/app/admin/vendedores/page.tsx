@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { UserResponse } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader, Success, Warning } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, PageHeader, Success, TableSkeleton, Warning } from '@/components/feedback';
 import { formatDate } from '@/components/ui';
 
 type Filter = 'pending' | 'approved' | 'all';
@@ -119,7 +119,7 @@ function SellerVerification() {
       )}
 
       {loading ? (
-        <Loading />
+        <TableSkeleton rows={6} />
       ) : sellers.length === 0 ? (
         <EmptyState
           title={

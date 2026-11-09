@@ -6,7 +6,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Product, SellerStock } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader, Success, Warning } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, PageHeader, Success, TableSkeleton, Warning } from '@/components/feedback';
 import { formatDate } from '@/components/ui';
 
 export default function SellerInventoryPage() {
@@ -97,7 +97,7 @@ function SellerInventory() {
     }
   }
 
-  if (loading) return <Loading />;
+  if (loading) return <TableSkeleton rows={6} />;
 
   return (
     <div>

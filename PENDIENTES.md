@@ -165,7 +165,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | 16 | *Write-behind* para el rating agregado de vendedor | ✅ Hecho: deltas en memoria + volcado cada 5 s | — |
 | 17 | Notificaciones (tabla propia o Firestore) | ✅ Hecho · tabla `notifications` + campana | — |
 | 18 | Ranking de productos con decaimiento temporal | ✅ Hecho: `GET /api/v1/products/ranking` | — |
-| 19 | Rediseño del frontend con Stitch / Figma «Origen» | ⚠️ Parcial (paleta y design system aplicados) | Alto |
+| 19 | Rediseño del frontend con Stitch / Figma «Origen» | ⚠️ Base aplicada: shell, portada, catálogo, auth, Inter y skeletons. Faltan role-switcher, búsqueda global, filtros avanzados, hoja móvil, quick-view/batch selection e imágenes reales | Medio |
 
 ### 🟢 Higiene del repositorio
 
@@ -229,6 +229,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | **#16 Rating write-behind** | Deltas en memoria + volcado cada 5 s; E2E: 0 → 5.00/1 al crear reseña y 5.00/1 → 0 al borrarla |
 | **#18 Ranking** | `GET /api/v1/products/ranking` con rating y decaimiento exponencial de 30 días; la portada lo usa |
 | **#15 Favoritos** | Tabla `favoritos` operativa: ids, listado, guardar/quitar; corazón en catálogo, portada, detalle y página `/favoritos` |
+| **#19 Rediseño Stitch** | Shell con sidebar/topbar, portada, catálogo con filtros, login/registro e Inter; tablas y paneles heredan el design system |
 | **Render/Vercel** | ⏸️ Pendientes de crear cuenta y conectar el repo; guía en [DESPLIEGUE_RENDER_VERCEL.md](docs/operacion/DESPLIEGUE_RENDER_VERCEL.md) |
 | **Config de despliegue** | `render.yaml` listo; Vercel con `frontend/.env.example`; `/api/upload` usa Neon Object Storage cuando hay credenciales |
 | **Verificación en vivo** | Health `UP` · ranking/perfil/favoritos OK · login BFF/carrito/notificaciones OK · write-behind 0→5→0 · 137 tests |
@@ -245,7 +246,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | 6 | #23 Consolidar documentos | ❌ |
 | 7 | #8 / #11 Render + Vercel | ⏸️ Pendiente de cuentas |
 | 8 | #15 Reorganizar la base | ✅ Esquema V3 completo; perfil y favoritos operativos |
-| 9 | #19 Rediseño (Stitch → código) | ⚠️ Parcial |
+| 9 | #19 Rediseño (Stitch → código) | ⚠️ Base aplicada; pulido pendiente |
 | 10 | #16 Write-behind del rating | ✅ Hecho |
 | 11 | #18 Ranking con decaimiento | ✅ Hecho |
 
@@ -325,6 +326,6 @@ Formato: `[Fecha] | [Capa] | [Descripción del Error] | [Solución Aplicada]`.
 **El proyecto está funcionalmente completo y verificado en local.** Quedan:
 - #15: esquema V3 completo, perfil de vendedor y favoritos operativos. Los endpoints/UI de
   marcas, direcciones, cupones e imágenes quedan como features posteriores.
-- #19: rediseño visual completo.
+- #19: base visual Stitch aplicada; el pulido fino de cada vista puede seguir iterándose.
 - #8/#11: desplegar API en Render y panel en Vercel (requiere crear cuentas y conectar el repo).
 - #22/#24: tag/rama y revocación de claves, que dependen de ti.

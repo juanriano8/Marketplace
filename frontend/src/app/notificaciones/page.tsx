@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import type { NotificationItem } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorState, Loading, PageHeader } from '@/components/feedback';
+import { EmptyState, ErrorState, ListSkeleton, PageHeader } from '@/components/feedback';
 import { formatDate } from '@/components/ui';
 import { notifyNotificationsUpdated } from '@/components/NotificationBell';
 
@@ -68,7 +68,7 @@ function NotificationsContent() {
     }
   }
 
-  if (loading) return <Loading />;
+  if (loading) return <ListSkeleton rows={5} itemClassName="h-24" />;
 
   const hasUnread = items.some((item) => !item.read);
 

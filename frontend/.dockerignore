@@ -1,0 +1,16 @@
+# Lo que NO se envia al contexto de build de Docker.
+# Sin esto, node_modules y .next viajan al daemon y el build tarda minutos de mas.
+
+node_modules
+.next
+out
+.npm-cache
+
+# Variables de entorno locales (contienen la URL del backend local)
+.env*.local
+
+# Documentacion y ficheros que no afectan al runtime
+README.md
+.git
+.gitignore
+*.log

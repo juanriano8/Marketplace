@@ -6,7 +6,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Order } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, ListSkeleton, PageHeader } from '@/components/feedback';
 import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
 
 export default function MyOrdersPage() {
@@ -44,7 +44,7 @@ function OrdersContent() {
     void load();
   }, [load]);
 
-  if (loading) return <Loading />;
+  if (loading) return <ListSkeleton rows={4} itemClassName="h-32" />;
 
   return (
     <div>

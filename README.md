@@ -124,6 +124,7 @@ Ver el catálogo completo en
 | Perfil de vendedor y rating | Flyway `V3`; write-behind cada 5 s; E2E 0→5→0 |
 | Ranking | `GET /api/v1/products/ranking`; la portada lo usa |
 | Favoritos | Corazón en catálogo/portada/detalle y página `/favoritos` |
+| Diseño Stitch | Shell con sidebar/topbar, catálogo con filtros, auth e Inter |
 | Antisobreventa, split multi-vendedor, BOLA, RBAC | Verificados |
 | Frontend: `tsc --noEmit` | 0 errores |
 | Frontend: `next build` y servido en el puerto 3000 | Compila y responde `200` en las 17 páginas |

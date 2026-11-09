@@ -6,7 +6,7 @@ import { apiFetch, errorMessage } from '@/lib/api';
 import { useFavorites } from '@/lib/favorites';
 import type { Product } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { EmptyState, ErrorState, Loading, PageHeader } from '@/components/feedback';
+import { CardGridSkeleton, EmptyState, ErrorState, PageHeader } from '@/components/feedback';
 import { StockChip, formatMoney } from '@/components/ui';
 
 export default function FavoritesPage() {
@@ -52,7 +52,7 @@ function FavoritesContent() {
     }
   }
 
-  if (loading) return <Loading />;
+  if (loading) return <CardGridSkeleton count={6} />;
 
   return (
     <div>

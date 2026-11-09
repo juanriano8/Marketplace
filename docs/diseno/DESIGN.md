@@ -3,7 +3,8 @@
 **Fuente de verdad visual:** Figma «Origen» → tokens extraídos en
 [design/tokens-origen.css](../../design/tokens-origen.css) (849 nodos, 2026-10-09).
 **Reglas de seguridad/UX:** [design/notebooklm/owasp-frontend.md](../../design/notebooklm/owasp-frontend.md).
-**Implementación:** `frontend/src/app/globals.css` (bloque `@theme`) + `frontend/src/components/ui.tsx`.
+**Implementación:** `frontend/src/app/globals.css` (bloque `@theme`), `frontend/src/components/ui.tsx`,
+`AppShell.tsx` (layout con sidebar/topbar) y `AuthShell.tsx` (login/registro).
 
 > Este documento es el contrato visual. Si un color, radio o tamaño no está aquí, no debería
 > aparecer en el código.
@@ -151,11 +152,15 @@ Gutter de grid: 16 px. Padding de tarjeta: 12–16 px.
 - Números alineados a la derecha; acciones a la izquierda.
 - En móvil: scroll horizontal, nunca romper el layout.
 
-### Navbar
+### Shell (sidebar + topbar)
 
-- Fondo `surface`, borde inferior 1 px `ink-100`, alto 56–64 px.
-- Logo a la izquierda, buscador centrado, carrito + cuenta a la derecha.
-- Enlace activo: texto `brand-600` + borde inferior de 2 px.
+- **Sidebar** de 256 px en escritorio, `surface`, borde derecho `ink-100`; logo, rol activo,
+  navegación por secciones y tarjeta de usuario.
+- **Topbar** de 56 px con breadcrumb, notificaciones, carrito y avatar. Bajo ella, banner de
+  contexto de 32 px con el rol activo.
+- **Móvil:** la sidebar se convierte en drawer; el estado público usa una barra superior con
+  catálogo, login y registro.
+- Enlace activo: fondo `brand-50`, texto `brand-700`.
 
 ---
 
@@ -242,4 +247,4 @@ En `frontend/src/app/globals.css`:
 
 ---
 
-**Última actualización:** 2026-11-03 · basado en los tokens de Figma «Origen».
+**Última actualización:** 2026-11-09 · tokens de Figma «Origen» + shell Stitch (sidebar, topbar y auth).

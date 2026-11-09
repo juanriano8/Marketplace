@@ -5,7 +5,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { CreateProductBody, Product } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Info, Loading, PageHeader, Warning } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, Info, PageHeader, TableSkeleton, Warning } from '@/components/feedback';
 import { ProductForm } from '@/components/ProductForm';
 import { StatusBadge, StockChip, formatDate, formatMoney } from '@/components/ui';
 
@@ -96,7 +96,7 @@ function SellerCatalog() {
     }
   }
 
-  if (loading) return <Loading />;
+  if (loading) return <TableSkeleton rows={6} />;
 
   const approved = session?.sellerApproved === true;
 

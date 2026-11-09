@@ -13,6 +13,10 @@ import type { NextConfig } from 'next';
 const API_URL = process.env.MARKETPLACE_API_URL ?? 'http://localhost:8080';
 
 const nextConfig: NextConfig = {
+  // Empaqueta el panel en un servidor Node autonomo (.next/standalone), que es
+  // lo que copia el Dockerfile a la imagen final. Reduce la imagen de ~1 GB a
+  // ~150 MB y el arranque en frio de Cloud Run a unos segundos.
+  output: 'standalone',
   // ---------------------------------------------------------------------------
   // Orígenes permitidos en desarrollo
   // ---------------------------------------------------------------------------

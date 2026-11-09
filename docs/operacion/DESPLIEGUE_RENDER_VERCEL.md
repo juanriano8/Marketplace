@@ -65,7 +65,7 @@ Las migraciones Flyway (`V1`–`V3`) se aplican solas al arrancar el backend.
 
 1. Sube el repo a GitHub (incluido `render.yaml`).
 2. Render Dashboard → **New → Blueprint** → conecta el repositorio.
-3. Render detecta [render.yaml](../render.yaml) y crea `marketplace-api`.
+3. Render detecta [render.yaml](../../render.yaml) y crea `marketplace-api`.
 4. Rellena las variables marcadas `sync: false`:
 
 | Variable | Valor |

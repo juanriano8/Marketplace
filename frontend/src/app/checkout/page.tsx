@@ -7,7 +7,7 @@ import { apiFetch, errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Cart, CheckoutResponse } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, ListSkeleton, PageHeader } from '@/components/feedback';
 import { StatusBadge, formatMoney } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 
@@ -63,7 +63,7 @@ function CheckoutContent() {
     }
   }
 
-  if (loading) return <Loading />;
+  if (loading) return <ListSkeleton rows={3} itemClassName="h-28" />;
 
   // Resultado del pago
   if (result) {

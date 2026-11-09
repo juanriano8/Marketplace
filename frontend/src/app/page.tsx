@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { ArrowRight, CheckCircle2, ShieldCheck, ShoppingBag, Sparkles, Store } from 'lucide-react';
 import { apiFetch, errorMessage } from '@/lib/api';
 import type { Product } from '@/lib/types';
 import { EmptyState, ErrorState, Skeleton } from '@/components/feedback';
@@ -12,23 +13,23 @@ const ROLE_CARDS = [
   {
     href: '/productos',
     title: 'Comprador',
-    description: 'Explora el catálogo, añade productos al carrito, paga y deja reseñas de tus compras.',
-    icon: '🛍️',
-    accent: 'border-brand-200 bg-brand-50',
+    description: 'Explora el catálogo, guarda favoritos, paga y deja reseñas verificadas.',
+    icon: ShoppingBag,
+    accent: 'bg-brand-50 text-brand-700',
   },
   {
     href: '/vendedor',
     title: 'Vendedor',
-    description: 'Publica productos, gestiona tu inventario y registra los despachos de tus sub-órdenes.',
-    icon: '🏪',
-    accent: 'border-emerald-200 bg-emerald-50',
+    description: 'Publica productos, controla inventario y registra despachos.',
+    icon: Store,
+    accent: 'bg-amber-50 text-amber-700',
   },
   {
     href: '/admin',
     title: 'Administrador',
-    description: 'Aprueba vendedores y productos, supervisa el stock y consulta todas las transacciones.',
-    icon: '🛡️',
-    accent: 'border-amber-200 bg-amber-50',
+    description: 'Modera vendedores y productos, audita stock y revisa transacciones.',
+    icon: ShieldCheck,
+    accent: 'bg-ink-100 text-ink-700',
   },
 ];
 
@@ -57,45 +58,105 @@ export default function HomePage() {
   return (
     <div className="space-y-10">
       <section className="card overflow-hidden">
-        <div className="bg-gradient-to-br from-brand-600 to-brand-800 px-6 py-12 text-white sm:px-10">
-          <p className="text-xs font-semibold uppercase tracking-wider text-brand-100">
-            Proyecto fullstack · Spring Boot + Next.js
-          </p>
-          <h1 className="mt-2 max-w-2xl text-3xl font-bold sm:text-4xl">
-            Marketplace multi-rol con API REST y base de datos en Google Cloud
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm text-brand-50">
-            Backend en Spring Boot 3 con arquitectura hexagonal, autenticación JWT, control de acceso
-            por roles y antisobreventa con bloqueo pesimista. Este panel consume esa misma API.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/productos" className="btn btn-secondary">
-              Ver catálogo
-            </Link>
-            <Link
-              href="/registro"
-              className="btn border-white/40 bg-white/10 text-white hover:bg-white/20"
-            >
-              Crear una cuenta
-            </Link>
+        <div className="grid lg:grid-cols-[1.5fr_1fr]">
+          <div className="p-6 sm:p-10">
+            <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-700">
+              <Sparkles className="h-3.5 w-3.5" />
+              Marketplace multi-rol · Spring Boot + Next.js
+            </p>
+            <h1 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
+              Un solo panel para comprar, vender y operar el marketplace.
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-500">
+              Catálogo con stock real, carrito y checkout, órdenes divididas por vendedor,
+              inventario auditado y moderación. Backend hexagonal con JWT y PostgreSQL en Neon.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/productos" className="btn btn-primary">
+                Ver catálogo
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link href="/registro" className="btn btn-secondary">
+                Crear una cuenta
+              </Link>
+            </div>
+
+            <div className="mt-8 grid max-w-lg grid-cols-3 gap-3 border-t border-ink-100 pt-5">
+              <div>
+                <p className="text-xl font-semibold tabular text-ink-900">3</p>
+                <p className="text-[11px] text-ink-500">roles operativos</p>
+              </div>
+              <div>
+                <p className="text-xl font-semibold tabular text-ink-900">44</p>
+                <p className="text-[11px] text-ink-500">operaciones REST</p>
+              </div>
+              <div>
+                <p className="text-xl font-semibold tabular text-ink-900">17</p>
+                <p className="text-[11px] text-ink-500">vistas del panel</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden border-l border-ink-100 bg-brand-50 p-6 lg:flex lg:flex-col lg:justify-between">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-700">
+                Flujo operativo
+              </p>
+              <ul className="mt-4 space-y-3">
+                {[
+                  'Catálogo y stock en tiempo real',
+                  'Checkout con pago simulado',
+                  'Sub-órdenes y despachos por vendedor',
+                  'Moderación y auditoría de inventario',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm text-ink-700">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-xl border border-brand-200 bg-white/70 p-4">
+              <p className="text-xs font-semibold text-brand-800">Diseño Stitch</p>
+              <p className="mt-1 text-[11px] leading-5 text-ink-500">
+                Paleta «Origen», tipografía Inter, densidad operativa y componentes de 8–12 px.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 className="mb-4 text-lg font-bold text-ink-900">Tres roles, tres paneles</h2>
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-700">
+              Accesos
+            </p>
+            <h2 className="mt-0.5 text-lg font-semibold tracking-tight text-ink-900">
+              Tres roles, tres paneles
+            </h2>
+          </div>
+        </div>
         <div className="grid gap-4 md:grid-cols-3">
-          {ROLE_CARDS.map((card) => (
-            <Link
-              key={card.href}
-              href={card.href}
-              className={`card border p-5 transition hover:-translate-y-0.5 hover:shadow-md ${card.accent}`}
-            >
-              <span className="text-2xl">{card.icon}</span>
-              <h3 className="mt-3 font-bold text-ink-900">{card.title}</h3>
-              <p className="mt-1 text-sm text-ink-600">{card.description}</p>
-            </Link>
-          ))}
+          {ROLE_CARDS.map((card) => {
+            const Icon = card.icon;
+            return (
+              <Link
+                key={card.href}
+                href={card.href}
+                className="card card-hover group flex flex-col p-5"
+              >
+                <span className={`grid h-10 w-10 place-items-center rounded-lg ${card.accent}`}>
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-3 flex items-center gap-1 text-sm font-semibold text-ink-900">
+                  {card.title}
+                  <ArrowRight className="h-3.5 w-3.5 text-ink-300 transition group-hover:translate-x-0.5 group-hover:text-brand-600" />
+                </h3>
+                <p className="mt-1 text-xs leading-5 text-ink-500">{card.description}</p>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

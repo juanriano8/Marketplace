@@ -6,7 +6,7 @@ import { apiFetch, errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Cart } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
-import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { ErrorState, EmptyState, ErrorBox, ListSkeleton, PageHeader } from '@/components/feedback';
 import { formatMoney } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 
@@ -94,7 +94,7 @@ function CartContent() {
     }
   }
 
-  if (loading) return <Loading />;
+  if (loading) return <ListSkeleton rows={4} itemClassName="h-28" />;
   if (error && !cart) return <ErrorBox>{error}</ErrorBox>;
 
   const items = cart?.items ?? [];
