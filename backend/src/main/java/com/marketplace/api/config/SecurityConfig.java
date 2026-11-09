@@ -3,6 +3,7 @@ package com.marketplace.api.config;
 import com.marketplace.api.shared.security.JwtAccessDeniedHandler;
 import com.marketplace.api.shared.security.JwtAuthenticationEntryPoint;
 import com.marketplace.api.shared.security.JwtAuthenticationFilter;
+import com.marketplace.api.shared.ratelimit.RateLimitFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -88,7 +90,10 @@ public class SecurityConfig {
                 // Anything not listed above (including future endpoints) requires an account.
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            // El limitador va DESPUES del filtro JWT: necesita la identidad ya resuelta para
+            // elegir el cubo (anonimo por IP, autenticado por usuario, auth por IP).
+            .addFilterAfter(rateLimitFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

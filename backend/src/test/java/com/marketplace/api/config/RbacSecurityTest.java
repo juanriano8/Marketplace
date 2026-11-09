@@ -24,6 +24,8 @@ import com.marketplace.api.modules.review.infrastructure.adapter.inbound.rest.Ad
 import com.marketplace.api.modules.review.infrastructure.adapter.inbound.rest.BuyerReviewController;
 import com.marketplace.api.modules.review.infrastructure.adapter.inbound.rest.ProductReviewController;
 import com.marketplace.api.shared.exception.GlobalExceptionHandler;
+import com.marketplace.api.shared.ratelimit.RateLimitFilter;
+import com.marketplace.api.shared.ratelimit.RateLimitProperties;
 import com.marketplace.api.shared.security.CustomUserDetailsService;
 import com.marketplace.api.shared.security.JwtAccessDeniedHandler;
 import com.marketplace.api.shared.security.JwtAuthenticationEntryPoint;
@@ -42,6 +44,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -80,9 +83,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     JwtAuthenticationFilter.class,
     JwtAuthenticationEntryPoint.class,
     JwtAccessDeniedHandler.class,
+    RateLimitFilter.class,
+    RateLimitProperties.class,
     GlobalExceptionHandler.class
 })
 @AutoConfigureMockMvc
+// Esta clase verifica AUTORIZACION, no el limitador de tasa: se desactiva para que las decenas de
+// peticiones de las pruebas parametrizadas no choquen con el limite. El limitador tiene su propia
+// prueba unitaria en RateLimitFilterTest.
+@TestPropertySource(properties = "app.rate-limit.enabled=false")
 class RbacSecurityTest {
 
     private static final String SELLER_ID = "11111111-1111-1111-1111-111111111111";

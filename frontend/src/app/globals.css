@@ -5,27 +5,48 @@
    Tailwind 4 se configura con @theme en lugar de tailwind.config.js
    ========================================================================== */
 @theme {
-  --color-brand-50: #eef4ff;
-  --color-brand-100: #dbe7fe;
-  --color-brand-200: #bfd4fe;
-  --color-brand-300: #93b6fd;
-  --color-brand-400: #6090fa;
-  --color-brand-500: #3b6df6;
-  --color-brand-600: #2551eb;
-  --color-brand-700: #1c3fd8;
-  --color-brand-800: #1e36af;
-  --color-brand-900: #1e338a;
+  /* ========================================================================
+     Paleta «Origen» — extraida de Figma (849 nodos) y documentada en DESIGN.md.
+     Los nombres (brand-*, ink-*) se mantienen a proposito: los componentes ya
+     usan clases tipo bg-brand-600 o text-ink-500, asi que cambiar solo los
+     valores repinta toda la interfaz sin tocar ningun componente.
+     ======================================================================== */
 
-  --color-ink-50: #f6f7f9;
-  --color-ink-100: #eceef2;
-  --color-ink-200: #d5d9e2;
-  --color-ink-300: #b0b8c8;
-  --color-ink-400: #8591a8;
-  --color-ink-500: #66738d;
-  --color-ink-600: #515c74;
-  --color-ink-700: #424b5e;
-  --color-ink-800: #394050;
-  --color-ink-900: #1f2430;
+  /* Marca: verde. Exactos del diseno: #17675B (principal) y #143D35 (oscuro). */
+  --color-brand-50: #e8f2ec;
+  --color-brand-100: #c6d6ce;
+  --color-brand-200: #a3c2b7;
+  --color-brand-300: #7fae9f;
+  --color-brand-400: #4f8e7f;
+  --color-brand-500: #228274;
+  --color-brand-600: #17675b;
+  --color-brand-700: #14574d;
+  --color-brand-800: #143d35;
+  --color-brand-900: #0f2f29;
+
+  /* Neutros. Exactos: #F7F8F5 (fondo), #E1E6DF (bordes), #69746E (secundario), #202C28 (tinta). */
+  --color-ink-50: #f7f8f5;
+  --color-ink-100: #e1e6df;
+  --color-ink-200: #cdd3cc;
+  --color-ink-300: #b4bbb4;
+  --color-ink-400: #8f978f;
+  --color-ink-500: #69746e;
+  --color-ink-600: #4e5c56;
+  --color-ink-700: #3a4943;
+  --color-ink-800: #2a3833;
+  --color-ink-900: #202c28;
+
+  /* Estados, con el color de texto y su fondo tal como aparecen en el diseno. */
+  --color-success: #17675b;
+  --color-success-soft: #e8f2ec;
+  --color-warning: #8b6018;
+  --color-warning-soft: #fbf2de;
+  --color-danger: #a94439;
+  --color-danger-soft: #faebe7;
+
+  /* Superficies. */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f0eee7;
 }
 
 html,

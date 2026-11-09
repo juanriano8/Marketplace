@@ -2,6 +2,8 @@ package com.marketplace.api.modules.auth.infrastructure.adapter.inbound.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marketplace.api.config.SecurityConfig;
+import com.marketplace.api.shared.ratelimit.RateLimitFilter;
+import com.marketplace.api.shared.ratelimit.RateLimitProperties;
 import com.marketplace.api.modules.auth.application.dto.AuthResponse;
 import com.marketplace.api.modules.auth.application.dto.LoginRequest;
 import com.marketplace.api.modules.auth.application.dto.RegisterBuyerRequest;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
@@ -32,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, JwtAuthenticationFilter.class, JwtAccessDeniedHandler.class})
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, JwtAccessDeniedHandler.class, RateLimitFilter.class, RateLimitProperties.class})
+@TestPropertySource(properties = "app.rate-limit.enabled=false")
 @AutoConfigureMockMvc
 class AuthControllerTest {
 

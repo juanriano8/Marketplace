@@ -443,11 +443,13 @@ ALTER TABLE ONLY public.cart_items
 
 
 --
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: -
+-- NOTA (migracion de Cloud SQL a Neon): se elimino la sentencia original
+--   GRANT ALL ON SCHEMA public TO cloudsqlsuperuser;
+-- porque "cloudsqlsuperuser" es un rol exclusivo de Cloud SQL. El dump se genero
+-- alli y al restaurarlo en otro proveedor (Neon) ese rol no existe y la migracion
+-- aborta con "role does not exist" (SQLState 42704). En Neon el propietario del
+-- esquema ya tiene todos los permisos, asi que la sentencia no es necesaria.
 --
-
-GRANT ALL ON SCHEMA public TO cloudsqlsuperuser;
-
 
 --
 -- PostgreSQL database dump complete

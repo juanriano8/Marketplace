@@ -30,6 +30,9 @@ solución aplicada. Formato exigido por la rúbrica:
 | 2026-10-02 | Postman | La colección daba `401` en el primer paso | `adminPassword` desactualizada y registros no idempotentes (el token quedaba `undefined` al repetir) |
 | 2026-11-03 | Frontend | El proxy `/api/v1/**` devolvía `500` | `frontend/.env.local` no existía (está en `.gitignore`); se fijó Cloud Run como destino en `next.config.ts` y se creó `.env.local` |
 | 2026-11-03 | Backend | Cloud Run: `503 Service Unavailable` en todos los endpoints | La instancia de Cloud SQL estaba **STOPPED**; se arrancó a `RUNNABLE` con `--activation-policy ALWAYS` |
+| 2026-11-08 | Backend | Migración a Neon: Flyway abortaba con `ERROR: role "cloudsqlsuperuser" does not exist` (SQLState 42704, línea 449 de `V1__initial_schema.sql`) | El `V1` se generó con un `pg_dump` de Cloud SQL y arrastraba `GRANT ALL ON SCHEMA public TO cloudsqlsuperuser`. Ese rol es exclusivo de Cloud SQL. Se eliminó la sentencia (el motivo queda documentado dentro del propio `.sql`) y la migración se aplicó completa |
+| 2026-11-08 | Backend | Flyway no creaba el esquema: la app usaba `ddl-auto: update` pese a estar `validate` en el YAML | `backend/.env` definía `JPA_DDL_AUTO=update`, y **las variables de entorno tienen prioridad** sobre `application.yml`. Se comentó esa línea para que Flyway gobierne el esquema y Hibernate solo valide |
+| 2026-11-08 | Backend | Tras integrar el limitador, 46 tests de `RbacSecurityTest` y `AuthControllerTest` fallaban por `ApplicationContext failure` | `@WebMvcTest` carga los `Filter`, así que `RateLimitFilter` se instanciaba sin `RateLimitProperties`. Se añadieron ambas clases al `@Import` y se desactivó el limitador en esas pruebas con `@TestPropertySource`; el limitador tiene su propia prueba unitaria |
 
 ---
 

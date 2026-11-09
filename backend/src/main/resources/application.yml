@@ -59,6 +59,17 @@ app:
       # When false the stub gateway leaves payments PENDING so the failure/retry branch of
       # checkout can be exercised locally.
       always-capture: ${PAYMENT_STUB_CAPTURE:true}
+
+  # Control de tasa (Bucket4j). Los valores por defecto son generosos a proposito: la suite
+  # end-to-end lanza decenas de peticiones seguidas desde la misma IP. En produccion se bajan
+  # por variables de entorno sin tocar codigo.
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    anonymous-per-minute: ${RATE_LIMIT_ANON:60}
+    authenticated-per-minute: ${RATE_LIMIT_USER:600}
+    auth-per-minute: ${RATE_LIMIT_AUTH:30}
+    max-tracked-keys: ${RATE_LIMIT_MAX_KEYS:10000}
+    idle-minutes: ${RATE_LIMIT_IDLE_MINUTES:10}
   bootstrap:
     admin:
       # Set both values once to have the first administrator created on startup, otherwise the
