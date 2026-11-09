@@ -178,6 +178,25 @@ export type ProductReviews = {
   };
 };
 
+export type NotificationType =
+  | 'SELLER_VERIFIED'
+  | 'SELLER_REJECTED'
+  | 'PRODUCT_APPROVED'
+  | 'PRODUCT_REJECTED'
+  | 'ORDER_SHIPPED'
+  | 'ORDER_DELIVERED'
+  | 'REVIEW_RECEIVED';
+
+export type NotificationItem = {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link: string | null;
+  read: boolean;
+  createdAt: string;
+};
+
 export type UserResponse = {
   id: string;
   email: string;

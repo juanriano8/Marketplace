@@ -27,13 +27,12 @@ function AllOrders() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const result = await apiFetch<Page<Order>>(
         `/api/v1/admin/orders?page=${page}&size=20&sort=createdAt,desc`,
-        { token: session.token },
       );
       setOrders(result.content);
       setTotalElements(result.totalElements);
@@ -43,7 +42,7 @@ function AllOrders() {
     } finally {
       setLoading(false);
     }
-  }, [session?.token, page]);
+  }, [session, page]);
 
   useEffect(() => {
     void load();

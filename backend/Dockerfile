@@ -1,7 +1,7 @@
 # ============================================================================
 # Imagen de la API Marketplace (Spring Boot 3 + Java 21)
 # Construcción multi-etapa: compila con el Gradle wrapper y ejecuta en un JRE
-# mínimo, que es el formato que espera Cloud Run.
+# mínimo. Render (y cualquier hosting de contenedores) la usa directamente.
 # ============================================================================
 
 # ---------- Etapa 1: compilación ----------
@@ -27,7 +27,7 @@ USER marketplace
 
 COPY --from=build /workspace/build/libs/*.jar app.jar
 
-# Cloud Run inyecta PORT (por defecto 8080)
+# Render inyecta PORT (por defecto 8080)
 ENV PORT=8080
 EXPOSE 8080
 

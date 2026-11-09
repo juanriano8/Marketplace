@@ -13,9 +13,11 @@ hexagonal y seguridad siguiendo **OWASP API Security Top 10**.
 | [**docs/README.md**](docs/README.md) | **Índice completo** de la documentación: operación, API, arquitectura, diseño, datos y referencia |
 | [**CONTEXTO.md**](CONTEXTO.md) | **Traspaso completo**: estado real, credenciales (dónde viven), trampas conocidas, mapa de archivos y qué falta por hacer |
 | [**ARRANQUE_RAPIDO.md**](docs/operacion/ARRANQUE_RAPIDO.md) | **Levantar todo en 3 comandos** y comprobar que está conectado |
+| [**ACTIVACION.md**](docs/operacion/ACTIVACION.md) | **Qué queda activado**, variables, verificación y pendientes que dependen de Google Cloud |
+| [**DESPLIEGUE_RENDER_VERCEL.md**](docs/operacion/DESPLIEGUE_RENDER_VERCEL.md) | Desplegar la API en **Render**, el panel en **Vercel** y las imágenes en **Neon Object Storage** |
 | [**GUIA_ENTREGA.md**](docs/operacion/GUIA_ENTREGA.md) | **Cómo levantar el backend y el frontend**, requisitos, checklist antes de presentar y solución de problemas |
-| [**POSTMAN_DEMO_PASO_A_PASO.md**](docs/api/POSTMAN_DEMO_PASO_A_PASO.md) | **Demostración de los 27 endpoints en Postman**, paso a paso con el código a pegar y el resultado esperado |
-| [**GUIA_OTRO_PC.md**](docs/operacion/GUIA_OTRO_PC.md) | **Qué instalar y hacer en otro computador con Windows** para ejecutarlo con otra conexión, conectando a Cloud SQL |
+| [**POSTMAN_DEMO_PASO_A_PASO.md**](docs/api/POSTMAN_DEMO_PASO_A_PASO.md) | **Demostración paso a paso en Postman**, con el código a pegar y el resultado esperado |
+| [**GUIA_OTRO_PC.md**](docs/operacion/GUIA_OTRO_PC.md) | **Qué instalar y hacer en otro computador con Windows** para ejecutarlo con otra conexión (guía histórica) |
 | [**GUIA_OTRO_PC_LINUX.md**](docs/operacion/GUIA_OTRO_PC_LINUX.md) | **Lo mismo para Linux** (Ubuntu, Debian, Fedora, Arch, openSUSE), con los scripts `.sh` |
 | [USUARIOS_PRUEBA.md](docs/api/USUARIOS_PRUEBA.md) | Las 16 cuentas de prueba con sus contraseñas y qué puede hacer cada rol |
 | [ANALISIS_CSV_VS_BD.md](docs/datos/ANALISIS_CSV_VS_BD.md) | Qué datos de `marketplace_datos.csv` sirven para las tablas de Cloud SQL y cuáles no |
@@ -71,7 +73,7 @@ npm run dev
 fullstack/
 ├── backend/          API REST Spring Boot (arquitectura hexagonal)
 │   ├── src/main/java/com/marketplace/api/
-│   │   ├── modules/  auth, user, admin, product, inventory, order, review, payment
+│   │   ├── modules/  auth, user, admin, product, inventory, order, review, payment, notification, seller, favorite
 │   │   ├── shared/   dominio base, excepciones RFC 7807, seguridad JWT
 │   │   └── config/   SecurityConfig, OpenApiConfig
 │   ├── tools/        scripts de verificación y pruebas end-to-end
@@ -92,7 +94,7 @@ fullstack/
 
 ## Módulos del backend
 
-`auth` · `user` · `admin` · `product` · `inventory` · `order` · `review` · `payment`
+`auth` · `user` · `admin` · `product` · `inventory` · `order` · `review` · `payment` · `notification` · `seller` · `favorite`
 
 Cada módulo sigue la misma estructura hexagonal:
 
@@ -104,7 +106,7 @@ infrastructure/adapter/...                 Adaptadores REST y JPA
 
 ## Endpoints
 
-**31 operaciones**: las 23 rutas de la especificación técnica más las de apoyo.
+**44 operaciones**: las 23 rutas de la especificación técnica más las de apoyo, notificaciones, ranking, perfil de vendedor y favoritos.
 Ver el catálogo completo en
 [ESPECIFICACION_TECNICA.md, sección 5](docs/arquitectura/ESPECIFICACION_TECNICA.md#5-catálogo-de-endpoints-implementados).
 
@@ -113,12 +115,18 @@ Ver el catálogo completo en
 | Comprobación | Resultado |
 |---|---|
 | Compilación del backend (`gradlew clean build`) | `BUILD SUCCESSFUL` |
-| Suite de tests del backend | **114 tests, 0 fallos** |
-| Arranque contra Cloud SQL | `HikariPool - Start completed` |
-| Endpoints end-to-end contra Cloud SQL | **39 aserciones, 0 fallos** |
+| Suite de tests del backend | **137 tests, 0 fallos** |
+| Arranque contra Neon | `HikariPool - Start completed` |
+| Endpoints end-to-end contra Neon | **39 aserciones, 0 fallos** |
+| Caché de catálogo (Caffeine) | 2 tests; invalidación al escribir producto o stock |
+| Sesión del panel | JWT en cookie httpOnly; carrito 200 con sesión, 401 sin ella |
+| Notificaciones | Flyway `V2`; campana, página `/notificaciones`, 5 tests |
+| Perfil de vendedor y rating | Flyway `V3`; write-behind cada 5 s; E2E 0→5→0 |
+| Ranking | `GET /api/v1/products/ranking`; la portada lo usa |
+| Favoritos | Corazón en catálogo/portada/detalle y página `/favoritos` |
 | Antisobreventa, split multi-vendedor, BOLA, RBAC | Verificados |
 | Frontend: `tsc --noEmit` | 0 errores |
-| Frontend: `next build` y servido en el puerto 3000 | Compila y responde `200` en las 15 páginas |
+| Frontend: `next build` y servido en el puerto 3000 | Compila y responde `200` en las 17 páginas |
 
 Comprobación rápida antes de presentar:
 

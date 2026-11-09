@@ -77,6 +77,16 @@ app:
     auth-per-minute: ${RATE_LIMIT_AUTH:30}
     max-tracked-keys: ${RATE_LIMIT_MAX_KEYS:10000}
     idle-minutes: ${RATE_LIMIT_IDLE_MINUTES:10}
+  seller-rating:
+    # Cada cuanto se vuelca el write-behind del rating de vendedor.
+    flush-ms: ${SELLER_RATING_FLUSH_MS:5000}
+  cache:
+    # Cache en memoria del catalogo publico (Caffeine). TTL corto a proposito:
+    # cualquier cambio de producto o stock invalida las entradas, y si algo se
+    # queda fuera se refresca solo en unos segundos.
+    catalog-ttl-seconds: ${CACHE_CATALOG_TTL_SECONDS:30}
+    detail-ttl-seconds: ${CACHE_DETAIL_TTL_SECONDS:60}
+    max-entries: ${CACHE_MAX_ENTRIES:1000}
   bootstrap:
     admin:
       # Set both values once to have the first administrator created on startup, otherwise the

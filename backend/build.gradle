@@ -62,6 +62,10 @@ dependencies {
     // OpenAPI 3 / Swagger UI
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
 
+    // Cache en memoria del catalogo publico (Caffeine)
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
     // Rate Limiting (Bucket4j)
     implementation 'com.bucket4j:bucket4j-core:8.10.1'
 
@@ -72,6 +76,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // Los fuentes estan en UTF-8 (comentarios y mensajes con tildes/enes).
+    // Sin esto, en Windows el compilador usa la codificacion de la plataforma
+    // y los textos con tildes llegan corruptos al cliente.
+    options.encoding = 'UTF-8'
 }
 
 tasks.named('test') {

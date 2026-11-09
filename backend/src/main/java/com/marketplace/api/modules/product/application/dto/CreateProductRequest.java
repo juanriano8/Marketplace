@@ -5,6 +5,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
@@ -39,5 +40,10 @@ public record CreateProductRequest(
     String category,
 
     @Schema(description = "Product image URL", example = "https://example.com/image.jpg")
+    @Size(max = 255, message = "Image URL must not exceed 255 characters")
+    @Pattern(
+        regexp = "^(https?://\\S+|/(?!/)\\S*)?$",
+        message = "Image URL must be an http(s) URL or a relative path"
+    )
     String imageUrl
 ) {}

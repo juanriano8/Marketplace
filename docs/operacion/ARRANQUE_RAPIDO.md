@@ -82,7 +82,7 @@ Invoke-RestMethod http://localhost:8080/actuator/health
 Invoke-RestMethod 'http://localhost:8080/api/v1/products?size=3' | Select-Object totalElements
 ```
 
-Batería completa de verificación (27 endpoints, 39 comprobaciones):
+Batería completa de verificación (44 operaciones, 39 comprobaciones):
 
 ```powershell
 .\backend\tools\verify.ps1
@@ -103,6 +103,7 @@ Batería completa de verificación (27 endpoints, 39 comprobaciones):
 | Catálogo | <http://localhost:3000/productos> |
 | Panel del vendedor | <http://localhost:3000/vendedor> |
 | Panel del administrador | <http://localhost:3000/admin> |
+| Notificaciones | <http://localhost:3000/notificaciones> |
 
 ---
 
@@ -142,10 +143,10 @@ Más incidencias resueltas en [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 |---|---|
 | Base de datos | **Neon**, PostgreSQL 18.6, base `neondb` |
 | Host | `ep-steep-dawn-bc86fdpf.c-16.us-east-1.aws.neon.tech` (directo) |
-| Esquema | 10 tablas, gestionadas por **Flyway** |
+| Esquema | 17 tablas, gestionadas por **Flyway** (`V1` + `V2` + `V3`) |
 | Backend local | `http://localhost:8080` |
 | Panel local | `http://localhost:3000` |
-| Cloud Run (histórico) | `marketplace-api` en `us-central1` — apunta a la base antigua, responde 500 |
+| Render/Vercel (pendiente) | Despliegue gratuito objetivo: API en Render y panel en Vercel |
 
 > **Sobre Cloud SQL:** la instancia `marketplace` de Google Cloud se usó hasta el
 > 2026-11-08. Su periodo de prueba terminó y los datos se migraron a Neon. Los

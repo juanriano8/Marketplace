@@ -55,7 +55,7 @@ autenticación, el código a pegar y el resultado que debes ver.
 
 ### ¿Local o nube? Solo cambia `baseUrl`
 
-El backend también está **desplegado en Google Cloud Run**, así que puedes hacer la demo sin arrancar
+El backend también puede desplegarse en **Render**, así que puedes hacer la demo sin arrancar
 nada en tu PC. Para apuntar la colección allí, cambia **únicamente la variable `baseUrl`**:
 
 | Dónde corre el backend | Valor de `baseUrl` |

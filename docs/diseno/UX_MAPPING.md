@@ -1,9 +1,11 @@
 # UX_MAPPING.md — Rutas de la API y su correspondencia con la interfaz
 
-Contrato funcional entre backend y frontend. **31 operaciones en 27 rutas**, agrupadas por módulo.
+Contrato funcional entre backend y frontend. **44 operaciones en 39 rutas**, agrupadas por módulo.
 Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-805790031718.us-central1.run.app`.
 
-**Auth:** `Authorization: Bearer <accessToken>` · Roles: `ADMIN`, `SELLER`, `BUYER`.
+**Auth:** el panel usa una cookie httpOnly y el proxy de Next añade
+`Authorization: Bearer <accessToken>`; Postman/Swagger pueden usar el Bearer directamente.
+Roles: `ADMIN`, `SELLER`, `BUYER`.
 **Paginación:** `?page=0&size=20&sort=createdAt,desc` → `{content, totalElements, totalPages, number, size}`.
 **Errores:** RFC 7807 `ProblemDetail` (`type`, `title`, `status`, `detail`, `instance`, `timestamp`).
 
@@ -25,6 +27,7 @@ Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-80579
 |---|---|---|---|---|---|
 | GET | `/products?page&size&sort` | Público | — | `200` paginado | `/productos`, `/` |
 | GET | `/products/{slug}` | Público | — | `200` · `404` | `/productos/[slug]` |
+| GET | `/products/ranking?limit` | Público | — | `200` lista ordenada por rating y decaimiento | `/` |
 | GET | `/seller/products?page&size` | SELLER | — | `200` paginado | `/vendedor` |
 | POST | `/seller/products` | SELLER | `{name, description, price, currencyCode, stockQuantity, category, imageUrl}` | `201` | `/vendedor` |
 | PUT | `/seller/products/{id}` | SELLER | mismos campos | `200` | `/vendedor` |
@@ -66,7 +69,33 @@ Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-80579
 | GET | `/admin/reviews?page&size` | ADMIN | — | `200` paginado | `/admin` |
 | DELETE | `/admin/reviews/{reviewId}` | ADMIN | — | `204` · `404` | `/admin` |
 
-## 6. Infraestructura
+## 6. Seller profile
+
+| Método | Ruta | Rol | Request | Response | Pantalla |
+|---|---|---|---|---|---|
+| GET | `/sellers/{sellerId}/profile` | Público | — | `200 {storeName, logoUrl, ratingAvg, ratingCount}` | — (API) |
+| GET | `/seller/profile` | SELLER | — | `200` perfil propio | — (API) |
+| PUT | `/seller/profile` | SELLER | `{storeName, description, logoUrl}` | `200` | — (API) |
+
+## 7. Notifications
+
+| Método | Ruta | Rol | Request | Response | Pantalla |
+|---|---|---|---|---|---|
+| GET | `/notifications?page&size` | Autenticado | — | `200` paginado | `/notificaciones` |
+| GET | `/notifications/unread-count` | Autenticado | — | `200 {count}` | campana de la navbar |
+| PATCH | `/notifications/{id}/read` | Autenticado | — | `204` · `404` si no es tuya | `/notificaciones` |
+| PATCH | `/notifications/read-all` | Autenticado | — | `200 {updated}` | `/notificaciones` |
+
+## 8. Favorites
+
+| Método | Ruta | Rol | Request | Response | Pantalla |
+|---|---|---|---|---|---|
+| GET | `/favorites` | BUYER | — | `200` lista de productos | `/favoritos` |
+| GET | `/favorites/ids` | BUYER | — | `200 [uuid]` | corazones |
+| POST | `/favorites/{productId}` | BUYER | — | `204` | catálogo/detalle |
+| DELETE | `/favorites/{productId}` | BUYER | — | `204` | catálogo/detalle/favoritos |
+
+## 9. Infraestructura
 
 | Método | Ruta | Uso |
 |---|---|---|
@@ -76,11 +105,11 @@ Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-80579
 
 ---
 
-## 7. Mapa pantalla → endpoints
+## 10. Mapa pantalla → endpoints
 
 | # | Pantalla | Endpoints que usa |
 |---|---|---|
-| 1 | `/` portada | `GET /products` (destacados) |
+| 1 | `/` portada | `GET /products/ranking` (destacados) |
 | 2 | `/productos` catálogo | `GET /products` |
 | 3 | `/productos/[slug]` detalle | `GET /products/{slug}` · `GET /inventory/check/{id}` · `GET /reviews/product/{id}` · `POST /cart/items` |
 | 4 | `/login` | `POST /auth/login` |
@@ -95,8 +124,10 @@ Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-80579
 | 13 | `/admin/vendedores` | `GET /admin/sellers` · `PATCH /admin/sellers/{id}/verify` |
 | 14 | `/admin/ordenes` | `GET /admin/orders` |
 | 15 | `/admin/inventario` | `GET /admin/inventory/audit` |
+| 16 | `/notificaciones` | `GET /notifications` · `GET /notifications/unread-count` · `PATCH /notifications/{id}/read` · `PATCH /notifications/read-all` |
+| 17 | `/favoritos` | `GET /favorites` · `DELETE /favorites/{id}` |
 
-## 8. Los 4 estados por pantalla
+## 11. Los 4 estados por pantalla
 
 | Pantalla | Carga | Vacío | Error + reintento |
 |---|---|---|---|
@@ -115,11 +146,13 @@ Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-80579
 | `/admin/vendedores` | skeleton | «No hay vendedores» | sí |
 | `/admin/ordenes` | skeleton | «No hay órdenes» | sí |
 | `/admin/inventario` | skeleton | «Sin movimientos» | sí |
+| `/notificaciones` | skeleton | «No tienes notificaciones» | sí |
+| `/favoritos` | skeleton | «Todavía no tienes favoritos» | sí |
 
 > El **botón «Reintentar»** debe repetir la misma petición que falló. Es el hueco más visible de la
 > rúbrica ([PENDIENTES.md §2.2](../../PENDIENTES.md#L51)).
 
-## 9. Códigos de error
+## 12. Códigos de error
 
 | Código | Cuándo | Qué muestra la UI |
 |---|---|---|
@@ -132,4 +165,4 @@ Base local: `http://localhost:8080` · Base nube: `https://marketplace-api-80579
 
 ---
 
-**Última actualización:** 2026-11-03 · 31 operaciones / 27 rutas.
+**Última actualización:** 2026-11-09 · 44 operaciones / 39 rutas.

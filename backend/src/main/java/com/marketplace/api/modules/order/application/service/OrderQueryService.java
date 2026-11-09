@@ -6,12 +6,15 @@ import com.marketplace.api.modules.order.domain.model.Order;
 import com.marketplace.api.modules.order.domain.model.SubOrder;
 import com.marketplace.api.modules.order.domain.model.SubOrderStatus;
 import com.marketplace.api.modules.order.domain.port.inbound.OrderQueryUseCase;
+import com.marketplace.api.modules.notification.domain.model.NotificationType;
 import com.marketplace.api.modules.order.domain.port.outbound.OrderRepositoryPort;
 import com.marketplace.api.modules.order.domain.port.outbound.SubOrderRepositoryPort;
+import com.marketplace.api.shared.events.NotificationEvent;
 import com.marketplace.api.shared.exception.DomainException;
 import com.marketplace.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ public class OrderQueryService implements OrderQueryUseCase {
     private final OrderRepositoryPort orderRepositoryPort;
     private final SubOrderRepositoryPort subOrderRepositoryPort;
     private final OrderMapper orderMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -79,6 +83,15 @@ public class OrderQueryService implements OrderQueryUseCase {
         if (order != null) {
             order.completeIfFullyDelivered();
             orderRepositoryPort.save(order);
+
+            eventPublisher.publishEvent(new NotificationEvent(
+                order.getBuyerId(),
+                NotificationType.ORDER_SHIPPED,
+                "Pedido despachado",
+                "Tu pedido " + order.getOrderNumber() + " fue despachado. "
+                    + "Guía: " + (trackingNumber != null ? trackingNumber : "sin guía") + ".",
+                "/mis-compras"
+            ));
         }
 
         log.info("Seller {} shipped sub-order {} with tracking {}", sellerId, subOrderId, trackingNumber);
@@ -104,6 +117,14 @@ public class OrderQueryService implements OrderQueryUseCase {
         if (order != null) {
             order.completeIfFullyDelivered();
             orderRepositoryPort.save(order);
+
+            eventPublisher.publishEvent(new NotificationEvent(
+                order.getBuyerId(),
+                NotificationType.ORDER_DELIVERED,
+                "Pedido entregado",
+                "Tu pedido " + order.getOrderNumber() + " fue entregado. Ya puedes dejar tu reseña.",
+                "/mis-compras"
+            ));
         }
 
         log.info("Seller {} marked sub-order {} as delivered", sellerId, subOrderId);

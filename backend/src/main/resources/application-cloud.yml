@@ -1,25 +1,22 @@
 # ============================================================================
-# Perfil para Google Cloud SQL (PostgreSQL)
+# Perfil de nube (Neon PostgreSQL + Render)
 # ----------------------------------------------------------------------------
 # Actívalo con:  --spring.profiles.active=cloud
 # o con:         SPRING_PROFILES_ACTIVE=cloud
 #
 # Todas las credenciales se leen de variables de entorno para que nunca queden
-# escritas en el repositorio (la especificación pide GCP Secret Manager).
+# escritas en el repositorio. En Render se configuran en el dashboard.
 # ============================================================================
 
 spring:
   datasource:
-    # El host puede ser:
-    #  a) la IP pública de la instancia Cloud SQL  -> 35.x.x.x
-    #  b) la IP privada (requiere VPC Connector)   -> 10.x.x.x
-    #  c) 127.0.0.1 si usas el Cloud SQL Auth Proxy en local
+    # Host directo de Neon (sin -pooler): Flyway hace DDL al arrancar.
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}?sslmode=${DB_SSLMODE:require}&connectTimeout=15&socketTimeout=60
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
-      # Cloud SQL cierra conexiones ociosas; estos valores evitan "connection reset"
+      # Neon/el hosting pueden cerrar conexiones ociosas; estos valores evitan "connection reset"
       maximum-pool-size: ${DB_POOL_SIZE:10}
       minimum-idle: ${DB_POOL_MIN_IDLE:2}
       connection-timeout: 20000
@@ -27,7 +24,7 @@ spring:
       max-lifetime: 600000
       keepalive-time: 60000
       pool-name: MarketplaceCloudSqlPool
-      # Cloud SQL no admite nombres de prepared statement repetidos entre conexiones
+      # Evita prepared statements persistentes entre conexiones del pool.
       data-source-properties:
         prepareThreshold: 0
 

@@ -4,13 +4,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CreateProductBody, Product } from '@/lib/types';
 import { agruparCategorias } from '@/lib/categorias';
 import { errorMessage } from '@/lib/api';
+import { sanitizeImageUrl, sanitizeMultiline, sanitizeText } from '@/lib/sanitize';
 
 type Props = {
   initial?: Product;
   /** Categorías ya usadas por otros productos, para no perder ninguna al editar. */
   categoriasEnUso?: string[];
-  /** Token del vendedor, necesario para subir la imagen. */
-  token?: string | null;
   submitting: boolean;
   error: string | null;
   onSubmit: (body: CreateProductBody) => void;
@@ -22,7 +21,6 @@ const TAMANO_MAXIMO = 3 * 1024 * 1024;
 export function ProductForm({
   initial,
   categoriasEnUso = [],
-  token,
   submitting,
   error,
   onSubmit,
@@ -69,9 +67,9 @@ export function ProductForm({
       const datos = new FormData();
       datos.append('file', archivo);
 
+      // La cookie httpOnly de sesión viaja sola; no hay que enviar el JWT.
       const respuesta = await fetch('/api/upload', {
         method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: datos,
       });
 
@@ -94,14 +92,21 @@ export function ProductForm({
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+
+    const imagenLimpia = sanitizeImageUrl(imageUrl);
+    if (imagenLimpia === null) {
+      setErrorImagen('La imagen debe ser una URL http(s):// o una ruta que empiece por "/".');
+      return;
+    }
+
     onSubmit({
-      name: name.trim(),
-      description: description.trim() || undefined,
+      name: sanitizeText(name, 255),
+      description: sanitizeMultiline(description, 5000) || undefined,
       price: Number(price),
       currencyCode: currency,
       stockQuantity: Number(stock),
-      category: category.trim(),
-      imageUrl: imageUrl.trim() || undefined,
+      category: sanitizeText(category, 255),
+      imageUrl: imagenLimpia || undefined,
     });
   }
 

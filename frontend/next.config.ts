@@ -3,16 +3,14 @@ import type { NextConfig } from 'next';
 // ---------------------------------------------------------------------------
 // Destino del proxy
 // ---------------------------------------------------------------------------
-// Por defecto apunta al backend DESPLEGADO EN CLOUD RUN, para que el panel
-// funcione en cualquier PC (Windows o Linux) sin configurar nada: basta con
-// clonar el repositorio y hacer `npm run dev`.
+// En local apunta al backend Spring Boot de `localhost:8080`.
+// En producción (Vercel) se define `MARKETPLACE_API_URL` con la URL pública
+// de Render, por ejemplo https://marketplace-api.onrender.com.
 //
-// Para usar un backend LOCAL en su lugar, crea `frontend/.env.local` con:
-//     MARKETPLACE_API_URL=http://localhost:8080
-// y reinicia `npm run dev`. Ese archivo está en .gitignore, así que es
-// configuración solo de tu PC (por eso no viaja con `git pull`).
-const API_URL =
-  process.env.MARKETPLACE_API_URL ?? 'https://marketplace-api-805790031718.us-central1.run.app';
+// Para usar otro backend crea `frontend/.env.local` con:
+//     MARKETPLACE_API_URL=https://tu-api.onrender.com
+// y reinicia `npm run dev`. Ese archivo está en .gitignore.
+const API_URL = process.env.MARKETPLACE_API_URL ?? 'http://localhost:8080';
 
 const nextConfig: NextConfig = {
   // ---------------------------------------------------------------------------
@@ -34,15 +32,13 @@ const nextConfig: NextConfig = {
     '192.168.10.22', // el PC con Linux, si se ejecuta allí el panel
   ],
 
-  // El navegador sólo habla con Next.js (puerto 3000): las peticiones a /api/v1/**
-  // se reenvían al backend Spring Boot (puerto 8080). Así no hay problemas de CORS
-  // ni de puertos, y el navegador nunca necesita saber dónde está la API.
+  // Las peticiones a /api/v1/** las atiende el route handler
+  // `app/api/v1/[...path]/route.ts`, que lee la cookie httpOnly y añade la
+  // cabecera Authorization antes de reenviar al backend. No se declara un
+  // rewrite para /api/v1 porque se aplicaría antes y saltaría ese proxy.
+  // /actuator se mantiene como rewrite directo para el enlace de salud.
   async rewrites() {
     return [
-      {
-        source: '/api/v1/:path*',
-        destination: `${API_URL}/api/v1/:path*`,
-      },
       {
         source: '/actuator/:path*',
         destination: `${API_URL}/actuator/:path*`,

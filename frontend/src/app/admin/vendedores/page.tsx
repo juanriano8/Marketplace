@@ -28,14 +28,13 @@ function SellerVerification() {
   const [busy, setBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const query = filter === 'all' ? '' : `approved=${filter === 'approved'}&`;
       const page = await apiFetch<Page<UserResponse>>(
         `/api/v1/admin/sellers?${query}page=0&size=100&sort=createdAt,desc`,
-        { token: session.token },
       );
       setSellers(page.content);
     } catch (err) {
@@ -43,21 +42,20 @@ function SellerVerification() {
     } finally {
       setLoading(false);
     }
-  }, [session?.token, filter]);
+  }, [session, filter]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   async function verify(seller: UserResponse, approved: boolean) {
-    if (!session?.token) return;
+    if (!session) return;
     setBusy(seller.id);
     setError(null);
     setFeedback(null);
     try {
       await apiFetch<UserResponse>(`/api/v1/admin/sellers/${seller.id}/verify`, {
         method: 'PATCH',
-        token: session.token,
         body: { approved },
       });
       setFeedback(

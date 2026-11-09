@@ -8,7 +8,9 @@ import { useAuth } from '@/lib/auth';
 import type { Product, ProductReviews, Review } from '@/lib/types';
 import { ErrorState, EmptyState, ErrorBox, Loading, Success } from '@/components/feedback';
 import { Stars, StockChip, formatDate, formatMoney } from '@/components/ui';
+import { FavoriteButton } from '@/components/FavoriteButton';
 import { notifyCartUpdated } from '@/components/CartCount';
+import { sanitizeMultiline, sanitizeText } from '@/lib/sanitize';
 
 export default function ProductDetailPage() {
   const params = useParams<{ slug: string }>();
@@ -55,13 +57,12 @@ export default function ProductDetailPage() {
   }, [loadProduct]);
 
   async function addToCart() {
-    if (!session?.token || !product) return;
+    if (!session || !product) return;
     setAdding(true);
     setFeedback(null);
     try {
       await apiFetch('/api/v1/cart/items', {
         method: 'POST',
-        token: session.token,
         body: { productId: product.id, quantity },
       });
       notifyCartUpdated();
@@ -75,19 +76,18 @@ export default function ProductDetailPage() {
 
   async function submitReview(event: React.FormEvent) {
     event.preventDefault();
-    if (!session?.token || !product) return;
+    if (!session || !product) return;
     setSendingReview(true);
     setReviewError(null);
     setReviewOk(null);
     try {
       await apiFetch<Review>('/api/v1/buyer/reviews', {
         method: 'POST',
-        token: session.token,
         body: {
           productId: product.id,
           rating,
-          title: title.trim() || undefined,
-          comment: comment.trim() || undefined,
+          title: sanitizeText(title, 150) || undefined,
+          comment: sanitizeMultiline(comment, 2000) || undefined,
         },
       });
       setReviewOk('¡Gracias! Tu reseña se publicó como compra verificada.');
@@ -196,6 +196,7 @@ export default function ProductDetailPage() {
               >
                 {adding ? 'Añadiendo…' : 'Añadir al carrito'}
               </button>
+              <FavoriteButton productId={product.id} className="w-full" />
               {feedback &&
                 (feedback.tone === 'ok' ? (
                   <Success>{feedback.text}</Success>

@@ -13,10 +13,12 @@ import com.marketplace.api.modules.inventory.domain.port.inbound.InventoryUseCas
 import com.marketplace.api.modules.inventory.domain.port.inbound.StockQueryPort;
 import com.marketplace.api.modules.inventory.domain.port.outbound.StockMovementRepositoryPort;
 import com.marketplace.api.modules.inventory.domain.port.outbound.StockRepositoryPort;
+import com.marketplace.api.shared.cache.CacheNames;
 import com.marketplace.api.shared.exception.DomainException;
 import com.marketplace.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public void initialiseStock(UUID productId, UUID sellerId, int initialQuantity) {
         if (stockRepositoryPort.existsByProductId(productId)) {
             log.debug("Stock already initialised for product {}", productId);
@@ -51,6 +54,7 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public SellerStockResponse adjustStock(UUID sellerId, StockAdjustmentRequest request) {
         boolean hasDelta = request.hasDelta();
         boolean hasAbsolute = request.hasPhysicalQuantity();
@@ -118,6 +122,7 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public void reserveStock(UUID productId, UUID sellerId, int quantity, String reference) {
         // Pessimistic write lock: concurrent checkouts of the same product queue here instead of
         // racing for the last unit (spec: "Control de bloqueos JPA al reservar productos en Cloud SQL").
@@ -142,6 +147,7 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public void releaseReservation(StockReservation reservation, String reference) {
         StockItem stockItem = requireStockForUpdate(reservation.productId());
 
@@ -155,6 +161,7 @@ public class InventoryService implements InventoryUseCase, StockQueryPort {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public void commitReservation(StockReservation reservation, String reference) {
         StockItem stockItem = requireStockForUpdate(reservation.productId());
 

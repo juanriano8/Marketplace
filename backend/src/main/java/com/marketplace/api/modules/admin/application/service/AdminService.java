@@ -4,12 +4,15 @@ import com.marketplace.api.modules.product.application.dto.SellerVerificationReq
 import com.marketplace.api.modules.user.application.dto.UserResponse;
 import com.marketplace.api.modules.user.application.mapper.UserMapper;
 import com.marketplace.api.modules.user.domain.model.User;
+import com.marketplace.api.modules.notification.domain.model.NotificationType;
 import com.marketplace.api.modules.user.domain.port.outbound.UserRepositoryPort;
+import com.marketplace.api.shared.events.NotificationEvent;
 import com.marketplace.api.shared.exception.DomainException;
 import com.marketplace.api.shared.exception.ResourceNotFoundException;
 import com.marketplace.api.shared.security.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ public class AdminService {
 
     private final UserRepositoryPort userRepositoryPort;
     private final UserMapper userMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Lists seller accounts for the moderation queue.
@@ -56,6 +60,17 @@ public class AdminService {
         }
 
         User saved = userRepositoryPort.save(user);
+
+        if (Boolean.TRUE.equals(request.approved())) {
+            eventPublisher.publishEvent(new NotificationEvent(
+                sellerId,
+                NotificationType.SELLER_VERIFIED,
+                "Cuenta verificada",
+                "Un administrador verificó tu cuenta. Ya puedes publicar productos en el catálogo.",
+                "/vendedor"
+            ));
+        }
+
         return userMapper.toResponse(saved);
     }
 }

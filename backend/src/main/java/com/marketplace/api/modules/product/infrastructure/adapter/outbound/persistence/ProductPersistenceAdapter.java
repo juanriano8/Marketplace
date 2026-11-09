@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +36,11 @@ public class ProductPersistenceAdapter implements ProductRepositoryPort {
     @Override
     public Page<Product> findAllActive(Pageable pageable) {
         return springDataProductRepository.findByStatus(ProductStatus.ACTIVE, pageable);
+    }
+
+    @Override
+    public List<Product> findRankedActive(int limit) {
+        return springDataProductRepository.findRankedActive(limit);
     }
 
     @Override

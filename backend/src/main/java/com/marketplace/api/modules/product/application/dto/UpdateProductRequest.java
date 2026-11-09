@@ -3,6 +3,7 @@ package com.marketplace.api.modules.product.application.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
@@ -33,5 +34,10 @@ public record UpdateProductRequest(
     String category,
 
     @Schema(description = "Product image URL")
+    @Size(max = 255, message = "Image URL must not exceed 255 characters")
+    @Pattern(
+        regexp = "^(https?://\\S+|/(?!/)\\S*)?$",
+        message = "Image URL must be an http(s) URL or a relative path"
+    )
     String imageUrl
 ) {}

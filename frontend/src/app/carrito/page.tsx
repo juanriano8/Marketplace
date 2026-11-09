@@ -26,30 +26,29 @@ function CartContent() {
   const [busy, setBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
-      setCart(await apiFetch<Cart>('/api/v1/cart', { token: session.token }));
+      setCart(await apiFetch<Cart>('/api/v1/cart'));
     } catch (err) {
       setError(errorMessage(err));
     } finally {
       setLoading(false);
     }
-  }, [session?.token]);
+  }, [session]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   async function changeQuantity(productId: string, quantity: number) {
-    if (!session?.token) return;
+    if (!session) return;
     setBusy(productId);
     setError(null);
     try {
       const updated = await apiFetch<Cart>(`/api/v1/cart/items/${productId}`, {
         method: 'PUT',
-        token: session.token,
         body: { quantity },
       });
       setCart(updated);
@@ -62,13 +61,12 @@ function CartContent() {
   }
 
   async function removeItem(productId: string) {
-    if (!session?.token) return;
+    if (!session) return;
     setBusy(productId);
     setError(null);
     try {
       const updated = await apiFetch<Cart>(`/api/v1/cart/items/${productId}`, {
         method: 'DELETE',
-        token: session.token,
       });
       setCart(updated);
       notifyCartUpdated();
@@ -80,13 +78,12 @@ function CartContent() {
   }
 
   async function clearCart() {
-    if (!session?.token) return;
+    if (!session) return;
     setBusy('all');
     setError(null);
     try {
       const updated = await apiFetch<Cart>('/api/v1/cart', {
         method: 'DELETE',
-        token: session.token,
       });
       setCart(updated);
       notifyCartUpdated();

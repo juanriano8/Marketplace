@@ -74,6 +74,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/products", "/api/v1/products/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/inventory/check/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/reviews/product/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/sellers/*/profile").permitAll()
 
                 // ---- Administrator ----
                 .requestMatchers("/api/v1/admin/**").hasRole(ADMIN)
@@ -86,6 +87,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/orders/checkout").hasRole(BUYER)
                 .requestMatchers("/api/v1/cart/**").hasRole(BUYER)
                 .requestMatchers("/api/v1/buyer/**").hasRole(BUYER)
+                .requestMatchers("/api/v1/favorites/**").hasRole(BUYER)
 
                 // Anything not listed above (including future endpoints) requires an account.
                 .anyRequest().authenticated()

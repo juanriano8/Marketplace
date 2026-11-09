@@ -257,7 +257,7 @@ proveedor). Todo lo demás sigue igual.
 ### 5.4 Si hay que re-desplegar
 
 Cloud Run + Artifact Registry se recrean con lo que ya está documentado en
-[DESPLIEGUE_CLOUD_RUN.md](../operacion/DESPLIEGUE_CLOUD_RUN.md). Los dos tropiezos que ya conoces (permisos de la
+[DESPLIEGUE_RENDER_VERCEL.md](../operacion/DESPLIEGUE_RENDER_VERCEL.md). Los dos tropiezos que ya conoces (permisos de la
 cuenta de servicio y la contraseña) están documentados con su solución.
 
 ---

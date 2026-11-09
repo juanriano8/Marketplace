@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { CartCount } from './CartCount';
+import { NotificationBell } from './NotificationBell';
 
 type NavLink = { href: string; label: string };
 
@@ -13,6 +14,7 @@ const PUBLIC_LINKS: NavLink[] = [{ href: '/productos', label: 'Catálogo' }];
 const BUYER_LINKS: NavLink[] = [
   { href: '/productos', label: 'Catálogo' },
   { href: '/carrito', label: 'Carrito' },
+  { href: '/favoritos', label: 'Favoritos' },
   { href: '/mis-compras', label: 'Mis compras' },
 ];
 
@@ -74,6 +76,7 @@ export function Navbar() {
 
         <div className="ml-auto flex items-center gap-2">
           {isBuyer && <CartCount />}
+          {session && <NotificationBell />}
 
           {loading ? (
             <span className="h-8 w-24 animate-pulse rounded-lg bg-ink-100" />

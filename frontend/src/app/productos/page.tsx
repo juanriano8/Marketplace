@@ -6,6 +6,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Product } from '@/lib/types';
 import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
+import { FavoriteButton } from '@/components/FavoriteButton';
 import { formatMoney, StockChip } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 const PAGE_SIZE = 9;
@@ -43,13 +44,12 @@ export default function CatalogPage() {
   }, [load]);
 
   async function addToCart(product: Product) {
-    if (!session?.token) return;
+    if (!session) return;
     setBusyProduct(product.id);
     setFeedback(null);
     try {
       await apiFetch('/api/v1/cart/items', {
         method: 'POST',
-        token: session.token,
         body: { productId: product.id, quantity: 1 },
       });
       notifyCartUpdated();
@@ -146,6 +146,7 @@ export default function CatalogPage() {
                     {busyProduct === product.id ? '…' : 'Añadir'}
                   </button>
                 )}
+                <FavoriteButton productId={product.id} />
               </div>
             </div>
           </article>

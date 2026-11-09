@@ -2,6 +2,7 @@ package com.marketplace.api.modules.review.application.service;
 
 import com.marketplace.api.modules.order.domain.model.SubOrder;
 import com.marketplace.api.modules.order.domain.model.SubOrderStatus;
+import com.marketplace.api.modules.notification.domain.model.NotificationType;
 import com.marketplace.api.modules.order.domain.port.outbound.SubOrderRepositoryPort;
 import com.marketplace.api.modules.product.domain.model.Product;
 import com.marketplace.api.modules.product.domain.port.outbound.ProductRepositoryPort;
@@ -12,10 +13,13 @@ import com.marketplace.api.modules.review.application.mapper.ReviewMapper;
 import com.marketplace.api.modules.review.domain.model.Review;
 import com.marketplace.api.modules.review.domain.port.inbound.ReviewUseCase;
 import com.marketplace.api.modules.review.domain.port.outbound.ReviewRepositoryPort;
+import com.marketplace.api.shared.events.NotificationEvent;
+import com.marketplace.api.shared.events.SellerRatingEvent;
 import com.marketplace.api.shared.exception.DomainException;
 import com.marketplace.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +44,7 @@ public class ReviewService implements ReviewUseCase {
     private final ProductRepositoryPort productRepositoryPort;
     private final SubOrderRepositoryPort subOrderRepositoryPort;
     private final ReviewMapper reviewMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -70,6 +75,16 @@ public class ReviewService implements ReviewUseCase {
         );
 
         Review saved = reviewRepositoryPort.save(review);
+
+        eventPublisher.publishEvent(new NotificationEvent(
+            product.getSellerId(),
+            NotificationType.REVIEW_RECEIVED,
+            "Nueva reseña",
+            "Recibiste una reseña de " + request.rating() + "★ para «" + product.getName() + "».",
+            "/vendedor"
+        ));
+        eventPublisher.publishEvent(new SellerRatingEvent(product.getSellerId(), request.rating(), 1));
+
         log.info("Buyer {} reviewed product {} with rating {} (verified={})",
             buyerId, request.productId(), request.rating(), saved.isVerifiedPurchase());
 
@@ -98,7 +113,11 @@ public class ReviewService implements ReviewUseCase {
         Review review = reviewRepositoryPort.findById(reviewId)
             .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + reviewId));
 
+        UUID sellerId = review.getSellerId();
+        int rating = review.getRating();
+
         reviewRepositoryPort.delete(review);
+        eventPublisher.publishEvent(new SellerRatingEvent(sellerId, rating, -1));
         log.info("Admin deleted review {}", reviewId);
     }
 

@@ -37,14 +37,13 @@ function Audit() {
 
   const load = useCallback(
     async (productId?: string) => {
-      if (!session?.token) return;
+      if (!session) return;
       setLoading(true);
       setError(null);
       try {
         const filter = productId ? `productId=${productId}&` : '';
         const result = await apiFetch<Page<StockMovement>>(
           `/api/v1/admin/inventory/audit?${filter}page=${page}&size=50&sort=createdAt,desc`,
-          { token: session.token },
         );
         setMovements(result.content);
         setTotal(result.totalElements);
@@ -55,7 +54,7 @@ function Audit() {
         setLoading(false);
       }
     },
-    [session?.token, page],
+    [session, page],
   );
 
   useEffect(() => {

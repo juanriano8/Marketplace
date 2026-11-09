@@ -16,17 +16,17 @@ export function CartCount() {
   const [count, setCount] = useState<number | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) {
+    if (!session) {
       setCount(null);
       return;
     }
     try {
-      const cart = await apiFetch<Cart>('/api/v1/cart', { token: session.token });
+      const cart = await apiFetch<Cart>('/api/v1/cart');
       setCount(cart.totalItemCount);
     } catch {
       setCount(null);
     }
-  }, [session?.token]);
+  }, [session]);
 
   useEffect(() => {
     void load();

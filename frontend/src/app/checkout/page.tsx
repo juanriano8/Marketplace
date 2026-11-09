@@ -30,29 +30,28 @@ function CheckoutContent() {
   const [result, setResult] = useState<CheckoutResponse | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     try {
-      setCart(await apiFetch<Cart>('/api/v1/cart', { token: session.token }));
+      setCart(await apiFetch<Cart>('/api/v1/cart'));
     } catch (err) {
       setError(errorMessage(err));
     } finally {
       setLoading(false);
     }
-  }, [session?.token]);
+  }, [session]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   async function pay() {
-    if (!session?.token) return;
+    if (!session) return;
     setProcessing(true);
     setError(null);
     try {
       const response = await apiFetch<CheckoutResponse>('/api/v1/orders/checkout', {
         method: 'POST',
-        token: session.token,
         body: { notes: notes.trim() || undefined },
       });
       setResult(response);

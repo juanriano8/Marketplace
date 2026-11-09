@@ -33,6 +33,10 @@ solución aplicada. Formato exigido por la rúbrica:
 | 2026-11-08 | Backend | Migración a Neon: Flyway abortaba con `ERROR: role "cloudsqlsuperuser" does not exist` (SQLState 42704, línea 449 de `V1__initial_schema.sql`) | El `V1` se generó con un `pg_dump` de Cloud SQL y arrastraba `GRANT ALL ON SCHEMA public TO cloudsqlsuperuser`. Ese rol es exclusivo de Cloud SQL. Se eliminó la sentencia (el motivo queda documentado dentro del propio `.sql`) y la migración se aplicó completa |
 | 2026-11-08 | Backend | Flyway no creaba el esquema: la app usaba `ddl-auto: update` pese a estar `validate` en el YAML | `backend/.env` definía `JPA_DDL_AUTO=update`, y **las variables de entorno tienen prioridad** sobre `application.yml`. Se comentó esa línea para que Flyway gobierne el esquema y Hibernate solo valide |
 | 2026-11-08 | Backend | Tras integrar el limitador, 46 tests de `RbacSecurityTest` y `AuthControllerTest` fallaban por `ApplicationContext failure` | `@WebMvcTest` carga los `Filter`, así que `RateLimitFilter` se instanciaba sin `RateLimitProperties`. Se añadieron ambas clases al `@Import` y se desactivó el limitador en esas pruebas con `@TestPropertySource`; el limitador tiene su propia prueba unitaria |
+| 2026-11-09 | Backend | `run.ps1` fallaba con `Value 'C:\...\jdk-21...\ " bootRun' given for org.gradle.java.home Gradle property is invalid` | `JAVA_HOME` terminaba en `\`; al pasarlo entre comillas a `gradlew.bat`, la barra escapaba la comilla y Gradle incluía `bootRun` en la ruta. Se recorta la barra final antes de construir `-Dorg.gradle.java.home` |
+| 2026-11-09 | Backend | `.\run.ps1` no se podía cargar: «no está firmado digitalmente» | La política de ejecución de PowerShell bloquea scripts sin firmar. Ejecutar con `powershell -NoProfile -ExecutionPolicy Bypass -File .\run.ps1` |
+| 2026-11-09 | Frontend | Con la cookie de sesión, `GET /api/v1/cart` seguía devolviendo `401`; el proxy de Next no se ejecutaba | `next.config.ts` declaraba un rewrite de `/api/v1/**` que se aplicaba antes del route handler y reenviaba al backend sin `Authorization`. Se eliminó ese rewrite (solo queda `/actuator`) y el route handler `app/api/v1/[...path]` pasó a ser el único proxy |
+| 2026-11-09 | Backend | Los mensajes con tildes se veían como `verificÃ³` al revisarlos con PowerShell 5.1 | El JSON de la API era UTF-8 correcto; PowerShell 5.1 lo decodificaba como Latin-1. Se comprobó con `curl` y se fijó `options.encoding = 'UTF-8'` en Gradle para que el fuente también se compile igual |
 
 ---
 
@@ -54,7 +58,7 @@ Estas se detectaron al verificar el despliegue y configurar las herramientas de 
 1. **Busca por el síntoma** en la columna «Descripción del error».
 2. Si el error no está, revisa:
    - [GUIA_ENTREGA.md](GUIA_ENTREGA.md) → problemas de arranque local.
-   - [DESPLIEGUE_CLOUD_RUN.md](DESPLIEGUE_CLOUD_RUN.md) → problemas de despliegue.
+   - [DESPLIEGUE_RENDER_VERCEL.md](DESPLIEGUE_RENDER_VERCEL.md) → problemas de despliegue actual.
    - [GUIA_OTRO_PC_LINUX.md](GUIA_OTRO_PC_LINUX.md) → problemas en Linux.
 3. Cuando aparezca uno nuevo, **añádelo aquí** con fecha, capa, error y solución.
 

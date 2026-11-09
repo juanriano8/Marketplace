@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
-import { apiFetch, errorMessage, type Page } from '@/lib/api';
+import { apiFetch, errorMessage } from '@/lib/api';
 import type { Product } from '@/lib/types';
 import { EmptyState, ErrorState, Skeleton } from '@/components/feedback';
+import { FavoriteButton } from '@/components/FavoriteButton';
 import { formatMoney } from '@/components/ui';
 
 const ROLE_CARDS = [
@@ -40,10 +41,8 @@ export default function HomePage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiFetch<Page<Product>>(
-        '/api/v1/products?page=0&size=3&sort=createdAt,desc',
-      );
-      setProducts(result.content);
+      const result = await apiFetch<Product[]>('/api/v1/products/ranking?limit=3');
+      setProducts(result);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -136,8 +135,12 @@ export default function HomePage() {
               <Link
                 key={product.id}
                 href={`/productos/${product.slug}`}
-                className="card flex flex-col overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
+                className="card relative flex flex-col overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md"
               >
+                <FavoriteButton
+                  productId={product.id}
+                  className="absolute right-2 top-2 z-10 bg-white/90"
+                />
                 <div className="grid h-36 place-items-center bg-ink-100 text-3xl text-ink-300">
                   {product.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element

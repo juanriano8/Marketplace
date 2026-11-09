@@ -9,6 +9,7 @@
 1. [CONTEXTO](../CONTEXTO.md) — estado real, credenciales, trampas y mapa del proyecto.
 2. [PENDIENTES](../PENDIENTES.md) — qué está hecho y qué falta, por prioridad.
 3. [ARRANQUE_RAPIDO](operacion/ARRANQUE_RAPIDO.md) — levantar backend y panel en 3 comandos.
+   [ACTIVACION](operacion/ACTIVACION.md) — qué queda activado y cómo verificarlo.
 4. [ESPECIFICACION_TECNICA](arquitectura/ESPECIFICACION_TECNICA.md) — arquitectura, modelo de datos, reglas y seguridad.
 5. [POSTMAN_DEMO_PASO_A_PASO](api/POSTMAN_DEMO_PASO_A_PASO.md) — demostrar los endpoints uno por uno.
 6. [DESIGN](diseno/DESIGN.md) y [UX_MAPPING](diseno/UX_MAPPING.md) — contrato visual y correspondencia API ↔ pantallas.
@@ -25,12 +26,13 @@
 | Documento | Contenido | Vigencia |
 |---|---|---|
 | [ARRANQUE_RAPIDO.md](operacion/ARRANQUE_RAPIDO.md) | Levantar todo en 3 comandos y comprobar la conexión | ✅ Actual (Neon) |
+| [ACTIVACION.md](operacion/ACTIVACION.md) | Qué queda activado, variables y verificación | ✅ Actual |
+| [DESPLIEGUE_RENDER_VERCEL.md](operacion/DESPLIEGUE_RENDER_VERCEL.md) | Desplegar API en Render, panel en Vercel y objetos en Neon | ✅ Guía nueva |
 | [TROUBLESHOOTING.md](operacion/TROUBLESHOOTING.md) | Incidencias reales con causa y solución | ✅ Actual |
 | [GUIA_ENTREGA.md](operacion/GUIA_ENTREGA.md) | Requisitos, arranque, checklist antes de presentar | ⚠️ Histórico (Cloud SQL) |
 | [EJECUCION_Y_DEMO.md](operacion/EJECUCION_Y_DEMO.md) | Configuración detallada, demo y solución de problemas | ⚠️ Histórico (Cloud SQL) |
 | [GUIA_OTRO_PC.md](operacion/GUIA_OTRO_PC.md) | Ejecutar el proyecto en otro PC con Windows | ⚠️ Histórico (Cloud SQL) |
 | [GUIA_OTRO_PC_LINUX.md](operacion/GUIA_OTRO_PC_LINUX.md) | Lo mismo para Linux | ⚠️ Histórico (Cloud SQL) |
-| [DESPLIEGUE_CLOUD_RUN.md](operacion/DESPLIEGUE_CLOUD_RUN.md) | Desplegar el backend en Cloud Run | ⚠️ Histórico (Cloud SQL) |
 
 ## `api/` — endpoints, Postman y usuarios de prueba
 
@@ -52,6 +54,7 @@
 |---|---|---|
 | [DESIGN.md](diseno/DESIGN.md) | Tokens, tipografía, componentes, 4 estados y accesibilidad | ✅ |
 | [UX_MAPPING.md](diseno/UX_MAPPING.md) | Rutas de la API ↔ pantallas y estados | ✅ |
+| [DECISION_UI.md](diseno/DECISION_UI.md) | Por qué se mantiene `ui.tsx` y no se adopta Shadcn UI | ✅ Decisión aceptada |
 | [PLAN_REDISENO.md](diseno/PLAN_REDISENO.md) | Plan de rediseño, Figma/Stitch y migración | ⚠️ Plan histórico |
 
 ## `datos/` — dataset y análisis

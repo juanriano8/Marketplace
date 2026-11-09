@@ -1,8 +1,9 @@
 # CONTEXTO — traspaso para continuar el proyecto
 
 > **Documento de relevo.** Léelo entero antes de tocar nada.
-> Última actualización: **2026-11-08**, commit `d351655`.
-> Estado: **backend y frontend funcionando**, base de datos en Neon, todo subido a GitHub.
+> Última actualización: **2026-11-09**, tras la reorganización de carpetas (`docs/`) y la
+> incorporación de los módulos de favoritos, notificaciones y perfil de vendedor.
+> Estado: **backend y frontend funcionando**, base de datos en Neon, todo en `main`.
 
 ---
 
@@ -12,7 +13,7 @@ Marketplace multi-rol (comprador / vendedor / administrador) para una entrega ac
 
 | Capa | Tecnología |
 |---|---|
-| Backend | Spring Boot 3.3.4 · Java 21 · Gradle 8.10.2 · arquitectura hexagonal (8 módulos) |
+| Backend | Spring Boot 3.3.4 · Java 21 · Gradle 8.10.2 · arquitectura hexagonal (11 módulos) |
 | Persistencia | PostgreSQL 18.6 en **Neon** (nube, gratis) · **Flyway** + `ddl-auto: validate` |
 | Seguridad | JWT HS256 (JJWT 0.12.6) · RBAC por URL + `@PreAuthorize` · comprobaciones BOLA |
 | Extras | Bucket4j (rate limiting) · RFC 7807 (`ProblemDetail`) · Swagger/OpenAPI |
@@ -21,19 +22,20 @@ Marketplace multi-rol (comprador / vendedor / administrador) para una entrega ac
 
 ---
 
-## 2. Estado actual (verificado el 2026-11-08)
+## 2. Estado actual (verificado el 2026-11-09)
 
 | Comprobación | Resultado |
 |---|---|
 | Backend `localhost:8080` | ✅ `{"status":"UP"}` |
 | Frontend `localhost:3000` | ✅ 200 |
 | Proxy panel → API | ✅ 200 |
-| **Operaciones de la API** | ✅ **32/32 probadas** |
-| Batería e2e | ✅ **39 OK / 0 fallos** |
-| Tests unitarios | ✅ **121, 0 fallos** |
+| **Operaciones de la API** | ✅ **44** (32 históricas + favoritos, notificaciones, ranking y perfil) |
+| Batería e2e | ⚠️ **39 OK / 0 fallos**, pero **no cubre** los módulos nuevos |
+| Tests unitarios | ✅ **137, 0 fallos** · 14 clases |
 | `tsc --noEmit` | ✅ 0 errores |
-| Base de datos | ✅ 10 tablas · **22 usuarios · 5 productos · 4 órdenes** |
-| Git | ✅ limpio y sincronizado en `d351655` |
+| Base de datos | ✅ **17 tablas** (+ `flyway_schema_history`) · **22 usuarios · 5 productos · 4 órdenes** |
+| Migraciones | ✅ V1, V2 y V3 aplicadas |
+| Git | ✅ `main` limpio y sincronizado |
 
 ### Datos sembrados en la base
 
@@ -103,7 +105,7 @@ Lista completa en [USUARIOS_PRUEBA.md](docs/api/USUARIOS_PRUEBA.md).
 
 - 🔴 **Revocar la API key de Stitch** (se compartió en un chat).
 - 🔴 **Revocar el token de Figma** (ya no se necesita).
-- 🟡 Mover `JWT_SECRET` y la contraseña de la base a **Secret Manager**.
+- 🟡 Configurar `JWT_SECRET` y la contraseña de la base como **variables de entorno en Render**.
 
 ---
 
@@ -124,15 +126,11 @@ Lista completa en [USUARIOS_PRUEBA.md](docs/api/USUARIOS_PRUEBA.md).
 **Neon no necesita encender/apagar nada** y **no requiere autorizar IPs** (a diferencia de
 Cloud SQL). Eso elimina el `0.0.0.0/0` que había antes.
 
-### Cloud Run (heredado, roto)
+### Render + Vercel (pendiente)
 
-El servicio `marketplace-api` (región `us-central1`) **sigue apuntando a la Cloud SQL antigua**
-→ responde **500**. Para recuperar la URL pública:
-
-```bash
-gcloud run services update marketplace-api --region us-central1 \
-  --update-env-vars DB_HOST=ep-steep-dawn-bc86fdpf.c-16.us-east-1.aws.neon.tech,DB_NAME=neondb,DB_USER=neondb_owner,DB_PASSWORD=<la_de_.env>,DB_SSLMODE=require
-```
+El despliegue objetivo es **Vercel → Render → Neon**, con las imágenes en **Neon Object Storage**.
+Neon ya está listo; faltan las cuentas de Render/Vercel y conectar el repositorio. Guía:
+`docs/operacion/DESPLIEGUE_RENDER_VERCEL.md`.
 
 ### Stitch (herramienta de diseño)
 
@@ -178,22 +176,29 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 
 | Bloque | Evidencia |
 |---|---|
-| **32 operaciones REST** | e2e 39/39 + 6 probadas a mano (incluido `/deliver`) |
+| **44 operaciones REST** | e2e 39/39 (solo cubre los 32 originales) + 6 a mano; los módulos nuevos se probaron con sus 16 tests unitarios |
 | **Máquina de estados de la orden** | `PROCESSING → SHIPPED → DELIVERED → COMPLETED` verificada |
 | **Antisobreventa** | lock pesimista + ledger `INITIAL → RESERVATION → SALE` · 400 al exceder |
 | **BOLA** | acceso a orden ajena → 404 |
 | **Rate limiting (Bucket4j)** | 3 niveles; 40 logins → 13 × `429` con `Retry-After` |
+| **Caché de catálogo (Caffeine)** | `productCatalog` 30 s y `productDetail` 60 s; invalidada al escribir producto o stock; 2 tests |
+| **Sesión del panel** | JWT en cookie **httpOnly** + BFF (`/api/session/*`) y proxy `/api/v1/**`; saneamiento de entradas y `imageUrl` validada |
+| **Notificaciones** | Tabla `notifications` (Flyway `V2`); avisos de vendedor/producto/pedido/reseña; campana y página `/notificaciones` |
+| **Perfil de vendedor** | `seller_profiles` (`V3`) con tienda, descripción, logo y rating agregado |
+| **Rating write-behind** | Deltas en memoria + volcado cada 5 s; E2E 0 → 5.00/1 → 0 |
+| **Ranking** | `GET /api/v1/products/ranking` con rating y decaimiento exponencial de 30 días |
+| **Favoritos** | Tabla `favoritos`; ids/listado/guardar/quitar y corazón en catálogo, portada, detalle y `/favoritos` |
 | **Robustez de la API** | `sort` inválido → 400 · método no permitido → 405 · `size` tope 100 |
 | **Flyway** | `V1` aplicada en Neon; arranque real verificado |
 | **Diseño** | Paleta «Origen» + design system de Stitch en `globals.css` |
-| **4 estados de UI** | 15/15 páginas con carga / vacío / error / **reintento** |
-| **Documentación** | 19 documentos (3 en la raíz + 16 en `docs/`), incluidos `DESIGN.md`, `UX_MAPPING.md`, `TROUBLESHOOTING.md` |
+| **4 estados de UI** | 17/17 páginas con carga / vacío / error / **reintento** |
+| **Documentación** | 3 documentos en la raíz y el resto agrupado en `docs/`, incluidos `DESIGN.md`, `UX_MAPPING.md`, `DECISION_UI.md`, `ACTIVACION.md` |
 
 ### Números clave
 
-- 15 controladores · 32 operaciones · 9 clases de test · **121 tests**
-- 15 páginas · 6 componentes · ~3.700 líneas de TSX
-- 19 documentos: 3 en la raíz y 16 en `docs/`
+- 18 controladores · 44 operaciones · 14 clases de test · **137 tests**
+- 17 páginas · 8 componentes · ~4.100 líneas de TSX
+- Documentación: 3 documentos en la raíz y el resto en `docs/`
 
 ---
 
@@ -203,23 +208,23 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 
 | # | Tarea | Esfuerzo | Nota |
 |---|---|---|---|
-| 1 | **Rediseñar el layout de las 15 vistas** | Días | La paleta y los componentes ya están; falta la **composición**. Solo hay 1 pantalla de referencia (catálogo) y es **móvil**; el panel es **escritorio** |
-| 2 | **Secret Manager** para las credenciales | 2-3 h | `JWT_SECRET` y la contraseña de la base |
-| 3 | **Cloud Armor + reCAPTCHA** en login/registro | 3-4 h | Pide proyecto de GCP con facturación |
-| 4 | **Seguridad del cliente (#7)** | 3-4 h | Sanitización de entradas; sacar el token de `localStorage` |
+| 1 | **Rediseñar el layout de las 17 vistas** | Días | La paleta y los componentes ya están; falta la **composición**. Solo hay 1 pantalla de referencia (catálogo) y es **móvil**; el panel es **escritorio** |
+| 2 | **Desplegar el backend en Render** | 1-2 h | Blueprint `render.yaml` + variables de Neon |
+| 3 | **Desplegar el panel en Vercel** | 1 h | `MARKETPLACE_API_URL` + Neon Object Storage |
+| 4 | ~~**Seguridad del cliente (#7)**~~ ✅ **Hecho**: JWT en cookie httpOnly + saneamiento | — | BFF en `/api/session/*` y proxy `/api/v1/**` |
 
 ### 🟡 Medio
 
 | # | Tarea | Esfuerzo |
 |---|---|---|
-| 5 | Caché de catálogo (Redis o Caffeine) | 3 h |
+| 5 | ~~Caché de catálogo (Redis o Caffeine)~~ ✅ **Hecho con Caffeine** (30/60 s, invalidación en escrituras) | — |
 | 6 | **Resilience4j**: integrarlo de verdad o quitarlo de `build.gradle` (hoy está declarado y sin usar) | 2 h |
-| 7 | Reorganizar la base: `marcas`, `direcciones`, `cupones`, `favoritos`, `producto_imagenes`, perfil de vendedor | 1-2 días |
-| 8 | *Write-behind* del rating de vendedor | 3 h |
-| 9 | Notificaciones | 1 día |
-| 10 | Ranking con decaimiento temporal | 3 h |
-| 11 | Adoptar Shadcn UI o justificar `ui.tsx` | 4 h |
-| 12 | Consolidar los 19 documentos (hay solape; ya están agrupados en `docs/`) | 3 h |
+| 7 | ~~Reorganizar la base~~ ✅ **Hecho**: `V3` crea las 6 tablas; perfil y favoritos operativos. Quedan como features los endpoints de marcas, direcciones, cupones e imágenes | — |
+| 8 | ~~*Write-behind* del rating de vendedor~~ ✅ **Hecho**: deltas + volcado cada 5 s | — |
+| 9 | ~~Notificaciones~~ ✅ **Hecho**: tabla `notifications` + campana y página | — |
+| 10 | ~~Ranking con decaimiento temporal~~ ✅ **Hecho**: `GET /api/v1/products/ranking` | — |
+| 11 | ~~Adoptar Shadcn UI o justificar `ui.tsx`~~ ✅ **Justificado** en `docs/diseno/DECISION_UI.md` | — |
+| 12 | Consolidar los documentos (hay solape; ya están agrupados en `docs/`) | 3 h |
 
 ### 🟢 Higiene
 
@@ -227,7 +232,7 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 |---|---|
 | 13 | Tag `entrega-v1` + rama de respaldo (red de seguridad antes del rediseño) |
 | 14 | Revocar API key de Stitch y token de Figma |
-| 15 | Reapuntar Cloud Run a Neon (2 minutos, recupera la URL pública) |
+| 15 | Desplegar en Render + Vercel (recupera la URL pública sin GCP) |
 
 ---
 
@@ -270,12 +275,12 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 ### Documentación (`docs/`)
 Índice completo en `docs/README.md`.
 
-- `docs/operacion/` — `ARRANQUE_RAPIDO.md` (**el operativo, al día**), `TROUBLESHOOTING.md`,
-  `GUIA_ENTREGA.md`, `EJECUCION_Y_DEMO.md`, `GUIA_OTRO_PC.md`, `GUIA_OTRO_PC_LINUX.md`,
-  `DESPLIEGUE_CLOUD_RUN.md`.
+- `docs/operacion/` — `ARRANQUE_RAPIDO.md` (**el operativo, al día**), `ACTIVACION.md`
+  (estado de activación y verificación), `TROUBLESHOOTING.md`, `GUIA_ENTREGA.md`,
+  `EJECUCION_Y_DEMO.md`, `GUIA_OTRO_PC.md`, `GUIA_OTRO_PC_LINUX.md`.
 - `docs/api/` — `POSTMAN_DEMO_PASO_A_PASO.md`, `GUIA_POSTMAN_MANUAL.md`, `USUARIOS_PRUEBA.md`.
 - `docs/arquitectura/` — `ESPECIFICACION_TECNICA.md`.
-- `docs/diseno/` — `DESIGN.md`, `UX_MAPPING.md`, `PLAN_REDISENO.md`.
+- `docs/diseno/` — `DESIGN.md`, `UX_MAPPING.md`, `DECISION_UI.md`, `PLAN_REDISENO.md`.
 - `docs/datos/` — `ANALISIS_CSV_VS_BD.md` y `marketplace_datos.csv`.
 - `docs/referencia/` — PDF y `.txt` de la especificación original, `task.md`.
 
@@ -283,19 +288,24 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 > (Cloud SQL). Son históricos; lo operativo está en `docs/operacion/ARRANQUE_RAPIDO.md`.
 
 ### Backend (`backend/`)
-- `src/main/java/com/marketplace/api/modules/{auth,user,admin,product,inventory,order,review,payment}`
+- `src/main/java/com/marketplace/api/modules/{auth,user,admin,product,inventory,order,review,payment,notification,seller,favorite}`
 - `src/main/java/com/marketplace/api/shared/{security,exception,ratelimit}`
 - `src/main/resources/db/migration/V1__initial_schema.sql` ← **no editar**
+- `src/main/resources/db/migration/V2__notifications.sql` ← tabla de notificaciones
+- `src/main/resources/db/migration/V3__catalog_and_profiles.sql` ← perfiles, marcas, imágenes, favoritos, direcciones y cupones
 - `run.ps1` / `run.sh` · `setup.ps1` · `docker-compose.yml` (Postgres local, alternativa)
 - `tools/`: `verify.ps1|sh`, `e2e-test.ps1`, `stock-test.ps1`, `split-test.ps1`,
   `seed-users.ps1`, `DbReport.java`, `SeedAdminUser.java`, `AdminPasswordSync.java`, `ResetPostmanUsers.java`
 - `postman/Marketplace-API.postman_collection.json` (44 peticiones)
 
 ### Frontend (`frontend/`)
-- `src/app/**/page.tsx` — 15 vistas
+- `src/app/**/page.tsx` — 17 vistas (incluye `/notificaciones` y `/favoritos`)
+- `src/app/api/session/{login,register,session,logout}` — BFF de sesión con cookies httpOnly
+- `src/app/api/v1/[...path]/route.ts` — proxy que añade `Authorization` desde la cookie
 - `src/components/` — `ui.tsx` (Badge, **StockChip**, Stars, formatMoney), `feedback.tsx`
   (Loading / EmptyState / ErrorState con reintento), `Navbar.tsx`, `RequireAuth.tsx`,
-  `ProductForm.tsx`, `CartCount.tsx`
+  `ProductForm.tsx`, `CartCount.tsx`, `NotificationBell.tsx`, `FavoriteButton.tsx`
+- `src/lib/` — `api.ts`, `auth.tsx`, `server-session.ts`, `sanitize.ts`, `favorites.tsx`
 - `src/app/globals.css` — tokens + componentes del design system
 - `next.config.ts` · `.env.local` · `scripts/dev-server.mjs`
 
@@ -317,10 +327,10 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 3. **Revisar** `PENDIENTES.md` → sección 7 de este documento.
 4. **Decidir la siguiente tarea**:
    - Si hay **pantallas nuevas en Stitch** → implementarlas (leerlas con los comandos del punto 5).
-   - Si no → la más rentable es **#7 seguridad del cliente** o **#2 Secret Manager**.
+   - Si no → la más rentable es **#2 Render** o **#3 Vercel** para dejar de depender de local.
 5. **Verificar siempre** antes de commitear:
    ```powershell
-   cd backend;  .\gradlew.bat test --no-daemon     # 121 tests
+   cd backend;  .\gradlew.bat test --no-daemon     # 137 tests
    cd ..\frontend; node node_modules\typescript\bin\tsc --noEmit
    ```
 
@@ -328,7 +338,7 @@ npx --yes '@_davideast/stitch-mcp' tool get_screen -d '{\"name\":\"projects/1641
 
 ## 12. Frase para retomar
 
-> «El proyecto está en `C:\Users\sebas\Desktop\marketplace\fullstack`, commit `d351655`.
+> «El proyecto está en `C:\Users\sebas\Desktop\marketplace\fullstack`, rama `main` al día (consulta `git log -1`).
 > Backend y panel funcionando contra Neon. Lee `CONTEXTO.md` y
 > `docs/operacion/ARRANQUE_RAPIDO.md` antes de tocar nada. Lo que falta está en la
 > sección 7 de `CONTEXTO.md`.»

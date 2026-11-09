@@ -15,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -34,6 +37,17 @@ public class ProductController {
         @ParameterObject @PageableDefault(size = 20, sort = "createdAt") Pageable pageable
     ) {
         return ResponseEntity.ok(productUseCase.listActiveProducts(pageable));
+    }
+
+    @Operation(
+        summary = "Ranking de productos",
+        description = "Productos activos ordenados por rating y decaimiento temporal (vida media de 30 días)."
+    )
+    @GetMapping("/ranking")
+    public ResponseEntity<List<ProductResponse>> rankedProducts(
+        @RequestParam(defaultValue = "10") int limit
+    ) {
+        return ResponseEntity.ok(productUseCase.listRankedProducts(limit));
     }
 
     @Operation(summary = "Get product detail by slug", description = "Returns a single ACTIVE product identified by its public slug.")

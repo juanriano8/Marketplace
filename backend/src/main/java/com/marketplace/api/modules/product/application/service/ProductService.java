@@ -2,6 +2,7 @@ package com.marketplace.api.modules.product.application.service;
 
 import com.marketplace.api.modules.inventory.domain.port.inbound.InventoryUseCase;
 import com.marketplace.api.modules.inventory.domain.port.inbound.StockQueryPort;
+import com.marketplace.api.modules.notification.domain.model.NotificationType;
 import com.marketplace.api.modules.product.application.dto.CreateProductRequest;
 import com.marketplace.api.modules.product.application.dto.ProductApprovalRequest;
 import com.marketplace.api.modules.product.application.dto.ProductResponse;
@@ -12,15 +13,21 @@ import com.marketplace.api.modules.product.domain.model.ProductStatus;
 import com.marketplace.api.modules.product.domain.port.inbound.ProductUseCase;
 import com.marketplace.api.modules.product.domain.port.outbound.ProductRepositoryPort;
 import com.marketplace.api.modules.user.domain.port.outbound.UserRepositoryPort;
+import com.marketplace.api.shared.cache.CacheNames;
+import com.marketplace.api.shared.events.NotificationEvent;
 import com.marketplace.api.shared.exception.DomainException;
 import com.marketplace.api.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -33,9 +40,11 @@ public class ProductService implements ProductUseCase {
     private final InventoryUseCase inventoryUseCase;
     private final StockQueryPort stockQueryPort;
     private final UserRepositoryPort userRepositoryPort;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = CacheNames.PRODUCT_CATALOG, key = "#pageable")
     public Page<ProductResponse> listActiveProducts(Pageable pageable) {
         return productRepositoryPort.findAllActive(pageable)
             .map(this::toResponseWithLiveStock);
@@ -43,6 +52,28 @@ public class ProductService implements ProductUseCase {
 
     @Override
     @Transactional(readOnly = true)
+    public ProductResponse getProductById(UUID id) {
+        Product product = productRepositoryPort.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+
+        if (!product.isActive()) {
+            throw new ResourceNotFoundException("Product not found with id: " + id);
+        }
+        return toResponseWithLiveStock(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> listRankedProducts(int limit) {
+        int safeLimit = Math.min(Math.max(limit, 1), 50);
+        return productRepositoryPort.findRankedActive(safeLimit).stream()
+            .map(this::toResponseWithLiveStock)
+            .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = CacheNames.PRODUCT_DETAIL, key = "#slug")
     public ProductResponse getProductBySlug(String slug) {
         Product product = productRepositoryPort.findBySlug(slug)
             .orElseThrow(() -> new ResourceNotFoundException("Product not found with slug: " + slug));
@@ -55,6 +86,7 @@ public class ProductService implements ProductUseCase {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public ProductResponse createProduct(CreateProductRequest request, UUID sellerId) {
         // Only sellers verified by an administrator may publish to the catalog.
         if (!userRepositoryPort.isSellerApproved(sellerId)) {
@@ -85,6 +117,7 @@ public class ProductService implements ProductUseCase {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public ProductResponse updateProduct(UUID productId, UpdateProductRequest request, UUID sellerId) {
         Product product = productRepositoryPort.findById(productId)
             .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
@@ -117,6 +150,7 @@ public class ProductService implements ProductUseCase {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {CacheNames.PRODUCT_CATALOG, CacheNames.PRODUCT_DETAIL}, allEntries = true)
     public ProductResponse approveOrRejectProduct(UUID productId, ProductApprovalRequest request) {
         Product product = productRepositoryPort.findById(productId)
             .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
@@ -129,7 +163,22 @@ public class ProductService implements ProductUseCase {
             log.info("Admin rejected product id={}", productId);
         }
 
-        return toResponseWithLiveStock(productRepositoryPort.save(product));
+        Product saved = productRepositoryPort.save(product);
+
+        eventPublisher.publishEvent(new NotificationEvent(
+            product.getSellerId(),
+            Boolean.TRUE.equals(request.approved())
+                ? NotificationType.PRODUCT_APPROVED
+                : NotificationType.PRODUCT_REJECTED,
+            Boolean.TRUE.equals(request.approved()) ? "Producto aprobado" : "Producto rechazado",
+            "Tu producto «" + product.getName() + "» "
+                + (Boolean.TRUE.equals(request.approved())
+                    ? "ya está visible en el catálogo."
+                    : "fue rechazado por un administrador."),
+            "/vendedor"
+        ));
+
+        return toResponseWithLiveStock(saved);
     }
 
     @Override

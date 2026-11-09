@@ -1,6 +1,9 @@
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { TOKEN_COOKIE } from '@/lib/server-session';
 
 /**
  * Subida de imágenes de producto.
@@ -11,7 +14,7 @@ import path from 'node:path';
  * `public/`, así que la imagen queda visible sin configurar nada más.
  *
  * IMPORTANTE: el archivo se escribe en el DISCO LOCAL del PC donde corre el
- * frontend. La fila del producto sí va a Cloud SQL (compartida), pero la imagen
+ * frontend. La fila del producto sí va a Neon (compartida), pero la imagen
  * no. Si vas a ejecutar el proyecto en otro PC, sube la carpeta
  * `frontend/public/images/productos/` a Git para que las imágenes viajen.
  */
@@ -20,6 +23,41 @@ import path from 'node:path';
 export const runtime = 'nodejs';
 
 const TAMANO_MAXIMO = 3 * 1024 * 1024; // 3 MB
+
+// ---------------------------------------------------------------------------
+// Almacenamiento de imágenes
+// ---------------------------------------------------------------------------
+// En local, sin variables de Neon Object Storage, se guarda en
+// `frontend/public/images/productos` (como hasta ahora).
+// En Vercel/cloud se usa Neon Object Storage (S3 compatible, forcePathStyle).
+const STORAGE_ENDPOINT = process.env.AWS_ENDPOINT_URL_S3?.replace(/\/+$/, '');
+const STORAGE_BUCKET = process.env.NEON_STORAGE_BUCKET;
+const STORAGE_REGION = process.env.AWS_REGION;
+const STORAGE_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
+const STORAGE_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+
+const storageConfigured = Boolean(
+  STORAGE_ENDPOINT &&
+    STORAGE_BUCKET &&
+    STORAGE_REGION &&
+    STORAGE_ACCESS_KEY &&
+    STORAGE_SECRET_KEY,
+);
+
+const s3 = storageConfigured
+  ? new S3Client({
+      region: STORAGE_REGION,
+      endpoint: STORAGE_ENDPOINT,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId: STORAGE_ACCESS_KEY!,
+        secretAccessKey: STORAGE_SECRET_KEY!,
+      },
+      // Neon Object Storage no implementa todos los checksums opcionales del SDK.
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
+    })
+  : null;
 
 /** Tipos aceptados y su extensión. */
 const TIPOS: Record<string, string> = {
@@ -70,12 +108,12 @@ function nombreSeguro(nombreOriginal: string): string {
 
 export async function POST(request: Request) {
   try {
-    // El panel siempre envía el token del vendedor. Se exige su presencia para
-    // que el endpoint no quede completamente abierto.
-    const autorizacion = request.headers.get('authorization');
-    if (!autorizacion || !autorizacion.toLowerCase().startsWith('bearer ')) {
+    // La sesión viaja en una cookie httpOnly; el navegador ya no envía el JWT
+    // en la cabecera Authorization.
+    const token = (await cookies()).get(TOKEN_COOKIE)?.value;
+    if (!token) {
       return NextResponse.json(
-        { detail: 'Se requiere un token de sesión para subir imágenes' },
+        { detail: 'Se requiere una sesión para subir imágenes' },
         { status: 401 },
       );
     }
@@ -118,6 +156,38 @@ export async function POST(request: Request) {
     }
 
     const nombre = `${nombreSeguro(archivo.name)}-${Date.now().toString(36)}.${extension}`;
+
+    if (s3 && STORAGE_BUCKET && STORAGE_ENDPOINT) {
+      const key = `productos/${nombre}`;
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: STORAGE_BUCKET,
+          Key: key,
+          Body: bytes,
+          ContentType: archivo.type,
+          CacheControl: 'public, max-age=31536000, immutable',
+        }),
+      );
+
+      return NextResponse.json({
+        url: `${STORAGE_ENDPOINT}/${STORAGE_BUCKET}/${key}`,
+        nombre,
+        bytes: archivo.size,
+        storage: 'neon',
+      });
+    }
+
+    if (process.env.VERCEL) {
+      return NextResponse.json(
+        {
+          detail:
+            'Falta configurar Neon Object Storage en Vercel: AWS_ENDPOINT_URL_S3, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY y NEON_STORAGE_BUCKET.',
+        },
+        { status: 503 },
+      );
+    }
+
+    // Fallback local para desarrollo.
     // La ruta se escribe de forma estática (sin variables) para que el empaquetador
     // sepa exactamente qué carpeta se usa y no arrastre todo el proyecto al build.
     const carpeta = path.join(process.cwd(), 'public', 'images', 'productos');
@@ -129,6 +199,7 @@ export async function POST(request: Request) {
       url: `/images/productos/${nombre}`,
       nombre,
       bytes: archivo.size,
+      storage: 'local',
     });
   } catch (error) {
     const detalle = error instanceof Error ? error.message : 'error desconocido';

@@ -159,7 +159,7 @@ Gutter de grid: 16 px. Padding de tarjeta: 12–16 px.
 
 ---
 
-## 6. Los 4 estados (obligatorios en las 15 páginas)
+## 6. Los 4 estados (obligatorios en las 17 páginas)
 
 | Estado | Qué mostrar |
 |---|---|

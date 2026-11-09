@@ -2,7 +2,7 @@
 # Arranca la API leyendo las variables de backend/.env
 # ----------------------------------------------------------------------------
 # Uso:
-#   .\run.ps1                 -> perfil cloud (Cloud SQL), puerto 8080
+#   .\run.ps1                 -> perfil cloud (Neon), puerto 8080
 #   .\run.ps1 -Profile local  -> perfil por defecto (PostgreSQL local/Docker)
 #   .\run.ps1 -Test           -> sólo compila y ejecuta los tests
 # ============================================================================
@@ -34,13 +34,13 @@ if (Test-Path $envFile) {
     }
 }
 else {
-    Write-Host "No se encontró .env (copia .env.example como .env si vas a usar Cloud SQL)" -ForegroundColor Yellow
+    Write-Host "No se encontró .env (copia .env.example como .env y completa las credenciales de Neon)" -ForegroundColor Yellow
 }
 
 # ---- 1b. Perfil local: forzar la base de datos local ---------------------
-# El .env apunta a Cloud SQL y las variables de entorno TIENEN PRIORIDAD sobre los valores por
+# El .env apunta a Neon y las variables de entorno TIENEN PRIORIDAD sobre los valores por
 # defecto de application.yml. Sin este bloque, "-Profile local" seguiría intentando conectar a
-# Cloud SQL. Aquí se sobrescriben para apuntar al PostgreSQL de docker-compose.
+# Neon. Aquí se sobrescriben para apuntar al PostgreSQL de docker-compose.
 if ($Profile -eq 'local') {
     Write-Host "Perfil local: usando PostgreSQL en localhost (se ignoran los datos de Cloud SQL)" -ForegroundColor Yellow
     $env:DB_HOST     = 'localhost'
@@ -92,8 +92,14 @@ else {
 }
 
 # El proyecto exige Java 21: se lo indicamos a Gradle explícitamente.
+# Se quita la barra final: al pasarla entre comillas a gradlew.bat, una barra
+# antes de la comilla escaparia la comilla y Gradle recibiria "bootRun" como
+# parte de la ruta (Java home supplied is invalid).
 $gradleArgs = @()
-if ($env:JAVA_HOME) { $gradleArgs += "-Dorg.gradle.java.home=$env:JAVA_HOME" }
+if ($env:JAVA_HOME) {
+    $javaHomeForGradle = $env:JAVA_HOME.TrimEnd('\')
+    $gradleArgs += "-Dorg.gradle.java.home=$javaHomeForGradle"
+}
 
 # ---- 3. Ejecutar ----------------------------------------------------------
 if ($Test) {

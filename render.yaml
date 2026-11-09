@@ -1,0 +1,49 @@
+# Render Blueprint — API Spring Boot + Neon
+#
+# Despliegue:
+#   1. Sube este archivo al repositorio.
+#   2. Render Dashboard → New → Blueprint → conecta el repositorio.
+#   3. Rellena las variables marcadas con `sync: false`.
+#
+# La base de datos NO se crea aquí: se usa el proyecto Neon existente.
+
+services:
+  - type: web
+    name: marketplace-api
+    runtime: docker
+    plan: free
+    region: virginia
+    rootDir: ./backend
+    healthCheckPath: /actuator/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: neondb
+      - key: DB_USER
+        value: neondb_owner
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSLMODE
+        value: require
+      - key: DB_POOL_SIZE
+        value: "5"
+      - key: DB_POOL_MIN_IDLE
+        value: "1"
+      - key: JWT_SECRET
+        sync: false
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        value: admin@marketplace.com
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        sync: false
+      - key: PAYMENT_STUB_CAPTURE
+        value: "true"
+      - key: PAGE_MAX_SIZE
+        value: "100"
+      - key: SELLER_RATING_FLUSH_MS
+        value: "5000"

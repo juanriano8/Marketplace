@@ -35,20 +35,18 @@ function SellerInventory() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const page = await apiFetch<Page<SellerStock>>(
         '/api/v1/seller/inventory?page=0&size=100&sort=createdAt,desc',
-        { token: session.token },
       );
       setStock(page.content);
 
       // El stock devuelve productId; se necesitan los nombres del catálogo propio.
       const catalog = await apiFetch<Page<Product>>(
         '/api/v1/seller/products?page=0&size=100',
-        { token: session.token },
       );
       const map: Record<string, Product> = {};
       for (const product of catalog.content) {
@@ -60,7 +58,7 @@ function SellerInventory() {
     } finally {
       setLoading(false);
     }
-  }, [session?.token]);
+  }, [session]);
 
   useEffect(() => {
     void load();
@@ -68,7 +66,7 @@ function SellerInventory() {
 
   async function submitAdjustment(event: React.FormEvent) {
     event.preventDefault();
-    if (!session?.token || !adjusting) return;
+    if (!session || !adjusting) return;
     setSubmitting(true);
     setFormError(null);
     try {
@@ -84,7 +82,6 @@ function SellerInventory() {
 
       await apiFetch<SellerStock>('/api/v1/seller/inventory/adjust', {
         method: 'POST',
-        token: session.token,
         body,
       });
 

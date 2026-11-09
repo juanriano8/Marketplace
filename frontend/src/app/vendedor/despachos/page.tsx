@@ -40,14 +40,13 @@ function Shipments() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const query = filter === 'ALL' ? '' : `status=${filter}&`;
       const page = await apiFetch<Page<SubOrder>>(
         `/api/v1/seller/orders?${query}page=0&size=100&sort=createdAt,desc`,
-        { token: session.token },
       );
       setSubOrders(page.content);
     } catch (err) {
@@ -55,7 +54,7 @@ function Shipments() {
     } finally {
       setLoading(false);
     }
-  }, [session?.token, filter]);
+  }, [session, filter]);
 
   useEffect(() => {
     void load();
@@ -63,13 +62,12 @@ function Shipments() {
 
   async function submitShipment(event: React.FormEvent) {
     event.preventDefault();
-    if (!session?.token || !shipping) return;
+    if (!session || !shipping) return;
     setSubmitting(true);
     setFormError(null);
     try {
       await apiFetch<SubOrder>(`/api/v1/seller/orders/${shipping.subOrderId}/ship`, {
         method: 'PATCH',
-        token: session.token,
         body: { trackingNumber: tracking.trim(), carrier: carrier.trim() || undefined },
       });
       setShipping(null);

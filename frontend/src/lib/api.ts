@@ -1,9 +1,10 @@
 /**
  * Cliente HTTP del frontend.
  *
- * Todas las llamadas van a rutas relativas (`/api/v1/...`), que Next.js reenvía al
- * backend Spring Boot mediante el `rewrite` de `next.config.ts`. El navegador nunca
- * habla directamente con el puerto 8080, así que no hay CORS de por medio.
+ * Todas las llamadas van a rutas relativas (`/api/v1/...`). En el servidor, el
+ * route handler `app/api/v1/[...path]/route.ts` añade la cabecera Authorization
+ * leyendo la cookie httpOnly de sesión. El navegador nunca ve el JWT ni habla
+ * directamente con el puerto 8080, así que no hay CORS de por medio.
  */
 
 export type ApiError = {
@@ -44,8 +45,6 @@ export class ApiException extends Error {
 type RequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
-  /** Token JWT del usuario autenticado. */
-  token?: string | null;
   /** Señal para cancelar la petición. */
   signal?: AbortSignal;
 };
@@ -72,14 +71,11 @@ async function toApiError(response: Response): Promise<ApiError> {
 }
 
 export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, token, signal } = options;
+  const { method = 'GET', body, signal } = options;
 
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (body !== undefined) {
     headers['Content-Type'] = 'application/json';
-  }
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
   }
 
   const response = await fetch(path, {
@@ -88,6 +84,8 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     body: body !== undefined ? JSON.stringify(body) : undefined,
     signal,
     cache: 'no-store',
+    // Mismo origen: las cookies httpOnly de sesión viajan automáticamente.
+    credentials: 'same-origin',
   });
 
   if (!response.ok) {

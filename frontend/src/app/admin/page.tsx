@@ -33,13 +33,12 @@ function Moderation() {
   const [busy, setBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const page = await apiFetch<Page<Product>>(
         `/api/v1/admin/products?status=${status}&page=0&size=100&sort=createdAt,desc`,
-        { token: session.token },
       );
       setProducts(page.content);
     } catch (err) {
@@ -47,21 +46,20 @@ function Moderation() {
     } finally {
       setLoading(false);
     }
-  }, [session?.token, status]);
+  }, [session, status]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   async function moderate(product: Product, approved: boolean) {
-    if (!session?.token) return;
+    if (!session) return;
     setBusy(product.id);
     setError(null);
     setFeedback(null);
     try {
       await apiFetch<Product>(`/api/v1/admin/products/${product.id}/approval`, {
         method: 'PATCH',
-        token: session.token,
         body: { approved },
       });
       setFeedback(

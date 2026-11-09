@@ -30,13 +30,12 @@ function SellerCatalog() {
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const page = await apiFetch<Page<Product>>(
         '/api/v1/seller/products?page=0&size=100&sort=createdAt,desc',
-        { token: session.token },
       );
       setProducts(page.content);
     } catch (err) {
@@ -44,20 +43,19 @@ function SellerCatalog() {
     } finally {
       setLoading(false);
     }
-  }, [session?.token]);
+  }, [session]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   async function createProduct(body: CreateProductBody) {
-    if (!session?.token) return;
+    if (!session) return;
     setSubmitting(true);
     setFormError(null);
     try {
       await apiFetch<Product>('/api/v1/seller/products', {
         method: 'POST',
-        token: session.token,
         body,
       });
       setCreating(false);
@@ -74,13 +72,12 @@ function SellerCatalog() {
   }
 
   async function updateProduct(product: Product, body: CreateProductBody) {
-    if (!session?.token) return;
+    if (!session) return;
     setSubmitting(true);
     setFormError(null);
     try {
       await apiFetch<Product>(`/api/v1/seller/products/${product.id}`, {
         method: 'PUT',
-        token: session.token,
         body: {
           name: body.name,
           description: body.description,
@@ -160,7 +157,6 @@ function SellerCatalog() {
         <div className="mb-6">
           <ProductForm
             categoriasEnUso={categoriasEnUso}
-            token={session?.token}
             submitting={submitting}
             error={formError}
             onSubmit={(body) => void createProduct(body)}
@@ -174,7 +170,6 @@ function SellerCatalog() {
           <ProductForm
             initial={editing}
             categoriasEnUso={categoriasEnUso}
-            token={session?.token}
             submitting={submitting}
             error={formError}
             onSubmit={(body) => void updateProduct(editing, body)}

@@ -25,13 +25,12 @@ function OrdersContent() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!session?.token) return;
+    if (!session) return;
     setLoading(true);
     setError(null);
     try {
       const page = await apiFetch<Page<Order>>(
         '/api/v1/buyer/orders?page=0&size=50&sort=createdAt,desc',
-        { token: session.token },
       );
       setOrders(page.content);
     } catch (err) {
@@ -39,7 +38,7 @@ function OrdersContent() {
     } finally {
       setLoading(false);
     }
-  }, [session?.token]);
+  }, [session]);
 
   useEffect(() => {
     void load();

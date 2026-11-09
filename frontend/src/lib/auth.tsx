@@ -2,12 +2,9 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { apiFetch } from './api';
-import type { AuthResponse, UserRole } from './types';
-
-const STORAGE_KEY = 'marketplace.session';
+import type { UserRole } from './types';
 
 export type Session = {
-  token: string;
   userId: string;
   email: string;
   role: UserRole;
@@ -16,7 +13,7 @@ export type Session = {
 
 type AuthContextValue = {
   session: Session | null;
-  /** true mientras se lee la sesión guardada (evita parpadeos al recargar). */
+  /** true mientras se consulta la sesión al servidor (evita parpadeos al recargar). */
   loading: boolean;
   login: (email: string, password: string) => Promise<Session>;
   register: (kind: 'buyer' | 'seller', email: string, password: string) => Promise<Session>;
@@ -28,70 +25,67 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function toSession(response: AuthResponse): Session {
-  return {
-    token: response.accessToken,
-    userId: response.userId,
-    email: response.email,
-    role: response.role,
-    sellerApproved: response.sellerApproved,
-  };
-}
+/** Clave antigua: se borra para no dejar JWT en localStorage de versiones previas. */
+const LEGACY_STORAGE_KEY = 'marketplace.session';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // La sesión se guarda en el navegador para sobrevivir a recargas.
   useEffect(() => {
+    let active = true;
+
     try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setSession(JSON.parse(stored) as Session);
-      }
+      window.localStorage.removeItem(LEGACY_STORAGE_KEY);
     } catch {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      setLoading(false);
+      // localStorage puede estar bloqueado; no es crítico.
     }
-  }, []);
 
-  const persist = useCallback((value: Session | null) => {
-    setSession(value);
-    if (value) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-    } else {
-      window.localStorage.removeItem(STORAGE_KEY);
-    }
-  }, []);
-
-  const login = useCallback(
-    async (email: string, password: string) => {
-      const response = await apiFetch<AuthResponse>('/api/v1/auth/login', {
-        method: 'POST',
-        body: { email, password },
+    // La sesión se reconstruye desde las cookies httpOnly, nunca desde localStorage.
+    apiFetch<Session>('/api/session')
+      .then((value) => {
+        if (active) setSession(value);
+      })
+      .catch(() => {
+        if (active) setSession(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
-      const value = toSession(response);
-      persist(value);
-      return value;
-    },
-    [persist],
-  );
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const login = useCallback(async (email: string, password: string) => {
+    const value = await apiFetch<Session>('/api/session/login', {
+      method: 'POST',
+      body: { email, password },
+    });
+    setSession(value);
+    return value;
+  }, []);
 
   const register = useCallback(
     async (kind: 'buyer' | 'seller', email: string, password: string) => {
-      const response = await apiFetch<AuthResponse>(`/api/v1/auth/register/${kind}`, {
+      const value = await apiFetch<Session>(`/api/session/register/${kind}`, {
         method: 'POST',
         body: { email, password },
       });
-      const value = toSession(response);
-      persist(value);
+      setSession(value);
       return value;
     },
-    [persist],
+    [],
   );
 
-  const logout = useCallback(() => persist(null), [persist]);
+  const logout = useCallback(() => {
+    setSession(null);
+    void fetch('/api/session/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+    }).catch(() => undefined);
+  }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
