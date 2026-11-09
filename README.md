@@ -1,15 +1,17 @@
 # Marketplace: Backend API + Panel web
 
 Marketplace multi-rol (Comprador / Vendedor / Administrador) con **backend Spring Boot 3.3.4 +
-Java 21**, **panel web Next.js 16** y **PostgreSQL en Google Cloud SQL**. Arquitectura hexagonal y
-seguridad siguiendo **OWASP API Security Top 10**.
+Java 21**, **panel web Next.js 16** y **PostgreSQL en Neon** (nube, plan gratuito). Arquitectura
+hexagonal y seguridad siguiendo **OWASP API Security Top 10**.
 
 ## Documentación
 
-Empieza por la guía de entrega.
+**Si llegas nuevo o retomas el proyecto, empieza por [CONTEXTO.md](CONTEXTO.md).**
 
 | Documento | Contenido |
 |---|---|
+| [**CONTEXTO.md**](CONTEXTO.md) | **Traspaso completo**: estado real, credenciales (dónde viven), trampas conocidas, mapa de archivos y qué falta por hacer |
+| [**ARRANQUE_RAPIDO.md**](ARRANQUE_RAPIDO.md) | **Levantar todo en 3 comandos** y comprobar que está conectado |
 | [**GUIA_ENTREGA.md**](GUIA_ENTREGA.md) | **Cómo levantar el backend y el frontend**, requisitos, checklist antes de presentar y solución de problemas |
 | [**POSTMAN_DEMO_PASO_A_PASO.md**](POSTMAN_DEMO_PASO_A_PASO.md) | **Demostración de los 27 endpoints en Postman**, paso a paso con el código a pegar y el resultado esperado |
 | [**GUIA_OTRO_PC.md**](GUIA_OTRO_PC.md) | **Qué instalar y hacer en otro computador con Windows** para ejecutarlo con otra conexión, conectando a Cloud SQL |
