@@ -177,11 +177,16 @@ export async function POST(request: Request) {
       });
     }
 
-    if (process.env.VERCEL) {
+    // En una plataforma serverless (Vercel o Cloud Run) el disco es efimero: lo
+    // que se escriba ahi desaparece en el siguiente reinicio. Antes se caia al
+    // "fallback local" tambien en Cloud Run y la imagen se perdia sin avisar.
+    // Cloud Run define K_SERVICE automaticamente, asi que se detecta igual.
+    const efimero = process.env.VERCEL || process.env.K_SERVICE;
+    if (efimero) {
       return NextResponse.json(
         {
           detail:
-            'Falta configurar Neon Object Storage en Vercel: AWS_ENDPOINT_URL_S3, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY y NEON_STORAGE_BUCKET.',
+            'La subida de archivos necesita Neon Object Storage. Configura AWS_ENDPOINT_URL_S3, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY y NEON_STORAGE_BUCKET en las variables del servicio, o pega directamente la URL de la imagen.',
         },
         { status: 503 },
       );
