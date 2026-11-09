@@ -4,12 +4,14 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -162,6 +164,46 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
         problemDetail.setTitle("Invalid Argument");
         problemDetail.setType(URI.create("https://api.marketplace.com/errors/invalid-argument"));
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    /**
+     * Un metodo HTTP que la ruta no admite (por ejemplo {@code PATCH /api/v1/products}, que solo
+     * acepta GET y POST). Sin este manejador la excepcion caia en el generico y respondia 500;
+     * RFC 9110 exige 405 en este caso.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ProblemDetail handleMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.METHOD_NOT_ALLOWED,
+            "The %s method is not supported for this resource".formatted(ex.getMethod())
+        );
+        problemDetail.setTitle("Method Not Allowed");
+        problemDetail.setType(URI.create("https://api.marketplace.com/errors/method-not-allowed"));
+        problemDetail.setProperty("timestamp", Instant.now());
+        if (ex.getSupportedHttpMethods() != null) {
+            problemDetail.setProperty(
+                "allowedMethods",
+                ex.getSupportedHttpMethods().stream().map(Object::toString).sorted().toList()
+            );
+        }
+        return problemDetail;
+    }
+
+    /**
+     * Propiedad de ordenacion inexistente (por ejemplo {@code ?sort=inventado}). Spring Data lanza
+     * {@code PropertyReferenceException}, que sin manejador acababa en 500. Es un error del cliente:
+     * corresponde 400.
+     */
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ProblemDetail handlePropertyReferenceException(PropertyReferenceException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+            HttpStatus.BAD_REQUEST,
+            "Unknown sort property '%s'".formatted(ex.getPropertyName())
+        );
+        problemDetail.setTitle("Invalid Sort Parameter");
+        problemDetail.setType(URI.create("https://api.marketplace.com/errors/invalid-sort"));
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }

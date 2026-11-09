@@ -6,7 +6,7 @@ import { apiFetch, errorMessage, type Page } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Product } from '@/lib/types';
 import { ErrorState, EmptyState, ErrorBox, Loading, PageHeader } from '@/components/feedback';
-import { formatMoney } from '@/components/ui';
+import { formatMoney, StockChip } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 const PAGE_SIZE = 9;
 
@@ -126,14 +126,10 @@ export default function CatalogPage() {
               )}
 
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-lg font-bold text-ink-900">
+                <span className="text-lg font-bold tabular text-ink-900">
                   {formatMoney(product.price, product.currencyCode)}
                 </span>
-                <span className="text-xs text-ink-500">
-                  {product.stockQuantity > 0
-                    ? `${product.stockQuantity} disponibles`
-                    : 'Agotado'}
-                </span>
+                <StockChip quantity={product.stockQuantity} />
               </div>
 
               <div className="mt-4 flex gap-2">

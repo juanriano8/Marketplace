@@ -20,18 +20,17 @@
 |---|---|---|
 | **Backend** Spring Boot 3.3.4 / Java 21 | ✅ Completo | Arquitectura hexagonal, 8 módulos |
 | **Endpoints** | ✅ **28 rutas / 32 operaciones** | + `DELIVERED`; 39 aserciones end-to-end históricas |
-| **Tests unitarios** | ✅ 114 (histórico) | `JwtTokenProviderTest` re-ejecutado ✅ |
-| **Base de datos** Cloud SQL PostgreSQL 18.6 | ✅ 10 tablas · **72 usuarios · 31 productos** | Dump verificado (365 filas) |
-| **Migraciones** | ⚠️ **Flyway V1 creada** + `ddl-auto: validate` | Compila; falta probar arranque |
-| **Despliegue** Cloud Run | ✅ Activo (imagen 2026-10-05) | `{"status":"UP"}`; pendiente redesplegar cambios |
+| **Tests unitarios** | ✅ **121, 0 fallos** | `BUILD SUCCESSFUL` (incluye 7 del limitador) |
+| **Base de datos** | ✅ **Neon** PostgreSQL 18.6 · 10 tablas | **19 usuarios · 3 productos · 4 órdenes** (sembrados; el dump de Cloud SQL no se restauró) |
+| **Migraciones** | ✅ **Flyway V1 aplicada y verificada** | Arranque real contra Neon con `ddl-auto: validate` |
+| **Despliegue** Cloud Run | ⚠️ Sigue apuntando a la base antigua → **500** | Hay que reapuntarlo a Neon |
 | **Frontend** Next.js 16 / Tailwind 4 / TS | ✅ 15 páginas con **4 estados + reintento** | `tsc --noEmit` sin errores |
 | **Reglas de negocio** | ✅ Verificadas | Antisobreventa (400 + ledger), multi-vendedor (350.00 USD), BOLA (400) |
-| **Rate limiting** | ✅ Bucket4j integrado | 60 anónimo · 600 autenticado · 30 auth por minuto · `429` + `Retry-After` |
-| **Diseño** | ✅ Figma «Origen» + `DESIGN.md` | 849 nodos → `design/tokens-origen.css` |
-| **Stitch** | ✅ Proyecto «Marketplace» + 1 pantalla | MCP conectado (Anexo B) |
+| **Diseño** | ✅ Paleta «Origen» **aplicada** + design system de Stitch | `globals.css` con tokens y componentes |
+| **Stitch** | ✅ **Conectado** (CLI) y design system extraído | 1 pantalla móvil + `designMd` de 10,8 KB en `design/stitch-design-md.md` |
 | **NotebookLM** | ✅ Cuaderno OWASP configurado | MCP conectado (Anexo B) |
 | **Documentación** | ✅ 18 documentos | + `TROUBLESHOOTING.md`, `DESIGN.md`, `UX_MAPPING.md` |
-| **Backup de la base** | ✅ `~/backups/backup_marketplace_2026-11-03.sql` | 96 KB · SHA-256 verificado |
+| **Backup de la base** | ⚠️ Solo existe en el **otro PC** | `backup_marketplace_2026-11-03.sql` (96 KB), no restaurado en Neon |
 
 **Este es el activo.** Lo que sigue es lo que falta para la rúbrica.
 
@@ -112,7 +111,7 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | Ranking con decaimiento temporal | ⏸️ No aplica al dominio |
 | *Write-behind* para reputación por lotes | ⏸️ Aplicable: los ratings de vendedor se calculan en consulta |
 | Notificaciones en Firestore | ⏸️ No existe (equivalente: tabla `notifications`) |
-| Redis para presencia / rate limit / caché | ⚠️ **Bucket4j integrado** (60/600/30 req/min); Redis sigue sin integrar |
+| Redis para presencia / rate limit / caché | ❌ Bucket4j declarado y **no integrado** |
 
 ### 2.6 Herramientas de la rúbrica
 
@@ -154,12 +153,12 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 
 | # | Tarea | Estado | Esfuerzo |
 |---|---|---|---|
-| 14 | Migraciones versionadas con Flyway | ⚠️ En progreso | Medio |
+| 14 | Migraciones versionadas con Flyway | ✅ Hecho | Medio |
 | 15 | Reorganizar la base (`marcas`, `direcciones`, `cupones`, `favoritos`, `producto_imagenes`, perfil de vendedor) | ❌ Pendiente | Alto |
 | 16 | *Write-behind* para el rating agregado de vendedor | ❌ Pendiente | Medio |
 | 17 | Notificaciones (tabla propia o Firestore) | ❌ Pendiente | Medio |
 | 18 | Ranking de productos con decaimiento temporal | ❌ Pendiente | Bajo |
-| 19 | Rediseño del frontend con Stitch / Figma «Origen» | ⚠️ En progreso | Alto |
+| 19 | Rediseño del frontend con Stitch / Figma «Origen» | ⚠️ Parcial (paleta y design system aplicados) | Alto |
 
 ### 🟢 Higiene del repositorio
 
@@ -187,18 +186,35 @@ estados y un `Skeleton` reutilizable. En formularios, «Reintentar» reenvía el
 | Frontend | 4 estados + reintento en las 15 vistas · `tsc` OK |
 | Commits | Los hace el usuario (no se hacen más desde el agente) |
 
+### Sesión 2026-11-08 — migración a Neon y design system
+
+| Qué | Resultado |
+|---|---|
+| **Base de datos** | Migrada a **Neon** (PostgreSQL 18.6, gratis). Flyway creó las 10 tablas |
+| **Incidencia resuelta** | `V1` fallaba con `role "cloudsqlsuperuser" does not exist` (rol exclusivo de Cloud SQL). Se eliminó la sentencia |
+| **Incidencia resuelta** | `JPA_DDL_AUTO=update` en `.env` anulaba el `validate`; ahora manda Flyway |
+| **Datos** | Sembrados de cero: 1 admin + 5 vendedores + 10 compradores + productos y órdenes de prueba |
+| **Rate limiting** | **Bucket4j implementado** (3 niveles: anon 60, usuario 600, login 30 por minuto) · 7 tests · verificado con 429 real |
+| **Robustez API** | `sort` inválido → **400** (antes 500) · método no permitido → **405** (antes 500) · tope de página **100** |
+| **Diseño** | Paleta «Origen» aplicada y **design system de Stitch** volcado a `globals.css` (botones, chips de stock, inputs, tarjetas, badges) |
+| **Stitch** | Conectado por CLI; proyecto «Marketplace» leído, pantalla y `designMd` descargados a `design/` |
+| **Documentación** | `.env.example` reescrito para Neon · `ARRANQUE_RAPIDO.md` reescrito · aviso de vigencia en los 7 documentos que describen Cloud SQL |
+| **Verificación** | **32/32 operaciones** de la API probadas · 39 aserciones e2e · 121 tests unitarios |
+| **Limpieza** | Cachés borradas: **1 GB** (`frontend/.next`, `frontend/.npm-cache`, `design/.npm-cache`, `backend/build`) |
+
 ### Orden sugerido para continuar
 
 | Orden | Tarea | Estado |
 |---|---|---|
-| 1 | #14 Flyway: probar arranque y corregir si falla `validate` | ⚠️ |
-| 2 | #13 Caché de catálogo | ❌ |
-| 3 | #7 Sanitización + token fuera de `localStorage` | ⚠️ |
-| 4 | #22 Tag/branch + push | ❌ |
-| 5 | #23 Consolidar documentos | ❌ |
-| 6 | #8 / #11 Secret Manager + Cloud Armor | ❌ (GCP) |
-| 7 | #15 Reorganizar la base | ❌ |
-| 8 | #19 Rediseño (Stitch → código) | ⚠️ |
+| 1 | #9 Bucket4j (rate limiting) | ✅ Hecho |
+| 2 | #14 Flyway: probar arranque y corregir si falla `validate` | ✅ Hecho |
+| 3 | #13 Caché de catálogo | ❌ |
+| 4 | #7 Sanitización + token fuera de `localStorage` | ⚠️ |
+| 5 | #22 Tag/branch + push | ❌ |
+| 6 | #23 Consolidar documentos | ❌ |
+| 7 | #8 / #11 Secret Manager + Cloud Armor | ❌ (GCP) |
+| 8 | #15 Reorganizar la base | ❌ |
+| 9 | #19 Rediseño (Stitch → código) | ⚠️ Parcial |
 
 ---
 
@@ -381,12 +397,13 @@ sha256: c1c9ce078a4ae4cd621c31f9b46911127dbc938063befcd8b5a568b6b8b6c477
 | Bloque | Hechos | Pendientes |
 |---|---|---|
 | 🔴 Bloqueantes | **6/7** | 1 (seguridad del cliente, parcial) |
-| 🟠 Alto | **2/6** | 4 |
-| 🟡 Medio | **0/6** | 5 pendientes + 1 en progreso (Flyway) |
+| 🟠 Alto | **1/6** | 5 |
+| 🟡 Medio | **1/6** | 5 pendientes |
 | 🟢 Higiene | **2/5** | 3 |
 
 **El proyecto está funcionalmente completo y verificado.** Los bloqueantes de documentación y
-credenciales están cerrados; quedan la seguridad del cliente y las tareas de infraestructura
-(Neon, Secret Manager, Cloud Armor), que dependen de cuentas o permisos.
+credenciales están cerrados; queda la seguridad del cliente y las tareas de infraestructura
+(Secret Manager, Cloud Armor), que dependen de cuentas o permisos.
 
-**Urgente:** migrar la base a Neon antes de que acabe el crédito de GCP (Anexo C).
+**La base ya está migrada a Neon** (2026-11-08), así que ya no hay urgencia por el crédito de GCP.
+Lo que falta de infraestructura es **reapuntar Cloud Run a Neon** para recuperar la URL pública.

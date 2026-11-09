@@ -4,3 +4,10 @@ figma-data/
 
 # Capturas y miniaturas temporales
 *.webp
+
+# Cache local de npm para los CLI (npx) y respuestas crudas de las APIs
+.npm-cache/
+*.json
+
+# Se conservan: stitch-design-md.md, stitch-catalogo-real.html y el .png de referencia
+!package.json

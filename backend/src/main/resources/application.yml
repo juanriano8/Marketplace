@@ -42,6 +42,13 @@ spring:
         default_batch_fetch_size: 50
 
   data:
+    # Tope de tamano de pagina. Sin esto un cliente puede pedir ?size=99999 y
+    # obligar al servidor a materializar la tabla entera (riesgo de agotar memoria).
+    # Con el tope, Spring recorta la peticion a 100 registros.
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: ${PAGE_MAX_SIZE:100}
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}

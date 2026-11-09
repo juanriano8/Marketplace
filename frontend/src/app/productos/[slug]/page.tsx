@@ -7,7 +7,7 @@ import { apiFetch, errorMessage } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import type { Product, ProductReviews, Review } from '@/lib/types';
 import { ErrorState, EmptyState, ErrorBox, Loading, Success } from '@/components/feedback';
-import { Stars, formatDate, formatMoney } from '@/components/ui';
+import { Stars, StockChip, formatDate, formatMoney } from '@/components/ui';
 import { notifyCartUpdated } from '@/components/CartCount';
 
 export default function ProductDetailPage() {
@@ -162,14 +162,13 @@ export default function ProductDetailPage() {
             {formatMoney(product.price, product.currencyCode)}
           </p>
 
-          <p className="mt-1 text-sm text-ink-600">
-            {product.stockQuantity > 0 ? (
-              <>
-                <span className="font-semibold text-green-700">{product.stockQuantity}</span>{' '}
+          <p className="mt-1 flex items-center gap-2 text-sm text-ink-600">
+            <StockChip quantity={product.stockQuantity} />
+            {product.stockQuantity > 0 && (
+              <span>
+                <span className="font-semibold tabular text-ink-800">{product.stockQuantity}</span>{' '}
                 unidades disponibles
-              </>
-            ) : (
-              <span className="font-semibold text-red-600">Agotado</span>
+              </span>
             )}
           </p>
 

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-primary": "#8cd4c5", "outline": "#6f7976", "on-secondary-fixed": "#151d1a", "tertiary-fixed-dim": "#ffb5a0", "primary-fixed-dim": "#8cd4c5", "surface-container": "#e5f1e9", "surface-dim": "#d1ddd5", "outline-variant": "#bec9c5", "secondary-container": "#dbe5df", "surface-variant": "#dae5de", "error-container": "#ffdad6", "inverse-on-surface": "#e8f4ec", "on-secondary": "#ffffff", "primary-fixed": "#a7f1e1", "on-primary-fixed-variant": "#005046", "on-error-container": "#93000a", "on-surface-variant": "#3f4946", "surface": "#f1fcf4", "on-primary-container": "#9ae2d3", "secondary-fixed-dim": "#bfc9c3", "on-primary-fixed": "#00201b", "error": "#ba1a1a", "surface-container-highest": "#dae5de", "tertiary-fixed": "#ffdbd1", "on-error": "#ffffff", "tertiary": "#6c3424", "secondary-fixed": "#dbe5df", "on-tertiary-fixed-variant": "#6f3726", "background": "#f1fcf4", "on-tertiary": "#ffffff", "on-tertiary-fixed": "#380d02", "on-tertiary-container": "#ffc8b9", "surface-container-lowest": "#ffffff", "surface-container-low": "#ebf6ef", "surface-container-high": "#dfebe3", "inverse-surface": "#28332e", "on-surface": "#141e19", "primary": "#004e44", "tertiary-container": "#894b39", "on-primary": "#ffffff", "on-secondary-fixed-variant": "#3f4945", "secondary": "#57615c", "surface-tint": "#1b6a5d", "primary-container": "#17675b", "on-secondary-container": "#5d6762", "on-background": "#141e19", "surface-bright": "#f1fcf4" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-mobile": "0.75rem", "gutter": "1rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "margin-mobile": "1rem", "margin": "1.5rem", "space-lg": "1rem", "space-xl": "1.5rem" }, "fontFamily": { "headline-md": ["Inter"], "title-price": ["Inter"], "body-md": ["Inter"], "body-sm": ["Inter"], "headline-sm": ["Inter"], "headline-lg": ["Inter"], "label-sm": ["Inter"], "body-md-medium": ["Inter"], "label-xs": ["Inter"], "headline-xl": ["Inter"], "label-md": ["Inter"] }, "fontSize": { "headline-md": ["1.25rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.01em", "fontWeight": "600" }], "title-price": ["1.125rem", { "lineHeight": "1.5rem", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0em", "fontWeight": "400" }], "body-sm": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.01em", "fontWeight": "400" }], "headline-sm": ["1rem", { "lineHeight": "1.5rem", "letterSpacing": "-0.005em", "fontWeight": "600" }], "headline-lg": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.015em", "fontWeight": "600" }], "label-sm": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.02em", "fontWeight": "600" }], "body-md-medium": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0em", "fontWeight": "500" }], "label-xs": ["0.6875rem", { "lineHeight": "0.875rem", "letterSpacing": "0.03em", "fontWeight": "600" }], "headline-xl": ["2rem", { "lineHeight": "2.5rem", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-md": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.005em", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-28 px-margin-mobile flex flex-col justify-center gap-space-xs"><div class="flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-primary-container text-[24px]">storefront</span><span class="font-headline-sm text-headline-sm text-primary-container font-bold tracking-tight">Marketplace</span></div><div class="flex items-center gap-space-xs"><a class="relative w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" data-path="cart" href="#"><span class="material-symbols-outlined text-[24px]">shopping_cart</span><span class="absolute top-1.5 right-1.5 bg-primary-container text-on-primary font-label-xs text-label-xs min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center font-bold">3</span></a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-9 pl-9 pr-3 rounded-lg bg-surface-container-low font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-all" placeholder="Buscar catálogo, SKU o marca..." type="text"/></div></div></header><main class="flex flex-col relative w-full pt-28 pb-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Multi-Role Context Utility Bar -->
+<div class="w-full bg-surface-container-low px-gutter-mobile py-space-xs flex items-center justify-between">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-primary-container text-[16px]">swap_horiz</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant truncate">Modo operativo:</span>
+<span class="font-label-xs text-label-xs text-primary-container bg-surface-container-lowest px-1.5 py-0.5 rounded shadow-sm">Comprador Mayorista</span>
+</div>
+<button class="flex items-center gap-1 font-label-xs text-label-xs text-primary hover:text-primary-container font-semibold transition-colors" type="button">
+<span>Cambiar rol</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+</div>
+<!-- Interactive State Simulator Switcher -->
+<div class="px-gutter-mobile pt-space-sm pb-space-xs">
+<div class="bg-surface-container-high p-1 rounded-xl flex items-center gap-1 shadow-sm overflow-x-auto">
+<button class="state-tab-btn flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-xs text-label-xs text-center transition-all bg-surface-container-lowest text-primary-container shadow-sm font-semibold" data-state-tab="active" onclick="switchCatalogState('active')" type="button">
+        Catálogo
+      </button>
+<button class="state-tab-btn flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-xs text-label-xs text-center transition-all text-on-surface-variant hover:text-on-surface" data-state-tab="loading" onclick="switchCatalogState('loading')" type="button">
+        Cargando
+      </button>
+<button class="state-tab-btn flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-xs text-label-xs text-center transition-all text-on-surface-variant hover:text-on-surface" data-state-tab="empty" onclick="switchCatalogState('empty')" type="button">
+        Vacío
+      </button>
+<button class="state-tab-btn flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-xs text-label-xs text-center transition-all text-on-surface-variant hover:text-on-surface" data-state-tab="error" onclick="switchCatalogState('error')" type="button">
+        Error
+      </button>
+</div>
+</div>
+<!-- Category Horizontal Chips Scroller -->
+<div class="w-full pt-space-xs pb-space-sm px-gutter-mobile">
+<div class="flex items-center gap-space-xs overflow-x-auto py-1">
+<button class="category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container text-primary-container shadow-sm font-semibold" onclick="selectCategory(this)" type="button">
+        Todos
+      </button>
+<button class="category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container-lowest text-on-surface-variant shadow-sm hover:text-on-surface" onclick="selectCategory(this)" type="button">
+        Electrónica
+      </button>
+<button class="category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container-lowest text-on-surface-variant shadow-sm hover:text-on-surface" onclick="selectCategory(this)" type="button">
+        Herramientas
+      </button>
+<button class="category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container-lowest text-on-surface-variant shadow-sm hover:text-on-surface" onclick="selectCategory(this)" type="button">
+        Oficina
+      </button>
+<button class="category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container-lowest text-on-surface-variant shadow-sm hover:text-on-surface" onclick="selectCategory(this)" type="button">
+        Materias Primas
+      </button>
+<button class="category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container-lowest text-on-surface-variant shadow-sm hover:text-on-surface" onclick="selectCategory(this)" type="button">
+        Equipamiento
+      </button>
+</div>
+</div>
+<!-- Action Sub-header: Count and Sort Dropdown -->
+<div class="px-gutter-mobile py-space-xs flex items-center justify-between gap-space-sm">
+<div class="flex items-baseline gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">Catálogo</span>
+<span class="font-body-sm text-body-sm text-secondary" id="catalog-count-label">128 productos</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest pl-2.5 pr-7 py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface shadow-sm focus:outline-none focus:bg-surface-container-low transition-all">
+<option>Más recientes</option>
+<option>Menor precio</option>
+<option>Mayor demanda</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-outline text-[16px]">arrow_drop_down</span>
+</div>
+</div>
+<!-- Content Slot: Main Interactive View Panels -->
+<div class="px-gutter-mobile pt-space-xs pb-space-lg flex flex-col gap-space-md">
+<!-- VIEW 1: ACTIVE CATALOG (3-COLUMN DENSE COMPACT GRID) -->
+<section class="state-view w-full" id="view-active">
+<div class="grid grid-cols-3 gap-2">
+<!-- Card 1: Disponible -->
+<article class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div class="flex flex-col gap-1.5">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="High precision industrial laser measurement gauge standing on a metallic testing bench with clean laboratory neutral lighting and soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu8ZpsMpzOk1l2zWQ6EdW1VJdjVgODH0Bsef9TzlMP2NUt5vQccvqOlFYxmpmDbG1o3UT1KnwqnydUquFKxkwYbdxPIBJ5zm5idWjZkbrshv2-0BMF0EQJjoHmBOkyRsWbI0kzpF2P9XRogDzUWbqvohjXT4txCP_Twy-mpcEvBzWvuBi8QKXaauh6SE7C5bOquAnMmLY7_gj4R50g1643jbd1CdGsahIymxgW-Aek"/>
+<button aria-label="Añadir a favoritos" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px]">favorite</span>
+</button>
+</div>
+<div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded font-label-xs text-[10px] leading-tight bg-[#E8F5E9] text-[#2E7D32] font-semibold">
+                Disponible
+              </span>
+</div>
+<h3 class="font-body-md-medium text-[12px] leading-tight text-on-surface line-clamp-2 min-h-[28px]">
+              Medidor Láser 60m Pro Industrial
+            </h3>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<span class="font-headline-sm text-[13px] leading-tight text-primary-container font-semibold">
+              $45.900
+            </span>
+<button class="w-full h-7 rounded-lg bg-primary-container hover:bg-primary active:scale-95 text-on-primary font-label-xs text-[11px] font-semibold flex items-center justify-center gap-1 transition-all shadow-sm" onclick="handleAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[13px]">add_shopping_cart</span>
+<span>Añadir</span>
+</button>
+</div>
+</article>
+<!-- Card 2: Últimas Unidades -->
+<article class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div class="flex flex-col gap-1.5">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Compact digital industrial multimeter with amber illuminated display screen and precision probes set on technical gray surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5GeNyG9kBgcIiyHRkUU5rkd6NxPMEt7SksRujpgKe9McmxIhLUug4E0p1tLMLST9zMsgF69ZdWJ2O9PC4oE5r2tT6Jkzh_NaaXKXMptKA_Gb78Sj3WLHV4nRuA1GRaGLUHXlX-vCt6mGaS8iL_ii7wwXp3I2pP93BtL0UI8Oes5bS3b4cd5ViWrmUbvxYkjXVrA9Lwl5HIEiWSQZKGhiODbc0M7stJkQUyZMrNX8N"/>
+<button aria-label="Añadir a favoritos" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px]">favorite</span>
+</button>
+</div>
+<div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded font-label-xs text-[10px] leading-tight bg-[#FFF4E5] text-[#ED6C02] font-semibold">
+                Últimas uds.
+              </span>
+</div>
+<h3 class="font-body-md-medium text-[12px] leading-tight text-on-surface line-clamp-2 min-h-[28px]">
+              Multímetro RMS Cat III 1000V
+            </h3>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<span class="font-headline-sm text-[13px] leading-tight text-primary-container font-semibold">
+              $78.500
+            </span>
+<button class="w-full h-7 rounded-lg bg-primary-container hover:bg-primary active:scale-95 text-on-primary font-label-xs text-[11px] font-semibold flex items-center justify-center gap-1 transition-all shadow-sm" onclick="handleAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[13px]">add_shopping_cart</span>
+<span>Añadir</span>
+</button>
+</div>
+</article>
+<!-- Card 3: Agotado -->
+<article class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between opacity-85 transition-all hover:opacity-100">
+<div class="flex flex-col gap-1.5">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover grayscale-[30%]" data-alt="Ergonomic cordless brushless screwdriver kit with titanium bits and rugged storage compartment on clean workshop background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4uPH3N30pUtDYn1jvM_WRbhzzudBKDOrm9k9XwChkuwCG8TGPXH-hAEkSYWuZl7TT4BUyvV7VDndkenn3Ny6Jrx1XZZ4MyrCy0vDVOwnH9AtuyJDu-mgLXJmlkndHA3oINt0_rYkEWOG6W3q0Ntoh5VVls4u1YrQCwDnED9vu8w769wXwHfQ5dQbuVJrminCkxbLF9DXRrhzvB7UHQmNBqJNbB6o1ZlYdPcu_g_PU"/>
+<button aria-label="Añadir a favoritos" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px]">favorite</span>
+</button>
+</div>
+<div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded font-label-xs text-[10px] leading-tight bg-[#FFEBEE] text-[#D32F2F] font-semibold">
+                Agotado
+              </span>
+</div>
+<h3 class="font-body-md-medium text-[12px] leading-tight text-on-surface line-clamp-2 min-h-[28px]">
+              Atornillador Brushless 18V
+            </h3>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<span class="font-headline-sm text-[13px] leading-tight text-outline font-semibold">
+              $120.000
+            </span>
+<button class="w-full h-7 rounded-lg bg-surface-container-high text-on-surface-variant font-label-xs text-[11px] font-medium flex items-center justify-center gap-1 cursor-not-allowed" type="button">
+<span class="material-symbols-outlined text-[13px]">notifications</span>
+<span>Avisarme</span>
+</button>
+</div>
+</article>
+<!-- Card 4: Disponible -->
+<article class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div class="flex flex-col gap-1.5">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Rolls of industrial raw copper wiring coils and spool cables in clean organized warehouse inventory lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLSeOQkEhbeq6KsT16t-Nrgf5JpqOQach59iHbTDD3hir83ZN40VB5oxl06DL6mPVfXPDa6wCZBtUQvPA6lniZG0gN9iFwPIMHCJj-KXrNJZ-SMIZwqJ81wdadbxXh4_3FUgDLBkwZ99p_g3qnWGDWRK4bfHdN6DvU1Uy12FMIuXBks7vEgbAWfwMkhl-rKktmECCN4UJjwN1JKhweeec-U_qfbVLaXZ2aUOov5TX6"/>
+<button aria-label="Añadir a favoritos" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px]">favorite</span>
+</button>
+</div>
+<div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded font-label-xs text-[10px] leading-tight bg-[#E8F5E9] text-[#2E7D32] font-semibold">
+                Disponible
+              </span>
+</div>
+<h3 class="font-body-md-medium text-[12px] leading-tight text-on-surface line-clamp-2 min-h-[28px]">
+              Cable Cobre Puro Rollo 100m
+            </h3>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<span class="font-headline-sm text-[13px] leading-tight text-primary-container font-semibold">
+              $89.900
+            </span>
+<button class="w-full h-7 rounded-lg bg-primary-container hover:bg-primary active:scale-95 text-on-primary font-label-xs text-[11px] font-semibold flex items-center justify-center gap-1 transition-all shadow-sm" onclick="handleAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[13px]">add_shopping_cart</span>
+<span>Añadir</span>
+</button>
+</div>
+</article>
+<!-- Card 5: Disponible -->
+<article class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div class="flex flex-col gap-1.5">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Smart thermal thermal imaging camera handheld diagnostics tool with modern interface display in soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG-QLPWNSJp_eWz8-6X2HZTbhZBFFYl0IAmH5f70IR_3Rut4hyzf8SdyIi5O1jQYtrhi4_XZlc667rrzA_0dc1N2OTFdTYTEHSigy7RpQcZzuNyX-EOEIAZT1D5ZLBvGYlwyte7mU7u1ngw7H1WZQnCiF3AVTuEuhQUIm1aVMghDXQYsOU4JPBOzUESzEtMWjyEIeQbBJ8RvnItq2I4TOzllBz411n7Q0UqDmED90x"/>
+<button aria-label="Añadir a favoritos" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px]">favorite</span>
+</button>
+</div>
+<div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded font-label-xs text-[10px] leading-tight bg-[#E8F5E9] text-[#2E7D32] font-semibold">
+                Disponible
+              </span>
+</div>
+<h3 class="font-body-md-medium text-[12px] leading-tight text-on-surface line-clamp-2 min-h-[28px]">
+              Cámara Térmica Mini Sensor
+            </h3>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<span class="font-headline-sm text-[13px] leading-tight text-primary-container font-semibold">
+              $210.000
+            </span>
+<button class="w-full h-7 rounded-lg bg-primary-container hover:bg-primary active:scale-95 text-on-primary font-label-xs text-[11px] font-semibold flex items-center justify-center gap-1 transition-all shadow-sm" onclick="handleAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[13px]">add_shopping_cart</span>
+<span>Añadir</span>
+</button>
+</div>
+</article>
+<!-- Card 6: Últimas Unidades -->
+<article class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
+<div class="flex flex-col gap-1.5">
+<div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Ergonomic heavy duty pneumatic stapler tool polished stainless steel parts on minimalist wooden work surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfEYs8VSbRD8ORRnIpx3fL2KwGtfINKA9ikh1AgjLsm8MGLB4tko5pcbJczzaPdnlR6cPFkt52JhB9obMpXUAwJVbRjOXj27so-k1UEbvkUcXXTRg7agVlRqdlVp40U0bCgNSqtFRqavdz0u-htlUIMFQwZVe_zIiu7NeqL-spWVwFATsXghdyrUJzITxoJLzOFlA2ThT6IQAEEH-gJ6tJ1i30ynZNRVOmXZAqARg3"/>
+<button aria-label="Añadir a favoritos" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-surface-container-lowest/80 backdrop-blur-sm flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[13px]">favorite</span>
+</button>
+</div>
+<div>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded font-label-xs text-[10px] leading-tight bg-[#FFF4E5] text-[#ED6C02] font-semibold">
+                Últimas uds.
+              </span>
+</div>
+<h3 class="font-body-md-medium text-[12px] leading-tight text-on-surface line-clamp-2 min-h-[28px]">
+              Engrapadora Neumática HD
+            </h3>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<span class="font-headline-sm text-[13px] leading-tight text-primary-container font-semibold">
+              $34.200
+            </span>
+<button class="w-full h-7 rounded-lg bg-primary-container hover:bg-primary active:scale-95 text-on-primary font-label-xs text-[11px] font-semibold flex items-center justify-center gap-1 transition-all shadow-sm" onclick="handleAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[13px]">add_shopping_cart</span>
+<span>Añadir</span>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- VIEW 2: LOADING SKELETON STATE (3-CARDS PULSING) -->
+<section class="state-view w-full hidden" id="view-loading">
+<div class="grid grid-cols-3 gap-2">
+<!-- Skeleton Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between animate-pulse">
+<div class="flex flex-col gap-1.5">
+<div class="w-full aspect-[4/3] rounded-xl bg-surface-container-highest"></div>
+<div class="w-12 h-3.5 rounded bg-surface-container-high"></div>
+<div class="w-full h-3 rounded bg-surface-container-highest"></div>
+<div class="w-3/4 h-3 rounded bg-surface-container-high"></div>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<div class="w-14 h-4 rounded bg-surface-container-highest"></div>
+<div class="w-full h-7 rounded-lg bg-surface-container-high"></div>
+</div>
+</div>
+<!-- Skeleton Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between animate-pulse">
+<div class="flex flex-col gap-1.5">
+<div class="w-full aspect-[4/3] rounded-xl bg-surface-container-highest"></div>
+<div class="w-12 h-3.5 rounded bg-surface-container-high"></div>
+<div class="w-full h-3 rounded bg-surface-container-highest"></div>
+<div class="w-3/4 h-3 rounded bg-surface-container-high"></div>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<div class="w-14 h-4 rounded bg-surface-container-highest"></div>
+<div class="w-full h-7 rounded-lg bg-surface-container-high"></div>
+</div>
+</div>
+<!-- Skeleton Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-2 shadow-sm flex flex-col justify-between animate-pulse">
+<div class="flex flex-col gap-1.5">
+<div class="w-full aspect-[4/3] rounded-xl bg-surface-container-highest"></div>
+<div class="w-12 h-3.5 rounded bg-surface-container-high"></div>
+<div class="w-full h-3 rounded bg-surface-container-highest"></div>
+<div class="w-3/4 h-3 rounded bg-surface-container-high"></div>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<div class="w-14 h-4 rounded bg-surface-container-highest"></div>
+<div class="w-full h-7 rounded-lg bg-surface-container-high"></div>
+</div>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] animate-spin text-primary-container">sync</span>
+<span class="font-body-sm text-body-sm">Cargando catálogo mayorista...</span>
+</div>
+</section>
+<!-- VIEW 3: EMPTY STATE -->
+<section class="state-view w-full hidden" id="view-empty">
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col items-center justify-center text-center py-10">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center mb-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[28px]">search_off</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">
+          Sin coincidencias directas
+        </h3>
+<p class="font-body-sm text-body-sm text-secondary max-w-[240px] mb-space-md">
+          No se encontraron productos en esta categoría o filtro seleccionado.
+        </p>
+<button class="px-5 h-9 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold inline-flex items-center gap-1.5 shadow-sm transition-all active:scale-95" onclick="resetCatalogFilters()" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span>Ver todo</span>
+</button>
+</div>
+</section>
+<!-- VIEW 4: ERROR STATE -->
+<section class="state-view w-full hidden" id="view-error">
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col items-center text-center py-8">
+<div class="w-12 h-12 rounded-full bg-error-container text-on-error-container flex items-center justify-center mb-space-xs">
+<span class="material-symbols-outlined text-[24px]">cloud_sync</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">
+          Error al sincronizar el inventario
+        </h3>
+<p class="font-body-sm text-body-sm text-secondary max-w-[260px] mb-space-md">
+          No pudimos conectar con los almacenes de fulfillment. Los precios y stocks podrían estar desactualizados.
+        </p>
+<div class="flex items-center gap-space-xs w-full max-w-[260px]">
+<button class="flex-1 h-9 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold inline-flex items-center justify-center gap-1.5 shadow-sm transition-all active:scale-95" onclick="switchCatalogState('active')" type="button">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>Reintentar</span>
+</button>
+<button class="h-9 px-3 rounded-lg bg-surface-container text-on-surface font-label-sm text-label-sm font-semibold hover:bg-surface-container-high transition-colors" onclick="switchCatalogState('active')" type="button">
+            Ignorar
+          </button>
+</div>
+</div>
+</section>
+</div>
+<!-- Toast Notification (Cart Delight Feedback) -->
+<div class="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 bg-inverse-surface text-inverse-on-surface px-4 py-2 rounded-xl shadow-lg flex items-center gap-2 transition-all opacity-0 pointer-events-none translate-y-3" id="cart-toast">
+<span class="material-symbols-outlined text-inverse-primary text-[18px]">check_circle</span>
+<span class="font-label-sm text-label-sm" id="cart-toast-text">SKU añadido al pedido comercial</span>
+</div>
+</div>
+<script>
+  function switchCatalogState(stateKey) {
+    const states = ['active', 'loading', 'empty', 'error'];
+    states.forEach(s => {
+      const el = document.getElementById(`view-${s}`);
+      if (el) {
+        if (s === stateKey) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      }
+    });
+
+    const buttons = document.querySelectorAll('.state-tab-btn');
+    buttons.forEach(btn => {
+      if (btn.getAttribute('data-state-tab') === stateKey) {
+        btn.className = "state-tab-btn flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-xs text-label-xs text-center transition-all bg-surface-container-lowest text-primary-container shadow-sm font-semibold";
+      } else {
+        btn.className = "state-tab-btn flex-1 min-w-[76px] py-1.5 px-2 rounded-lg font-label-xs text-label-xs text-center transition-all text-on-surface-variant hover:text-on-surface";
+      }
+    });
+
+    const counter = document.getElementById('catalog-count-label');
+    if (counter) {
+      if (stateKey === 'active') counter.textContent = '128 productos';
+      else if (stateKey === 'loading') counter.textContent = 'Sincronizando...';
+      else if (stateKey === 'empty') counter.textContent = '0 productos';
+      else if (stateKey === 'error') counter.textContent = 'Desconectado';
+    }
+  }
+
+  function selectCategory(button) {
+    const chips = document.querySelectorAll('.category-chip');
+    chips.forEach(c => {
+      c.className = "category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container-lowest text-on-surface-variant shadow-sm hover:text-on-surface";
+    });
+    button.className = "category-chip shrink-0 px-3 py-1.5 rounded-full font-label-xs text-label-xs transition-all bg-surface-container text-primary-container shadow-sm font-semibold";
+  }
+
+  function resetCatalogFilters() {
+    const chips = document.querySelectorAll('.category-chip');
+    if (chips.length > 0) {
+      selectCategory(chips[0]);
+    }
+    switchCatalogState('active');
+  }
+
+  let toastTimeout;
+  function handleAddToCart(btn) {
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<span class="material-symbols-outlined text-[14px] animate-bounce">check</span><span>Listo</span>`;
+    btn.classList.add('bg-primary');
+
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.classList.remove('bg-primary');
+    }, 1200);
+
+    const toast = document.getElementById('cart-toast');
+    if (toast) {
+      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-3');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2000);
+    }
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary-container font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="catalog" href="#"><span class="material-symbols-outlined text-[22px]">grid_view</span><span class="font-label-xs text-label-xs">Catálogo</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="orders" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-label-xs text-label-xs">Pedidos</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="inventory" href="#"><span class="material-symbols-outlined text-[22px]">inventory_2</span><span class="font-label-xs text-label-xs">Inventario</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="account" href="#"><span class="material-symbols-outlined text-[22px]">manage_accounts</span><span class="font-label-xs text-label-xs">Cuenta</span></a></div></nav></body></html>

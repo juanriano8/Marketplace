@@ -7,7 +7,7 @@ import type { CreateProductBody, Product } from '@/lib/types';
 import { RequireAuth } from '@/components/RequireAuth';
 import { ErrorState, EmptyState, ErrorBox, Info, Loading, PageHeader, Warning } from '@/components/feedback';
 import { ProductForm } from '@/components/ProductForm';
-import { StatusBadge, formatDate, formatMoney } from '@/components/ui';
+import { StatusBadge, StockChip, formatDate, formatMoney } from '@/components/ui';
 
 export default function SellerCatalogPage() {
   return (
@@ -212,17 +212,10 @@ function SellerCatalog() {
                   </td>
                   <td>{formatMoney(product.price, product.currencyCode)}</td>
                   <td>
-                    <span
-                      className={
-                        product.stockQuantity === 0
-                          ? 'font-semibold text-red-600'
-                          : product.stockQuantity <= 5
-                            ? 'font-semibold text-amber-600'
-                            : ''
-                      }
-                    >
-                      {product.stockQuantity}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <StockChip quantity={product.stockQuantity} />
+                      <span className="tabular text-xs text-ink-500">{product.stockQuantity}</span>
+                    </div>
                   </td>
                   <td>
                     <StatusBadge status={product.status} />

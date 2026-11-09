@@ -60,20 +60,32 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Componentes reutilizables */
+/* ============================================================================
+   COMPONENTES — design system «Marketplace»
+   ----------------------------------------------------------------------------
+   Fuente: design system de Stitch (design/stitch-design-md.md) + tokens de
+   Figma «Origen». Los valores son los exactos del diseño, no aproximaciones.
+   ============================================================================ */
 
+/* --- Botones -------------------------------------------------------------
+   Alturas 40 px (normal) y 36 px (.btn-sm). Radio 8 px. Primario verde con
+   hover #114E45 y un hundido del 2 % al pulsar, como indica el diseño.        */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  height: 40px;
+  padding: 0 1rem;
   border-radius: 0.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  transition: all 0.15s ease;
-  cursor: pointer;
   border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
 }
 
 .btn:disabled {
@@ -81,123 +93,212 @@ body {
   cursor: not-allowed;
 }
 
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(23 103 91 / 0.15);
+}
+
 .btn-primary {
-  background-color: var(--color-brand-600);
-  color: white;
+  background-color: #17675b;
+  color: #ffffff;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--color-brand-700);
+  background-color: #114e45;
 }
 
 .btn-secondary {
-  background-color: white;
-  color: var(--color-ink-800);
-  border-color: var(--color-ink-200);
+  background-color: #ffffff;
+  color: #141e19;
+  border-color: #d1ddd5;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--color-ink-100);
+  background-color: #f1fcf4;
+  border-color: #bec9c5;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: #17675b;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: rgb(23 103 91 / 0.08);
 }
 
 .btn-danger {
-  background-color: #dc2626;
-  color: white;
+  background-color: #a94439;
+  color: #ffffff;
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: #b91c1c;
+  background-color: #8f3a31;
 }
 
 .btn-success {
-  background-color: #16a34a;
-  color: white;
+  background-color: #17675b;
+  color: #ffffff;
 }
 
 .btn-success:hover:not(:disabled) {
-  background-color: #15803d;
+  background-color: #114e45;
 }
 
 .btn-sm {
-  padding: 0.25rem 0.625rem;
+  height: 36px;
+  padding: 0 0.75rem;
   font-size: 0.8125rem;
 }
 
+/* --- Tarjetas ------------------------------------------------------------
+   Radio 12 px, borde del token surface-container y sombra de nivel 1.        */
 .card {
-  background-color: white;
-  border: 1px solid var(--color-ink-200);
+  background-color: #ffffff;
+  border: 1px solid #dae5de;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  box-shadow: 0 1px 2px rgb(20 30 25 / 0.06);
 }
 
+.card-hover {
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.card-hover:hover {
+  border-color: #bec9c5;
+  box-shadow: 0 6px 16px rgb(20 30 25 / 0.10);
+  transform: translateY(-1px);
+}
+
+/* --- Formularios --------------------------------------------------------- */
 .input,
 .select,
 .textarea {
   width: 100%;
-  border: 1px solid var(--color-ink-200);
+  min-height: 40px;
+  border: 1px solid #bec9c5;
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  background-color: white;
-  color: var(--color-ink-900);
+  background-color: #ffffff;
+  color: #141e19;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+.input::placeholder,
+.textarea::placeholder {
+  color: #6f7976;
+}
+
+/* Anillo de foco del diseño: borde verde + halo suave del 15 %. */
 .input:focus,
 .select:focus,
 .textarea:focus {
-  outline: 2px solid var(--color-brand-500);
-  outline-offset: -1px;
-  border-color: var(--color-brand-500);
+  outline: none;
+  border-color: #17675b;
+  box-shadow: 0 0 0 3px rgb(23 103 91 / 0.15);
+}
+
+.input:disabled,
+.select:disabled,
+.textarea:disabled {
+  background-color: #f1fcf4;
+  color: #6f7976;
+  cursor: not-allowed;
 }
 
 .label {
   display: block;
+  margin-bottom: 0.375rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--color-ink-700);
-  margin-bottom: 0.25rem;
+  color: #3f4946;
 }
 
+/* --- Etiquetas de estado -------------------------------------------------
+   Píldoras de 12 px/600 con el trío texto/fondo/borde del diseño.            */
 .badge {
   display: inline-flex;
   align-items: center;
+  gap: 0.25rem;
   border-radius: 9999px;
+  border: 1px solid transparent;
   padding: 0.125rem 0.625rem;
   font-size: 0.75rem;
   font-weight: 600;
-  border: 1px solid transparent;
+  line-height: 1.25rem;
+  white-space: nowrap;
 }
 
 .badge-green {
-  background-color: #dcfce7;
-  color: #15803d;
-  border-color: #bbf7d0;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-color: #c8e6c9;
 }
 
 .badge-yellow {
-  background-color: #fef9c3;
-  color: #a16207;
-  border-color: #fde68a;
+  background-color: #fff4e5;
+  color: #ed6c02;
+  border-color: #ffe0b2;
 }
 
 .badge-red {
-  background-color: #fee2e2;
-  color: #b91c1c;
-  border-color: #fecaca;
-}
-
-.badge-gray {
-  background-color: var(--color-ink-100);
-  color: var(--color-ink-700);
-  border-color: var(--color-ink-200);
+  background-color: #ffebee;
+  color: #d32f2f;
+  border-color: #ffcdd2;
 }
 
 .badge-blue {
-  background-color: var(--color-brand-100);
-  color: var(--color-brand-800);
-  border-color: var(--color-brand-200);
+  background-color: #e5f1e9;
+  color: #004e44;
+  border-color: #bec9c5;
 }
 
+.badge-gray {
+  background-color: #e5f1e9;
+  color: #3f4946;
+  border-color: #bec9c5;
+}
+
+/* --- Disponibilidad de stock ---------------------------------------------
+   Los tres estados EXACTOS del diseño de Stitch. Se usa .stock-chip con uno
+   de los modificadores; el componente StockChip de ui.tsx los elige solo.    */
+.stock-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+
+.stock-in {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-color: #c8e6c9;
+}
+
+.stock-low {
+  background-color: #fff4e5;
+  color: #ed6c02;
+  border-color: #ffe0b2;
+}
+
+.stock-out {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border-color: #ffcdd2;
+}
+
+/* --- Tablas -------------------------------------------------------------- */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -205,23 +306,40 @@ body {
 }
 
 .table th {
-  text-align: left;
-  font-weight: 600;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--color-ink-500);
   padding: 0.625rem 0.75rem;
-  border-bottom: 1px solid var(--color-ink-200);
-  background-color: var(--color-ink-50);
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #3f4946;
+  background-color: #ebf6ef;
+  border-bottom: 1px solid #bec9c5;
+  white-space: nowrap;
 }
 
 .table td {
   padding: 0.75rem;
-  border-bottom: 1px solid var(--color-ink-100);
+  border-bottom: 1px solid #dae5de;
   vertical-align: middle;
 }
 
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .table tbody tr:hover {
-  background-color: var(--color-ink-50);
+  background-color: #f1fcf4;
+}
+
+/* --- Utilidades ---------------------------------------------------------- */
+.surface {
+  background-color: #ffffff;
+  border: 1px solid #dae5de;
+  border-radius: 0.75rem;
+}
+
+/* Números de precio: cifras tabulares para que las columnas no bailen. */
+.tabular {
+  font-variant-numeric: tabular-nums;
 }

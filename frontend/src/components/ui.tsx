@@ -63,6 +63,33 @@ export function Badge({ tone = 'gray', children }: { tone?: Tone; children: Reac
   return <span className={TONE_CLASSES[tone]}>{children}</span>;
 }
 
+/** Umbral a partir del cual el stock se considera bajo ("Últimas uds." en el diseño). */
+export const LOW_STOCK_THRESHOLD = 5;
+
+export type StockState = 'in' | 'low' | 'out';
+
+/** Traduce una cantidad a los tres estados de disponibilidad del diseño. */
+export function stockState(quantity: number): StockState {
+  if (!quantity || quantity <= 0) return 'out';
+  if (quantity <= LOW_STOCK_THRESHOLD) return 'low';
+  return 'in';
+}
+
+const STOCK_CHIP = {
+  in: { clase: 'stock-in', etiqueta: 'Disponible' },
+  low: { clase: 'stock-low', etiqueta: 'Últimas uds.' },
+  out: { clase: 'stock-out', etiqueta: 'Agotado' },
+} as const;
+
+/**
+ * Chip de disponibilidad con los tres colores exactos del design system
+ * (verde / ámbar / rojo). Es la pieza que más se ve en las tarjetas de producto.
+ */
+export function StockChip({ quantity }: { quantity: number }) {
+  const { clase, etiqueta } = STOCK_CHIP[stockState(quantity)];
+  return <span className={`stock-chip ${clase}`}>{etiqueta}</span>;
+}
+
 export function formatMoney(amount: number, currency = 'USD'): string {
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',

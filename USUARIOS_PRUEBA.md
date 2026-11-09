@@ -1,4 +1,9 @@
 # Usuarios de prueba
+> ⚠️ **Nota de vigencia (2026-11-08).** Este documento describe la infraestructura
+> **anterior**, basada en Google Cloud SQL. Desde esa fecha el proyecto usa
+> **Neon** (PostgreSQL en la nube, plan gratuito) y la base se llama `neondb`.
+> Las referencias a `136.112.91.42` y a `marketplace_db` son **históricas**.
+> Para la puesta en marcha actual consulta [ARRANQUE_RAPIDO.md](ARRANQUE_RAPIDO.md).
 
 **Fecha de creación:** 26 de septiembre de 2026
 **Base de datos:** `marketplace_db` en Google Cloud SQL
