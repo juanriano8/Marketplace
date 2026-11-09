@@ -268,7 +268,7 @@ export function ProductForm({
                   <span className="truncate font-mono text-[11px] text-ink-500">{imageUrl}</span>
                   <button
                     type="button"
-                    className="text-xs text-red-600 hover:underline"
+                    className="text-xs text-danger hover:underline"
                     onClick={() => {
                       setImageUrl('');
                       setErrorImagen(null);
@@ -279,7 +279,7 @@ export function ProductForm({
                 </div>
               )}
 
-              {errorImagen && <p className="mt-2 text-xs text-red-600">{errorImagen}</p>}
+              {errorImagen && <p className="mt-2 text-xs text-danger">{errorImagen}</p>}
 
               <details className="mt-2">
                 <summary className="cursor-pointer text-[11px] text-ink-500">
@@ -298,7 +298,7 @@ export function ProductForm({
       </div>
 
       {error && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <div className="mt-4 rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
           {error}
         </div>
       )}

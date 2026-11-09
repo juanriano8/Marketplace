@@ -213,7 +213,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100 hover:text-red-600"
+              className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100 hover:text-danger"
               aria-label="Cerrar sesión"
               title="Cerrar sesión"
             >

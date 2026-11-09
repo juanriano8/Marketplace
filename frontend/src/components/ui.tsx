@@ -110,7 +110,7 @@ export function Stars({ rating, size = 'md' }: { rating: number; size?: 'sm' | '
   const full = Math.round(rating);
   const className = size === 'sm' ? 'text-sm' : 'text-base';
   return (
-    <span className={`${className} text-amber-500`} title={`${rating} de 5`}>
+    <span className={`${className} text-warning`} title={`${rating} de 5`}>
       {'★'.repeat(Math.max(0, Math.min(5, full)))}
       <span className="text-ink-300">{'★'.repeat(5 - Math.max(0, Math.min(5, full)))}</span>
     </span>

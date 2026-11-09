@@ -180,7 +180,7 @@ function CartContent() {
                     <td>
                       <button
                         type="button"
-                        className="text-sm text-red-600 hover:underline"
+                        className="text-sm text-danger hover:underline"
                         disabled={busy === item.productId}
                         onClick={() => void removeItem(item.productId)}
                         title="Quitar del carrito"

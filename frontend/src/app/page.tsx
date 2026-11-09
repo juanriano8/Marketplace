@@ -22,7 +22,7 @@ const ROLE_CARDS = [
     title: 'Vendedor',
     description: 'Publica productos, controla inventario y registra despachos.',
     icon: Store,
-    accent: 'bg-amber-50 text-amber-700',
+    accent: 'bg-warning-soft text-warning',
   },
   {
     href: '/admin',

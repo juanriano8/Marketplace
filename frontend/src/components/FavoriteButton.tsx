@@ -27,7 +27,7 @@ export function FavoriteButton({
       type="button"
       aria-label={active ? 'Quitar de favoritos' : 'Guardar en favoritos'}
       aria-pressed={active}
-      className={`btn btn-secondary btn-sm ${active ? 'text-red-600' : ''} ${className}`}
+      className={`btn btn-secondary btn-sm ${active ? 'text-danger' : ''} ${className}`}
       disabled={busy}
       onClick={(event) => {
         // Si el botón vive dentro de un <Link>, evita navegar.

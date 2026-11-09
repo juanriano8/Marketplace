@@ -91,7 +91,7 @@ export default function LoginPage() {
         </Link>
       </p>
 
-      <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900">
+      <div className="mt-4 rounded-lg border border-warning/30 bg-warning-soft p-4 text-xs text-warning">
         <p className="font-semibold">Credenciales de administrador</p>
         <p className="mt-1">
           No existe registro público de administradores. Usa el correo y la contraseña definidos en{' '}

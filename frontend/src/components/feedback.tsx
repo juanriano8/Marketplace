@@ -13,7 +13,7 @@ export function Info({ children }: { children: ReactNode }) {
 /** Aviso de éxito. */
 export function Success({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
+    <div className="rounded-lg border border-success/30 bg-success-soft px-3 py-2 text-sm text-success">
       {children}
     </div>
   );
@@ -22,7 +22,7 @@ export function Success({ children }: { children: ReactNode }) {
 /** Aviso de error. */
 export function ErrorBox({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+    <div className="rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
       {children}
     </div>
   );
@@ -42,12 +42,12 @@ export function ErrorState({
   retryLabel?: string;
 }) {
   return (
-    <div className="card border border-red-200 bg-red-50 p-6 text-center">
-      <span className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-full bg-white text-red-600">
+    <div className="card border border-danger/30 bg-danger-soft p-6 text-center">
+      <span className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-full bg-white text-danger">
         <AlertTriangle className="h-4 w-4" />
       </span>
-      <p className="font-semibold text-red-800">No se pudo cargar la información</p>
-      <p className="mt-1 text-sm text-red-700">{message}</p>
+      <p className="font-semibold text-danger">No se pudo cargar la información</p>
+      <p className="mt-1 text-sm text-danger">{message}</p>
       {onRetry && (
         <button type="button" className="btn btn-primary mt-4" onClick={onRetry}>
           {retryLabel}
@@ -136,7 +136,7 @@ export function DetailSkeleton() {
 /** Aviso de advertencia. */
 export function Warning({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+    <div className="rounded-lg border border-warning/30 bg-warning-soft px-3 py-2 text-sm text-warning">
       {children}
     </div>
   );

@@ -133,9 +133,9 @@ function Audit() {
                     <td
                       className={`font-semibold ${
                         movement.quantityDelta > 0
-                          ? 'text-green-700'
+                          ? 'text-success'
                           : movement.quantityDelta < 0
-                            ? 'text-red-600'
+                            ? 'text-danger'
                             : 'text-ink-400'
                       }`}
                     >

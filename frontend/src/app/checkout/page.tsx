@@ -71,7 +71,7 @@ function CheckoutContent() {
     return (
       <div className="mx-auto max-w-3xl">
         <div
-          className={`card p-6 ${result.paymentCaptured ? 'border-green-200' : 'border-amber-200'}`}
+          className={`card p-6 ${result.paymentCaptured ? 'border-success/30' : 'border-warning/30'}`}
         >
           <div className="flex items-center gap-3">
             <span className="text-3xl">{result.paymentCaptured ? '✅' : '⚠️'}</span>

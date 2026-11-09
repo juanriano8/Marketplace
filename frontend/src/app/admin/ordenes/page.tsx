@@ -73,7 +73,7 @@ function AllOrders() {
         </div>
         <div className="card p-4">
           <p className="text-xs uppercase tracking-wide text-ink-500">Ingresos (página actual)</p>
-          <p className="text-xl font-bold text-green-700">{formatMoney(revenue)}</p>
+          <p className="text-xl font-bold text-success">{formatMoney(revenue)}</p>
         </div>
         <div className="card p-4">
           <p className="text-xs uppercase tracking-wide text-ink-500">Envíos en esta página</p>

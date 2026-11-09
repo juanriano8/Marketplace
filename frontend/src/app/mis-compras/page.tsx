@@ -152,7 +152,7 @@ function OrdersContent() {
                           </ul>
 
                           {subOrder.status === 'SHIPPED' && (
-                            <p className="mt-2 text-xs text-green-700">
+                            <p className="mt-2 text-xs text-success">
                               Ya puedes dejar tu reseña de este producto desde la ficha del catálogo.
                             </p>
                           )}
