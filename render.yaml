@@ -1,4 +1,4 @@
-# Render Blueprint — API Spring Boot + Neon
+# Render Blueprint — API Spring Boot + panel Next.js, con Neon como base
 #
 # Despliegue:
 #   1. Sube este archivo al repositorio.
@@ -6,8 +6,22 @@
 #   3. Rellena las variables marcadas con `sync: false`.
 #
 # La base de datos NO se crea aquí: se usa el proyecto Neon existente.
+#
+# ---------------------------------------------------------------------------
+# Sobre Neon: no puede ejecutar el backend. Su producto «Neon Functions» solo
+# corre JavaScript/TypeScript sobre Node.js 24; el backend es Spring Boot con
+# Java 21 y necesita un contenedor. Por eso el cómputo va en Render y Neon se
+# queda con lo que sí sabe hacer: PostgreSQL y el almacenamiento de imágenes.
+#
+# Con este blueprint ambas piezas quedan en Render (una sola cuenta) y Neon
+# aporta la base y las imágenes. Si en el futuro prefieres Vercel para el panel,
+# basta con borrar el servicio `marketplace-web` de esta lista.
+# ---------------------------------------------------------------------------
 
 services:
+  # -------------------------------------------------------------------------
+  # API (Spring Boot 3.3.4 / Java 21). Se construye con backend/Dockerfile.
+  # -------------------------------------------------------------------------
   - type: web
     name: marketplace-api
     runtime: docker
@@ -31,6 +45,7 @@ services:
         sync: false
       - key: DB_SSLMODE
         value: require
+      # 512 MB de RAM son justos para Spring Boot: pool pequeño y caché acotada.
       - key: DB_POOL_SIZE
         value: "5"
       - key: DB_POOL_MIN_IDLE
@@ -47,3 +62,38 @@ services:
         value: "100"
       - key: SELLER_RATING_FLUSH_MS
         value: "5000"
+
+  # -------------------------------------------------------------------------
+  # Panel (Next.js 16). Servicio Node aparte, en el mismo proveedor.
+  #
+  # Usa `npm run start:prod` (no `npm start`) porque el script local fija el
+  # puerto 3000 y Render inyecta el suyo en $PORT: si se fijara, el health
+  # check del servicio fallaría.
+  # -------------------------------------------------------------------------
+  - type: web
+    name: marketplace-web
+    runtime: node
+    plan: free
+    region: virginia
+    rootDir: ./frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # URL pública de la API de arriba. El panel la usa en tiempo de ejecución.
+      - key: MARKETPLACE_API_URL
+        value: https://marketplace-api.onrender.com
+      # Imágenes: bucket de Neon Object Storage (rellenar en el dashboard).
+      - key: AWS_ENDPOINT_URL_S3
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: NEON_STORAGE_BUCKET
+        value: marketplace-images

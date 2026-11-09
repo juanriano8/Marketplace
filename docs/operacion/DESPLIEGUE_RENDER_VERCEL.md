@@ -100,7 +100,14 @@ https://marketplace-api.onrender.com/swagger-ui/index.html
 
 ---
 
-## 4. Vercel: panel Next.js
+## 4. Panel Next.js: Vercel **o** Render
+
+El panel necesita un runtime de Node, no una base de datos. Hay dos caminos y **el `render.yaml`
+ya trae el segundo preparado**, así que puedes elegir sin tocar código.
+
+### 4.A Vercel (recomendado para presentar)
+
+Vercel es el mejor host para Next.js: CDN, builds optimizados y **el panel no duerme nunca**.
 
 1. Vercel → **Add New → Project** → importa el repo.
 2. **Root Directory:** `frontend`.
@@ -118,13 +125,58 @@ https://marketplace-api.onrender.com/swagger-ui/index.html
 
 5. Deploy. Abre la URL `https://<proyecto>.vercel.app`.
 
-El panel llama a `/api/v1/**` en su propio dominio; el route handler de Next lee la cookie
-httpOnly y reenvía a Render con `Authorization`. Por eso **no hace falta CORS** y la cookie
-`secure` funciona bajo HTTPS.
+> Si eliges Vercel, **borra el servicio `marketplace-web`** de `render.yaml` para no crear un
+> servicio que no vas a usar.
+
+### 4.B Todo en Render (una sola cuenta)
+
+Si prefieres no crear cuenta en Vercel, el `render.yaml` ya declara `marketplace-web`:
+
+| Ajuste | Valor |
+|---|---|
+| Runtime | `node` |
+| Root directory | `frontend` |
+| Build | `npm ci && npm run build` |
+| Start | `npm run start:prod` |
+| Health check | `/` |
+
+> **`start:prod` y no `start`.** El script local fija el puerto 3000 (`next start -p 3000`), pero
+> Render inyecta el suyo en `PORT`. Si se fijara el puerto, el health check fallaría y Render
+> reiniciaría el servicio en bucle.
+
+Solo hay que rellenar `MARKETPLACE_API_URL` (ya viene con el valor correcto) y las 4 variables de
+Neon Object Storage.
+
+**Comparación:**
+
+| | Vercel (4.A) | Render (4.B) |
+|---|---|---|
+| Cuentas nuevas | 2 (Render + Vercel) | **1** (Render) |
+| El panel duerme | ❌ Nunca | ✅ A los 15 min |
+| Primer arranque | Instantáneo | ~30-60 s |
+| Cuota | 100 GB de banda | 750 h/mes compartidas |
 
 ---
 
-## 5. Probar el flujo completo
+## 5. El BFF: por qué no hace falta CORS
+
+El panel llama a `/api/v1/**` **en su propio dominio**; el route handler de Next lee la cookie
+httpOnly y reenvía a Render con `Authorization`. Por eso **no hace falta CORS** y la cookie
+`secure` funciona bajo HTTPS.
+
+Comprobado en modo producción (`next start`):
+
+```
+POST /api/session/login          -> 200
+set-cookie: mp_token=...; Secure; HttpOnly; SameSite=lax
+cuerpo de la respuesta           -> sin accessToken (el JWT no llega al navegador)
+GET /api/v1/cart con cookie      -> 200
+GET /api/v1/cart sin cookie      -> 401
+```
+
+---
+
+## 6. Probar el flujo completo
 
 1. Abre la URL de Vercel.
 2. Login con un usuario de prueba.
@@ -135,7 +187,7 @@ httpOnly y reenvía a Render con `Authorization`. Por eso **no hace falta CORS**
 
 ---
 
-## 6. Desarrollo local apuntando a la nube
+## 7. Desarrollo local apuntando a la nube
 
 Si quieres seguir usando el panel en local pero con la API de Render:
 
@@ -149,7 +201,7 @@ y reinicia `npm run dev`. Para las imágenes, añade también las variables de N
 
 ---
 
-## 7. Problemas típicos
+## 8. Problemas típicos
 
 | Síntoma | Causa | Solución |
 |---|---|---|
@@ -163,7 +215,7 @@ y reinicia `npm run dev`. Para las imágenes, añade también las variables de N
 
 ---
 
-## 8. Referencias
+## 9. Referencias
 
 - Neon Free: <https://neon.com/faqs/free-plan-limits-and-quotas>
 - Neon Object Storage: <https://neon.com/docs/storage/overview>
