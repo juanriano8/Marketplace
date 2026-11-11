@@ -31,7 +31,8 @@ const nextConfig: NextConfig = {
   // Si tu IP cambia (DHCP), añádela a esta lista y reinicia `npm run dev`.
   allowedDevOrigins: [
     '192.168.56.1', // adaptador host-only de VirtualBox en este PC
-    '192.168.10.7', // red Wi-Fi de este PC
+    '192.168.10.7', // red Wi-Fi de este PC (IP anterior; puede volver por DHCP)
+    '192.168.10.11', // red Wi-Fi de este PC (IP actual, 2026-11-11)
     '192.168.107.2', // segunda red virtual de este PC
     '192.168.10.22', // el PC con Linux, si se ejecuta allí el panel
   ],
