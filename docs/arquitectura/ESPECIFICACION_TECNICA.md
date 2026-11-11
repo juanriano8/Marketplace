@@ -1,5 +1,23 @@
 # Especificación Técnica — Marketplace API Multi-Rol
-> ⚠️ **Nota de vigencia (2026-11-08).** Este documento describe la infraestructura
+> ## ⚠️ Estado de esta especificación (2026-11-11)
+>
+> El proyecto **se ejecuta en local** y ya no depende de ningún servicio en la nube:
+> Google Cloud y la base de datos Neon se dieron de baja tras la entrega.
+>
+> | Pieza | Ahora |
+> |---|---|
+> | Base de datos | **PostgreSQL 16 local** (`marketplace_db`, usuario `postgres`) |
+> | Esquema | **17 tablas** gestionadas por **Flyway** (V1, V2 y V3) |
+> | API | Spring Boot en `http://localhost:8080` |
+> | Panel | Next.js en `http://localhost:3000` |
+> | Operaciones de API | **44** |
+> | Tests | **137** |
+>
+> Los apartados que describen **Google Cloud SQL**, **Neon** o **Cloud Run** se conservan
+> como **registro histórico** de cómo se desplegó y por qué se cambió. Para levantar el
+> proyecto hoy: [GUIA_LOCAL_OTRO_PC.md](../operacion/GUIA_LOCAL_OTRO_PC.md).
+
+---> ⚠️ **Nota de vigencia (2026-11-08).** Este documento describe la infraestructura
 > **anterior**, basada en Google Cloud SQL. Desde esa fecha el proyecto usa
 > **Neon** (PostgreSQL en la nube, plan gratuito) y la base se llama `neondb`.
 > Las referencias a `136.112.91.42` y a `marketplace_db` son **históricas**.
@@ -321,7 +339,45 @@ adaptadores ni repositorios ajenos:
 
 ---
 
-## 6. Base de datos y conexión a Google Cloud SQL
+## 6. Base de datos: PostgreSQL local (y, como histórico, Cloud SQL)
+### 6.0 Configuración actual: PostgreSQL local
+
+El proyecto ya no usa Cloud SQL ni Neon. La base es un PostgreSQL 16 que corre en la misma
+máquina, y el esquema lo crea **Flyway** al arrancar la API.
+
+| Dato | Valor |
+|---|---|
+| Motor | PostgreSQL **16.x** (cualquier versión ≥ 16 sirve) |
+| Host y puerto | `localhost:5432` |
+| Base de datos | `marketplace_db` |
+| Usuario / contraseña | `postgres` / `postgres` (solo local) |
+| SSL | `disable` (`DB_SSLMODE=disable`) |
+| Esquema | **Flyway** `V1` → `V3` · 17 tablas |
+| Perfil de Spring | `local` (`SPRING_PROFILES_ACTIVE=local`) |
+| `ddl-auto` | `validate` — Hibernate comprueba, no modifica |
+
+**Las tres migraciones:**
+
+| Versión | Contenido |
+|---|---|
+| `V1__initial_schema.sql` | 10 tablas base: usuarios, productos, inventario, carrito, órdenes, reseñas y el histórico de movimientos |
+| `V2__notifications.sql` | Tabla `notifications` |
+| `V3__catalog_and_profiles.sql` | `marcas`, `direcciones`, `cupones`, `favoritos`, `producto_imagenes` y `seller_profiles` |
+
+**Nota sobre portabilidad.** El `V1` se generó con `pg_dump` desde una base 18.6. Traía
+`SET transaction_timeout = 0`, un parámetro que **solo existe desde PostgreSQL 17**: en un
+servidor 16 la migración abortaba con `unrecognized configuration parameter`. Se eliminó y
+quedó documentado dentro del propio `.sql`.
+
+**Datos de demostración.** El repositorio incluye `backend/db/marketplace_local.sql`, un volcado
+completo (esquema + datos) con 16 usuarios, 15 productos con imagen, una orden con dos
+sub-órdenes y una reseña. Se carga con un solo `psql -f`.
+
+Para levantar el proyecto en otro PC: [GUIA_LOCAL_OTRO_PC.md](../operacion/GUIA_LOCAL_OTRO_PC.md).
+
+---
+
+> **A partir de aquí, contenido histórico.** Describe la conexión a Google Cloud SQL tal como funcionó durante la entrega; hoy ya no aplica.
 
 ### 6.1 Respuesta directa: ¿funciona la conexión a la base de datos de Google Cloud?
 
@@ -332,7 +388,7 @@ La aplicación arrancó conectada a Cloud SQL, Hibernate creó el esquema y se e
 
 Instancia verificada: `marketplace-509503:us-central1:marketplace` · IP pública
 `136.112.91.42:5432` · PostgreSQL 18.6 · base `marketplace_db` (creada durante la sesión, vacía
-y con las 10 tablas generadas por Hibernate).
+y con las 17 tablas generadas por Hibernate).
 
 Evidencia del log de arranque:
 
@@ -357,7 +413,7 @@ Situación de cada pieza:
 | Host/usuario/contraseña reales | ✅ Sí | Configurados en `backend/.env` (ignorado por git) |
 | IP autorizada en Cloud SQL | ✅ Sí | Verificado: `TcpTestSucceeded = True` al puerto 5432 |
 | Base de datos `marketplace_db` | ✅ Creada | Creada vía JDBC; el usuario `postgres` tenía privilegio `CREATEDB` |
-| Esquema (10 tablas) | ✅ Generado | Hibernate lo creó con `ddl-auto: update` |
+| Esquema (17 tablas) | ✅ Generado | Hibernate lo creó con `ddl-auto: update` |
 | **Prueba de conexión real** | ✅ **Hecha** | Arranque + 58 comprobaciones end-to-end |
 
 ### 6.1.1 Un obstáculo real que apareció: esquema previo incompatible
@@ -480,7 +536,7 @@ migraciones versionadas con Flyway o Liquibase.
 
 ## 7. Modelo de datos
 
-**12 entidades JPA → 10 tablas** (`BaseEntity` es `@MappedSuperclass`, no genera tabla propia).
+**Las entidades JPA generan 17 tablas** (`BaseEntity` es `@MappedSuperclass`, no genera tabla propia).
 
 | Tabla | Entidad | Campos destacados |
 |---|---|---|
@@ -754,7 +810,7 @@ secuencia completa (23 pasos) está en la [guía de ejecución](../operacion/EJE
 | Compilación (`compileJava`, `bootJar`) | ✅ `BUILD SUCCESSFUL` |
 | Suite de tests | ✅ **114 tests, 0 fallos, 0 errores** |
 | Arranque contra Cloud SQL | ✅ `HikariPool - Start completed` en 12,25 s |
-| Esquema generado | ✅ 10 tablas |
+| Esquema generado | ✅ 17 tablas |
 | Endpoints end-to-end | ✅ **39 aserciones, 0 fallos** |
 | Antisobreventa con bloqueo pesimista | ✅ Verificado |
 | División de orden por vendedor | ✅ Verificado |
@@ -798,7 +854,10 @@ secuencia completa (23 pasos) está en la [guía de ejecución](../operacion/EJE
 
 ---
 
-## 14. Ruta a producción en GCP
+## 14. Despliegue: local (actual) y ruta a GCP (histórica)
+
+> **Hoy el proyecto se ejecuta en local.** Ver [GUIA_LOCAL_OTRO_PC.md](../operacion/GUIA_LOCAL_OTRO_PC.md).
+> Lo que sigue describe el despliegue que se usó en la entrega y ya **no está activo**.
 
 El diseño encaja con el despliegue descrito en la especificación V2. Pasos:
 
@@ -844,6 +903,6 @@ gcloud run deploy marketplace-api `
 - ✅ **Verificado en ejecución:** `BUILD SUCCESSFUL`, **114 tests sin fallos** y **39 aserciones
   end-to-end contra Cloud SQL** con 0 errores.
 - ✅ **Conexión a Google Cloud SQL funcionando:** la aplicación arranca contra la instancia real,
-  Hibernate genera las 10 tablas y todos los endpoints responden.
+  Hibernate genera las 17 tablas y todos los endpoints responden.
 - ⚠️ **Pendiente para producción:** sustituir la pasarela de pago *stub*, integrar Redis y
   Bucket4j/Resilience4j, y pasar `ddl-auto` a `validate` con migraciones versionadas.

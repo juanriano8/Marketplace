@@ -32,7 +32,9 @@
 | [GUIA_ENTREGA.md](operacion/GUIA_ENTREGA.md) | Requisitos, arranque, checklist antes de presentar | ⚠️ Histórico (Cloud SQL) |
 | [EJECUCION_Y_DEMO.md](operacion/EJECUCION_Y_DEMO.md) | Configuración detallada, demo y solución de problemas | ⚠️ Histórico (Cloud SQL) |
 | [GUIA_OTRO_PC.md](operacion/GUIA_OTRO_PC.md) | Ejecutar el proyecto en otro PC con Windows | ⚠️ Histórico (Cloud SQL) |
+| docs/operacion/GUIA_LOCAL_OTRO_PC.md | Ejecutar el proyecto en local en otro PC (sin nube) |
 | [GUIA_OTRO_PC_LINUX.md](operacion/GUIA_OTRO_PC_LINUX.md) | Lo mismo para Linux | ⚠️ Histórico (Cloud SQL) |
+| docs/operacion/GUIA_LOCAL_OTRO_PC.md | Ejecutar el proyecto en local en otro PC (sin nube) |
 
 ## `api/` — endpoints, Postman y usuarios de prueba
 

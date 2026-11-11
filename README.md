@@ -13,6 +13,7 @@ hexagonal y seguridad siguiendo **OWASP API Security Top 10**.
 | [**docs/README.md**](docs/README.md) | **Índice completo** de la documentación: operación, API, arquitectura, diseño, datos y referencia |
 | [**CONTEXTO.md**](CONTEXTO.md) | **Traspaso completo**: estado real, credenciales (dónde viven), trampas conocidas, mapa de archivos y qué falta por hacer |
 | [**PRESENTACION.md**](PRESENTACION.md) | **Guion de la demo**: enlaces, cuentas, recorrido paso a paso, qué destacar en cada pantalla y plan B |
+| [**GUIA_LOCAL_OTRO_PC.md**](docs/operacion/GUIA_LOCAL_OTRO_PC.md) | **Ejecutar todo en local en otro PC**, sin Google Cloud ni Neon: requisitos, base de datos y volcado con datos |
 | [**ARRANQUE_RAPIDO.md**](docs/operacion/ARRANQUE_RAPIDO.md) | **Levantar todo en 3 comandos** y comprobar que está conectado |
 | [**ACTIVACION.md**](docs/operacion/ACTIVACION.md) | **Qué queda activado**, variables, verificación y pendientes que dependen de Google Cloud |
 | [**DESPLIEGUE_RENDER_VERCEL.md**](docs/operacion/DESPLIEGUE_RENDER_VERCEL.md) | Desplegar la API en **Render**, el panel en **Vercel** y las imágenes en **Neon Object Storage** |
