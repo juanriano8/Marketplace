@@ -9,7 +9,10 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
-SET transaction_timeout = 0;
+-- "SET transaction_timeout = 0" se elimino a proposito: es un parametro que solo
+-- existe desde PostgreSQL 17. Venia en el pg_dump de una base 18.6 y hacia que la
+-- migracion abortara en cualquier servidor 16 ("unrecognized configuration
+-- parameter"). No es necesario para crear el esquema.
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
